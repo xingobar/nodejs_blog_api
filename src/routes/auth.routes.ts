@@ -1,16 +1,15 @@
 import MainRoute from "routes/route.abstract";
-
+import AuthController from "controller/authController";
 class AuthRoute extends MainRoute {
+  private authController: AuthController = new AuthController();
+
   constructor() {
     super();
     this.setRoutes();
   }
 
   protected setRoutes() {
-    this.router.get("/auth/login", (req, res) => {
-      console.log("login");
-      res.json({ test: "test" });
-    });
+    this.router.get("/auth/register", this.authController.register);
   }
 }
 
