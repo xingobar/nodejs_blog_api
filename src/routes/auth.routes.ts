@@ -1,5 +1,5 @@
 import MainRoute from "routes/route.abstract";
-import AuthController from "controller/authController";
+import AuthController from "controller/auth.controller";
 class AuthRoute extends MainRoute {
   private authController: AuthController = new AuthController();
 
