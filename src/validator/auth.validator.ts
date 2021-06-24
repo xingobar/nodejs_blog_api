@@ -1,8 +1,14 @@
 import { Joi, errors, Segments, celebrate } from "celebrate";
+import ValidationAbstractor from "validator/validator.abstract";
 
-class AuthValidator {
-  public register() {
-    return Joi.object().keys({
+class AuthValidator extends ValidationAbstractor {
+  constructor(payload: any) {
+    super();
+    this.payload = payload;
+  }
+
+  public register(): ValidationAbstractor {
+    this.rules = Joi.object().keys({
       email: Joi.string()
         .required()
         .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
@@ -16,6 +22,8 @@ class AuthValidator {
         "string.max": `密碼至多 {#limit} 位`,
       }),
     });
+
+    return this;
   }
 }
 

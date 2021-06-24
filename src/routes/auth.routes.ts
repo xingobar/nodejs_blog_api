@@ -9,7 +9,7 @@ class AuthRoute extends MainRoute {
   }
 
   protected setRoutes() {
-    this.router.get("/auth/register", this.authController.register);
+    this.router.post("/auth/register", this.authController.register);
   }
 }
 

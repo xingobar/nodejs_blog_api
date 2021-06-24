@@ -1,6 +1,5 @@
-import { celebrate } from "celebrate";
 import { Request, Response } from "express";
-import AuthValidator from "validator/authValidator";
+import AuthValidator from "validator/auth.validator";
 
 class AuthController {
   /**
@@ -11,11 +10,14 @@ class AuthController {
   public register(req: Request, res: Response) {
     console.log(req.body);
 
-    const { error, value } = new AuthValidator().register().validate(req.body);
+    const v = new AuthValidator(req.body);
+    v.register().validate();
 
-    console.log(error, value);
+    if (v.isError()) {
+      return res.json({ test: v.error });
+    }
 
-    res.json({ test: error });
+    res.json({ test: "test" });
   }
 }
 
