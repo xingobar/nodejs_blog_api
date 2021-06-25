@@ -1,7 +1,5 @@
-import dotenv from "dotenv";
 import app from "app";
 
-dotenv.config();
 const port = process.env.APP_PORT ?? 8001; // default port to listen
 
 // define a route handler for the default home page
