@@ -1,3 +1,4 @@
+import IError from "@src/interface/error.interface";
 import Joi, { ValidationError, ValidationResult } from "joi";
 
 abstract class ValidatorAbstract {
@@ -44,6 +45,15 @@ abstract class ValidatorAbstract {
 
   public set rules(data: Joi.AnySchema) {
     this._rules = data;
+  }
+
+  /**
+   * 客製化回傳訊息
+   */
+  public get detail(): IError[] | undefined {
+    return this._error?.details.map<IError>((item) => {
+      return { message: item.message };
+    });
   }
 }
 

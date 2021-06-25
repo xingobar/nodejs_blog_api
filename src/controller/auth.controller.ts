@@ -1,6 +1,7 @@
 //import { Request, Response } from "express";
 import AuthValidator from "validator/auth.validator";
 import { Response, Request, Post, Controller } from "@decorators/express";
+import IError from "interface/error.interface";
 
 @Controller("/auth")
 class AuthController {
@@ -15,7 +16,7 @@ class AuthController {
     v.register().validate();
 
     if (v.isError()) {
-      return res.json({ test: v.error });
+      return res.json({ errors: v.detail });
     }
 
     res.json({ test: "test" });
