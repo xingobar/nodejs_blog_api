@@ -4,6 +4,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import { createConnection } from "typeorm";
 import config from "config/ormconfig";
+import { attachControllers } from "@decorators/express";
 
 class App {
   public app: express.Application;
