@@ -1,7 +1,7 @@
-//import { Request, Response } from "express";
+// import { Request, Response } from "express";
 import AuthValidator from "validator/auth.validator";
 import { Response, Request, Post, Controller } from "@decorators/express";
-import IError from "interface/error.interface";
+import NotFoundException from "exception/notfound.exception";
 
 @Controller("/auth")
 class AuthController {

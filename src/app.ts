@@ -4,7 +4,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import { createConnection } from "typeorm";
 import config from "config/ormconfig";
-import { attachControllers } from "@decorators/express";
+import { Request, Response, NextFunction } from "express";
 
 class App {
   public app: express.Application;
@@ -46,6 +46,11 @@ class App {
     for (const route of router) {
       this.app.use(route.getPrefix(), route.getRouter());
     }
+
+    this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+      const { code, message } = err;
+      return res.status(code ?? 500).json({ message });
+    });
   }
 }
 

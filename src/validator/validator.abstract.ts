@@ -23,6 +23,18 @@ abstract class ValidatorAbstract {
   }
 
   /**
+   * 驗證
+   */
+  public async validateAsync() {
+    const { error, value }: { error?: ValidationError; value: ValidationResult } = await this._rules.validateAsync(this.payload);
+
+    this._error = error;
+    this._value = value;
+
+    return this._rules.validateAsync(this.payload);
+  }
+
+  /**
    * 取得錯誤訊息
    */
   public get error(): ValidationError | undefined {

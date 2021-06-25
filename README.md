@@ -2,6 +2,11 @@
 
 nodejs + ts + express blog api
 
+```
+npm install -g typeorm ts-node
+後才可以設定 package.json
+```
+
 # package.json typeorm
 
 ```
@@ -43,6 +48,8 @@ npm run typeorm migration:run
 2. https://github.com/typeorm/typeorm/blob/master/docs/zh_CN/index.md
 3. https://medium.com/swlh/migrations-over-synchronize-in-typeorm-2c66bc008e74
 4. https://github.com/typeorm/typeorm/blob/master/docs/eager-and-lazy-relations.md
+5. https://github.com/typeorm/typeorm/blob/master/docs/using-cli.md
+6. https://www.gitmemory.com/issue/typeorm/typeorm/3017/501248107
 ```
 
 # typeorm migration setting
@@ -69,4 +76,12 @@ npm run typeorm migration:run
 
 ```
 1. https://oldmo860617.medium.com/%E5%8D%81%E5%88%86%E9%90%98%E5%B8%B6%E4%BD%A0%E4%BA%86%E8%A7%A3-typescript-decorator-48c2ae9e246d
+```
+
+# npm install class-validator --save
+
+# 驗證 database column
+
+```
+1. https://github.com/typestack/class-validator
 ```

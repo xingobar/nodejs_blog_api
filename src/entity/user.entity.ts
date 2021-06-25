@@ -7,11 +7,13 @@ export class User {
 
   @Column({
     comment: "帳號",
+    unique: true,
   })
   account: string;
 
   @Column({
     comment: "電子信箱",
+    unique: true,
   })
   email: string;
 
