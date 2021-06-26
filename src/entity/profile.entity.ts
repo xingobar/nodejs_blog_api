@@ -1,5 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 
+export enum ProfileGender {
+  MALE = "MALE",
+  FEMALE = "FEMALE",
+}
+
 @Entity("profiles")
 export class Profile {
   @PrimaryGeneratedColumn()

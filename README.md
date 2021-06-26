@@ -107,3 +107,10 @@ npm run typeorm migration:run
 ```
 1. https://stackoverflow.com/questions/44383387/typescript-error-property-user-does-not-exist-on-type-request
 ```
+
+# typeorm docs
+
+```
+1. https://github.com/typeorm/typeorm/blob/master/docs/decorator-reference.md#relationid
+2. https://github.com/typeorm/typeorm/blob/master/docs/find-options.md#basic-options
+```
