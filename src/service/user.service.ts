@@ -1,6 +1,7 @@
 import argon2 from "argon2";
 import UserRepository from "repository/user.repository";
 import InvalidException from "exception/invalid.exception";
+import jwt from "jsonwebtoken";
 
 import { IAuthInput, ICreateUser } from "@src/interface/auth.interface";
 import { randomBytes } from "crypto";
@@ -39,5 +40,13 @@ export default class UserService {
     const user: User = await this.userRepository.createUser(data);
 
     return user;
+  }
+
+  /**
+   * 產生 jwt token
+   * @param email
+   */
+  public generateJwtToken(user: User): string {
+    return jwt.sign({ email: user.email }, "secret", { expiresIn: "1h" });
   }
 }

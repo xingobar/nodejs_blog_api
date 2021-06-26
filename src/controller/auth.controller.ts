@@ -20,7 +20,9 @@ class AuthController {
       return res.json({ errors: v.detail });
     }
 
-    const user = await Container.get(UserService).createUser(req.body);
+    const userService: UserService = Container.get(UserService);
+
+    const user = await userService.createUser(req.body);
 
     res.json({ user });
   }
