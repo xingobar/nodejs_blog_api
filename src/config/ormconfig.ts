@@ -1,15 +1,13 @@
 import { ConnectionOptions } from "typeorm";
-import dotenv from "dotenv";
-
-dotenv.config();
+import envConfig from "config/index";
 
 const config: ConnectionOptions = {
   type: "mysql",
-  host: "localhost",
-  port: 3306,
-  username: process.env.MYSQL_USERNAME,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DB,
+  host: envConfig.database.mysql.host,
+  port: envConfig.database.mysql.port,
+  username: envConfig.database.mysql.username,
+  password: envConfig.database.mysql.password,
+  database: envConfig.database.mysql.database,
   entities: ["dist/entity/**/*{.js,.ts}", __dirname + "/../entity/**/*{.js,.ts}"],
   migrations: ["dist/migration/**/*{.js,.ts}", __dirname + "/../migration/**/*{.js,.ts}"],
   subscribers: ["dist/subscriber/**/*{.js,.ts}", __dirname + "/../subscriber/**/*{.js,.ts}"],

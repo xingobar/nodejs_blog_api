@@ -2,6 +2,7 @@ import argon2 from "argon2";
 import UserRepository from "repository/user.repository";
 import InvalidException from "exception/invalid.exception";
 import jwt from "jsonwebtoken";
+import config from "config/index";
 
 import { IAuthInput, ICreateUser } from "@src/interface/auth.interface";
 import { randomBytes } from "crypto";
@@ -47,6 +48,6 @@ export default class UserService {
    * @param email
    */
   public generateJwtToken(user: User): string {
-    return jwt.sign({ email: user.email }, "secret", { expiresIn: "1h" });
+    return jwt.sign({ email: user.email }, config.jwt.secret || randomBytes(20).toString("hex"), { expiresIn: "1h" });
   }
 }
