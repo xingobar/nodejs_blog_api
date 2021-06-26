@@ -1,5 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
-
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  OneToOne,
+  JoinColumn,
+} from "typeorm";
+import { Profile } from "./profile.entity";
 @Entity("users") // 資料表名稱 users
 export class User {
   @PrimaryGeneratedColumn()
@@ -29,6 +38,13 @@ export class User {
     name: "confirm_token",
   })
   confirmToken: string;
+
+  @OneToOne(() => Profile)
+  @JoinColumn()
+  profile: Profile;
+
+  @Column({ nullable: true })
+  profileId: number;
 
   @CreateDateColumn({
     type: "timestamp",

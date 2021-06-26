@@ -77,4 +77,13 @@ export default class UserService {
       throw new InvalidException("密碼錯誤");
     }
   }
+
+  /**
+   * 根據帳號取得會員資料
+   * @param account
+   * @param relations
+   */
+  public async findByAccount(account: string, relations: string[] = []): Promise<User | undefined> {
+    return await this.userRepository.findByAccount(account, relations);
+  }
 }

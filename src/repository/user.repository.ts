@@ -32,11 +32,12 @@ export default class UserRepository extends Repository<User> {
    * 根據帳號取得會員
    * @param {string} account 帳號
    */
-  findByAccount(account: string) {
+  findByAccount(account: string, relations: string[] = []) {
     return this.findOne({
       where: {
         account,
       },
+      relations,
     });
   }
 
