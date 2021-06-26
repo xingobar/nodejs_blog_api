@@ -2,9 +2,11 @@ import dotenv from "dotenv";
 import router from "./routes/router";
 import express from "express";
 import bodyParser from "body-parser";
-import { createConnection } from "typeorm";
+import { createConnection, useContainer } from "typeorm";
 import config from "config/ormconfig";
 import { Request, Response, NextFunction } from "express";
+import DependencyLib from "lib/dependency.lib";
+import { Container } from "typeorm-typedi-extensions";
 
 class App {
   public app: express.Application;
@@ -18,6 +20,8 @@ class App {
   }
 
   private setDbConnection() {
+    // typeorm use typedi
+    useContainer(Container);
     createConnection(config)
       .then((connection) => {
         console.log("has connection to db => ", connection.isConnected);

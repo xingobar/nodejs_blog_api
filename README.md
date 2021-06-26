@@ -85,3 +85,12 @@ npm run typeorm migration:run
 ```
 1. https://github.com/typestack/class-validator
 ```
+
+# npm install typeorm-typedi-extensions --save
+
+```
+使用 typeorm 可以使用 typedi
+1. https://github.com/typeorm/typeorm/issues/487
+2. https://github.com/typestack/typedi/issues/4
+3. https://www.npmjs.com/package/typeorm-typedi-extensions
+```

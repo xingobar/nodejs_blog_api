@@ -40,6 +40,8 @@
     "joi": "^17.4.0",
     "mysql2": "^2.2.5",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.34"
+    "typedi": "^0.10.0",
+    "typeorm": "^0.2.34",
+    "typeorm-typedi-extensions": "^0.4.1"
   }
 }

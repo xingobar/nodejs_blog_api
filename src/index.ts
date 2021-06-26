@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import app from "app";
 
 const port = process.env.APP_PORT ?? 8001; // default port to listen

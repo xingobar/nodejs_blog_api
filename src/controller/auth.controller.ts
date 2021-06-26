@@ -1,7 +1,7 @@
-// import { Request, Response } from "express";
 import AuthValidator from "validator/auth.validator";
 import { Response, Request, Post, Controller } from "@decorators/express";
 import UserService from "service/user.service";
+import { Container } from "typedi";
 
 @Controller("/auth")
 class AuthController {
@@ -20,7 +20,7 @@ class AuthController {
       return res.json({ errors: v.detail });
     }
 
-    const user = await new UserService().createUser(req.body);
+    const user = await Container.get(UserService).createUser(req.body);
 
     res.json({ user });
   }
