@@ -20,10 +20,22 @@ export default class UserRepository extends Repository<User> {
    * 根據電子信箱取得會員
    * @param {string} email 電子信箱
    */
-  getByEmail(email: string) {
-    this.findOne({
+  findByEmail(email: string) {
+    return this.findOne({
       where: {
         email,
+      },
+    });
+  }
+
+  /**
+   * 根據帳號取得會員
+   * @param {string} account 帳號
+   */
+  findByAccount(account: string) {
+    return this.findOne({
+      where: {
+        account,
       },
     });
   }
