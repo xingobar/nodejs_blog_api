@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 
 @Entity("users") // 資料表名稱 users
 export class User {
@@ -43,4 +43,11 @@ export class User {
     name: "updated_at",
   })
   updatedAt: Date;
+
+  @DeleteDateColumn({
+    type: "timestamp",
+    comment: "刪除時間",
+    name: "deleted_at",
+  })
+  deletedAt: Date;
 }

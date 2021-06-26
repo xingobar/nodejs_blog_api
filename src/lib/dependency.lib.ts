@@ -23,7 +23,7 @@ export default class DependencyLib {
   private repositories: IRepository[];
 
   inject() {
-    //this.dependencyRepository();
+    // this.dependencyRepository();
     this.dependencyService();
   }
 

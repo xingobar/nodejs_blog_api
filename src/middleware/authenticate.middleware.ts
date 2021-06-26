@@ -6,7 +6,7 @@ import InvalidException from "exception/invalid.exception";
 
 export default class AuthenticateMiddleware implements Middleware {
   public use(req: Request, res: Response, next: NextFunction) {
-    const authHeader = req.headers["authorization"];
+    const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
 
     // token 找不到
