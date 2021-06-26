@@ -10,10 +10,10 @@ const config: ConnectionOptions = {
   username: process.env.MYSQL_USERNAME,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DB,
-  entities: [__dirname + "/../entity/**/*{.js,.ts}"],
-  migrations: [__dirname + "/../database/migration/**/*{.js,.ts}"],
-  subscribers: [__dirname + "/../database/subscriber/**/*{.js,.ts}"],
-  synchronize: true, // 之後改 modal 的話會同步資料庫
+  entities: ["dist/entity/**/*{.js,.ts}", __dirname + "/../entity/**/*{.js,.ts}"],
+  migrations: ["dist/migration/**/*{.js,.ts}", __dirname + "/../migration/**/*{.js,.ts}"],
+  subscribers: ["dist/subscriber/**/*{.js,.ts}", __dirname + "/../subscriber/**/*{.js,.ts}"],
+  synchronize: false, // 之後改 modal 的話會同步資料庫
   logging: false,
   // migrations: ["src/migration/**/*.ts"],
 };

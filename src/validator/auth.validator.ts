@@ -9,6 +9,11 @@ class AuthValidator extends ValidationAbstractor {
 
   public register(): ValidationAbstractor {
     this.rules = Joi.object().keys({
+      account: Joi.string().required().min(6).max(20).messages({
+        "any.required": "請輸入帳號",
+        "string.min": "帳號至少要 {#limit} 位",
+        "string.max": "帳號至多 {#limit} 位",
+      }),
       email: Joi.string()
         .required()
         .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
@@ -20,6 +25,10 @@ class AuthValidator extends ValidationAbstractor {
         "any.required": "請輸入密碼",
         "string.min": `密碼至少要 {#limit} 位 `,
         "string.max": `密碼至多 {#limit} 位`,
+      }),
+      confirmPassword: Joi.string().required().equal(Joi.ref("password")).messages({
+        "any.only": "密碼不一致",
+        "any.required": "請輸入確認密碼",
       }),
     });
 

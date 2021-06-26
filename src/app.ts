@@ -18,7 +18,6 @@ class App {
   }
 
   private setDbConnection() {
-    console.log("set => ", config);
     createConnection(config)
       .then((connection) => {
         console.log("has connection to db => ", connection.isConnected);

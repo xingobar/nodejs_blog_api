@@ -1,12 +1,13 @@
 import { User } from "entity/user.entity";
 import { getRepository } from "typeorm";
+import { ICreateUser } from "@src/interface/auth.interface";
 
 /**
  * 新建使用者
  * @param {User} data 要先增的會員資料
  * @return {User}
  */
-export const createUser = async (data: User) => {
+export const createUser = async (data: ICreateUser) => {
   const user = getRepository(User).create(data);
   return await getRepository(User).save(user);
 };

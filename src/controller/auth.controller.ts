@@ -1,7 +1,7 @@
 // import { Request, Response } from "express";
 import AuthValidator from "validator/auth.validator";
 import { Response, Request, Post, Controller } from "@decorators/express";
-import NotFoundException from "exception/notfound.exception";
+import UserService from "service/user.service";
 
 @Controller("/auth")
 class AuthController {
@@ -11,15 +11,18 @@ class AuthController {
    * @param res
    */
   @Post("/register")
-  public register(@Request() req: any, @Response() res: any) {
+  public async register(@Request() req: any, @Response() res: any) {
     const v = new AuthValidator(req.body);
+
     v.register().validate();
 
     if (v.isError()) {
       return res.json({ errors: v.detail });
     }
 
-    res.json({ test: "test" });
+    const user = await new UserService().createUser(req.body);
+
+    res.json({ user });
   }
 }
 

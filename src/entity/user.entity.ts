@@ -24,12 +24,6 @@ export class User {
 
   @Column({
     nullable: true,
-    comment: "名稱",
-  })
-  name: string;
-
-  @Column({
-    nullable: true,
     comment: "驗證 token",
     name: "confirm_token",
   })
