@@ -19,6 +19,7 @@ export class User {
 
   @Column({
     comment: "密碼",
+    select: false,
   })
   password: string;
 

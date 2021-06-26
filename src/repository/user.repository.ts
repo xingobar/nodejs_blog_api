@@ -1,5 +1,5 @@
 import { User } from "entity/user.entity";
-import { Repository, EntityRepository } from "typeorm";
+import { Repository, EntityRepository, getRepository } from "typeorm";
 import { ICreateUser } from "@src/interface/auth.interface";
 import { Service } from "typedi";
 
@@ -38,5 +38,13 @@ export default class UserRepository extends Repository<User> {
         account,
       },
     });
+  }
+
+  /**
+   * 抓取會員且有密碼
+   * @param {string} account 帳號
+   */
+  findByAccountWithPassword(account: string) {
+    return getRepository(User).createQueryBuilder("users").addSelect("users.password").getRawOne();
   }
 }

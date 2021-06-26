@@ -53,7 +53,7 @@ export default class UserService {
    * @param {User} user
    */
   public generateJwtToken(user: User): string {
-    return jwt.sign({ email: user.email }, config.jwt.secret || randomBytes(20).toString("hex"), { expiresIn: "1h" });
+    return jwt.sign({ ...user }, config.jwt.secret || randomBytes(20).toString("hex"), { expiresIn: "1h" });
   }
 
   /**
@@ -66,8 +66,11 @@ export default class UserService {
     if (!user) {
       throw new InvalidException("帳號不存在");
     }
+
+    const userWithPassword = await this.userRepository.findByAccountWithPassword(payload.account);
+
     // 檢查密碼是否正確
-    if (await argon2.verify(user.password, payload.password)) {
+    if (await argon2.verify(userWithPassword.password, payload.password)) {
       // 回傳 token
       return this.generateJwtToken(user);
     } else {

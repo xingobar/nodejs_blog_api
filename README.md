@@ -101,3 +101,9 @@ npm run typeorm migration:run
 密碼加密
 1. https://www.npmjs.com/package/argon2
 ```
+
+# add namespace module
+
+```
+1. https://stackoverflow.com/questions/44383387/typescript-error-property-user-does-not-exist-on-type-request
+```
