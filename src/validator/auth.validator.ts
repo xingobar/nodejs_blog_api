@@ -34,6 +34,21 @@ class AuthValidator extends ValidationAbstractor {
 
     return this;
   }
+
+  /**
+   * 登入
+   */
+  public login(): ValidationAbstractor {
+    this.rules = Joi.object().keys({
+      account: Joi.string().required().messages({
+        "any.required": "請輸入登入帳號",
+      }),
+      password: Joi.string().required().messages({
+        "any.required": "請輸入密碼",
+      }),
+    });
+    return this;
+  }
 }
 
 export default AuthValidator;

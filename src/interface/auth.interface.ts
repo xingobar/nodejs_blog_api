@@ -14,3 +14,11 @@ export interface ICreateUser {
   email: string;
   password: string;
 }
+
+/**
+ * 登入
+ */
+export interface IAuthLogin {
+  account: string;
+  password: string;
+}

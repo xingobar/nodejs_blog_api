@@ -94,3 +94,10 @@ npm run typeorm migration:run
 2. https://github.com/typestack/typedi/issues/4
 3. https://www.npmjs.com/package/typeorm-typedi-extensions
 ```
+
+# npm install --save argon2
+
+```
+密碼加密
+1. https://www.npmjs.com/package/argon2
+```

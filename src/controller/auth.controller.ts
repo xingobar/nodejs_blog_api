@@ -26,6 +26,26 @@ class AuthController {
 
     res.json({ user });
   }
+
+  /**
+   * 登入
+   * @param req
+   * @param res
+   */
+  @Post("/login")
+  public async login(@Request() req: any, @Response() res: any) {
+    const v = new AuthValidator(req.body);
+    v.login().validate();
+
+    if (v.isError()) {
+      return res.json({ errors: v.detail });
+    }
+
+    const userService: UserService = Container.get(UserService);
+    const token: string = await userService.login(req.body);
+
+    return res.json({ token });
+  }
 }
 
 export default AuthController;

@@ -5,7 +5,6 @@ import bodyParser from "body-parser";
 import { createConnection, useContainer } from "typeorm";
 import config from "config/ormconfig";
 import { Request, Response, NextFunction } from "express";
-import DependencyLib from "lib/dependency.lib";
 import { Container } from "typeorm-typedi-extensions";
 
 class App {

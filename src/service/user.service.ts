@@ -4,7 +4,7 @@ import InvalidException from "exception/invalid.exception";
 import jwt from "jsonwebtoken";
 import config from "config/index";
 
-import { IAuthInput, ICreateUser } from "@src/interface/auth.interface";
+import { IAuthInput, ICreateUser, IAuthLogin } from "@src/interface/auth.interface";
 import { randomBytes } from "crypto";
 import { User } from "entity/user.entity";
 import { Service } from "typedi";
@@ -17,6 +17,11 @@ export default class UserService {
     private readonly userRepository: UserRepository
   ) {}
 
+  /**
+   * 創建會員
+   * @param {IAuthInput} payload
+   * @param payload
+   */
   public async createUser(payload: IAuthInput): Promise<User> {
     const salt = randomBytes(20);
 
@@ -45,9 +50,28 @@ export default class UserService {
 
   /**
    * 產生 jwt token
-   * @param email
+   * @param {User} user
    */
   public generateJwtToken(user: User): string {
     return jwt.sign({ email: user.email }, config.jwt.secret || randomBytes(20).toString("hex"), { expiresIn: "1h" });
+  }
+
+  /**
+   * 登入
+   * @param {IAuthLogin} payload
+   */
+  public async login(payload: IAuthLogin) {
+    // 檢查帳號是否存在
+    const user = await this.userRepository.findByAccount(payload.account);
+    if (!user) {
+      throw new InvalidException("帳號不存在");
+    }
+    // 檢查密碼是否正確
+    if (await argon2.verify(user.password, payload.password)) {
+      // 回傳 token
+      return this.generateJwtToken(user);
+    } else {
+      throw new InvalidException("密碼錯誤");
+    }
   }
 }
