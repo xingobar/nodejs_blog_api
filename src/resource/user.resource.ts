@@ -1,4 +1,8 @@
-import { ProfileGender, Profile } from "entity/profile.entity";
+import { ProfileGender } from "entity/profile.entity";
+
+import ResourceAbstract from "resource/resource.abstract";
+import ProfileResource from "resource/profile.resource";
+import { User } from "entity/user.entity";
 
 interface IProfile {
   id: number;
@@ -6,38 +10,35 @@ interface IProfile {
   gender: ProfileGender;
 }
 
-interface IUserResource {
+export interface IUserResource {
   id: number;
   account: string;
   email: string;
   profile?: IProfile;
 }
 
-export default class UserResource {
-  private data: any;
+export default class UserResource extends ResourceAbstract {
+  private user: IUserResource;
 
   constructor(data: any) {
-    this.data = data;
+    super(data);
+    this.user = <IUserResource>{
+      id: this.resource.id,
+      account: this.resource.account,
+      email: this.resource.email,
+    };
   }
 
   public async toJson() {
-    const user: IUserResource = {
-      id: this.data.id,
-      account: this.data.account,
-      email: this.data.email,
-    };
-
-    if (this.data.profile && this.data.profile.then && typeof this.data.profile.then === "function") {
-      const profile = await this.data.profile;
-      if (profile) {
-        user.profile = <IProfile>{
-          id: profile.id,
-          gender: profile.gender,
-          phone: profile.gender,
-        };
-      }
+    // 是否加載 profile
+    if (this.when("profile")) {
+      this.user.profile = new ProfileResource(await this.resource.profile).getFormat();
     }
 
-    return user;
+    return this.user;
+  }
+
+  public getFormat() {
+    return this.user;
   }
 }
