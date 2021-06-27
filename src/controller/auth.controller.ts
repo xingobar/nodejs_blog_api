@@ -29,7 +29,7 @@ class AuthController {
     console.log(user);
     const userResource: UserResource = new UserResource(user);
 
-    res.json(await userResource.toArray());
+    res.json(await userResource.toJson());
   }
 
   /**

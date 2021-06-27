@@ -7,6 +7,6 @@ export default class UserController {
   @Get("/", [AuthenticateMiddleware])
   public async index(@Request() req: any, @Response() res: any) {
     const userResource = new UserResource(req.user);
-    res.json(await userResource.toArray());
+    res.json(await userResource.toJson());
   }
 }
