@@ -1,16 +1,20 @@
 import { IProfile } from "interface/profile.interface";
-import ProfileRepository from "repository/profile.repository";
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Profile } from "entity/profile.entity";
 import { User } from "entity/user.entity";
 import { UpdateResult } from "typeorm";
 
+import ProfileRepository from "repository/profile.repository";
+import UserRepository from "repository/user.repository";
+
 @Service()
 export class ProfileService {
   constructor(
     @InjectRepository()
-    private readonly profileRepository: ProfileRepository
+    private readonly profileRepository: ProfileRepository,
+    @InjectRepository()
+    private readonly userRepository: UserRepository
   ) {}
 
   /**
@@ -27,6 +31,42 @@ export class ProfileService {
         ...data,
       }
     );
+
+    const profile: Profile | undefined = await this.profileRepository.findById(user.profileId);
+
+    return profile;
+  }
+
+  /**
+   * 根據編號取得個人資料
+   * @param profileId
+   */
+  public async findById(profileId: number): Promise<Profile | undefined> {
+    return await this.profileRepository.findById(profileId);
+  }
+
+  /**
+   * 個人資料 update or create
+   * @param user
+   * @param payload
+   */
+  public async updateOrCreate(user: User, payload: IProfile): Promise<Profile | undefined> {
+    if (await this.profileRepository.findById(user.profileId)) {
+      await this.profileRepository.update(
+        {
+          id: user.profileId,
+        },
+        {
+          ...payload,
+        }
+      );
+    } else {
+      const newProfile: Profile = await this.profileRepository.save(payload);
+
+      user.profileId = newProfile.id;
+
+      await this.userRepository.save(user);
+    }
 
     const profile: Profile | undefined = await this.profileRepository.findById(user.profileId);
 

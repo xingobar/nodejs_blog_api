@@ -9,7 +9,7 @@ import { User } from "entity/user.entity";
 import { IProfile } from "interface/profile.interface";
 import { ProfileService } from "service/profile.service";
 import { Profile } from "entity/profile.entity";
-import { Controller, Get, Params, Put, Request, Response } from "@decorators/express";
+import { Controller, Get, Post, Request, Response } from "@decorators/express";
 
 @Controller("/users")
 class ProfileController {
@@ -23,33 +23,36 @@ class ProfileController {
   }
 
   /**
-   * 更新資料
+   * 儲存或更新個人資料
    * @param req
    * @param res
    */
-  @Put("/:userId/profiles", [AuthenticateMiddleware])
-  public async update(@Request() req: any, @Response() res: any) {
+  @Post("/:userId/profiles", [AuthenticateMiddleware])
+  public async store(@Request() req: any, @Response() res: any) {
     const payload: IProfile = req.body;
 
     const v = new ProfileValidator(req.body);
     v.update().validate();
 
     if (v.isError()) {
-      return res.status(400).json({ error: v.detail });
+      return res.json({ error: v.detail });
     }
 
-    // 檢查 profile 是否為自己
-    const profilePolicy: ProfilePolicy = Container.get(ProfilePolicy);
-    if (!profilePolicy.update(req.user, req.params.userId)) {
-      throw new AccessDeniedException();
-    }
-
-    // 更新資料
     const profileService: ProfileService = Container.get(ProfileService);
 
-    const profile: Profile | undefined = await profileService.update(req.user, payload);
+    // 已經有 profile 的資料的話，就要檢查是否更新自己的 profile
+    if (req.user.profileId && profileService.findById(req.user.profileId)) {
+      // 檢查 profile 是否為自己
+      const profilePolicy: ProfilePolicy = Container.get(ProfilePolicy);
+      if (!profilePolicy.update(req.user, req.params.userId)) {
+        throw new AccessDeniedException();
+      }
+    }
 
-    res.json({ profile: profile });
+    // 更新 or 新增資料
+    const profile: Profile | undefined = await profileService.updateOrCreate(req.user, payload);
+
+    return res.json({ profile });
   }
 }
 
