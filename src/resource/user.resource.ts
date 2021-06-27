@@ -12,25 +12,18 @@ export interface IUserResource {
   profile?: IProfileResource;
 }
 
-// 分頁資料
-export interface IUserResourcePaginate {
-  data: IUserResource[];
-}
-
 export default class UserResource extends ResourceAbstract {
   private user: IUserResource;
-  private users: IUserResourcePaginate = {
-    data: [],
-  };
+  private users: IUserResource[];
 
   constructor(data: any) {
     super(data);
     if (Array.isArray(data)) {
-      this.users.data = data.map<IUserResource>((item) => {
+      this.users = data.map<IUserResource>((item) => {
         return this.format(item);
       });
     } else {
-      this.user = (this.format(this.resource) as IUserResource);
+      this.user = this.format(this.resource) as IUserResource;
     }
   }
 
@@ -43,10 +36,10 @@ export default class UserResource extends ResourceAbstract {
     return user;
   }
 
-  public async toArray(): Promise<IUserResourcePaginate> {
-    this.users.data.forEach(async (user: IUserResource, key: number) => {
+  public async toArray(): Promise<IUserResource[]> {
+    this.users.forEach(async (user: IUserResource, key: number) => {
       this.setIndex(key);
-      this.users.data[key] = await this.toJson(user);
+      this.users[key] = await this.toJson(user);
     });
     return this.users;
   }
