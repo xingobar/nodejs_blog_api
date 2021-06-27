@@ -48,7 +48,7 @@ class ProfileController {
     if (req.user.profileId && profileService.findById(req.user.profileId)) {
       // 檢查 profile 是否為自己
       const profilePolicy: ProfilePolicy = Container.get(ProfilePolicy);
-      if (!profilePolicy.update(req.user, parseInt(req.params.userId))) {
+      if (!profilePolicy.update(req.user, parseInt(req.params.userId, 10))) {
         throw new AccessDeniedException();
       }
     }

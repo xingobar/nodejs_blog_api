@@ -63,7 +63,7 @@ export class ProfileService {
     } else {
       const newProfile: Profile = await this.profileRepository.save(payload);
 
-      user.profileId = newProfile.id;
+      user.profile = newProfile;
 
       await this.userRepository.save(user);
     }

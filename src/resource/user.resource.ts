@@ -30,7 +30,7 @@ export default class UserResource extends ResourceAbstract {
         return this.format(item);
       });
     } else {
-      this.user = <IUserResource>this.format(this.resource);
+      this.user = (this.format(this.resource) as IUserResource);
     }
   }
 

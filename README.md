@@ -114,3 +114,19 @@ npm run typeorm migration:run
 1. https://github.com/typeorm/typeorm/blob/master/docs/decorator-reference.md#relationid
 2. https://github.com/typeorm/typeorm/blob/master/docs/find-options.md#basic-options
 ```
+
+# seeder, faker
+
+##### npm install --save typeorm-seeding @types/faker
+
+```
+1. https://saveyourtime.medium.com/typeorm-how-to-seed-data-with-typeorm-seeding-8f0f8273e05f
+2. https://www.npmjs.com/package/typeorm-seeding
+3. https://github.com/w3tecch/typeorm-seeding#cli-configuration
+```
+
+##### npm install typeorm-seeding @types/faker --save
+
+```
+1.https://saveyourtime.medium.com/typeorm-how-to-seed-data-with-typeorm-seeding-8f0f8273e05f
+```

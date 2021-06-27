@@ -13,7 +13,7 @@ export default class ProfileResource extends ResourceAbstract {
 
   constructor(data: Profile) {
     super(data);
-    this.profile = <IProfileResource>this.format(this.resource);
+    this.profile = (this.format(this.resource) as IProfileResource);
   }
 
   public async toJson(profile: IProfileResource = this.profile): Promise<IProfileResource> {
@@ -21,10 +21,10 @@ export default class ProfileResource extends ResourceAbstract {
   }
 
   public format(item: Profile): IProfileResource {
-    return <IProfileResource>{
+    return {
       id: item.id,
       phone: item.phone,
       gender: item.gender,
-    };
+    } as IProfileResource;
   }
 }
