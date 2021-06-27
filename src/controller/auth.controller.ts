@@ -1,7 +1,9 @@
-import AuthValidator from "validator/auth.validator";
 import { Response, Request, Post, Controller } from "@decorators/express";
-import UserService from "service/user.service";
 import { Container } from "typedi";
+
+import UserService from "service/user.service";
+import AuthValidator from "validator/auth.validator";
+import UserResource from "resource/user.resource";
 
 @Controller("/auth")
 class AuthController {
@@ -24,7 +26,10 @@ class AuthController {
 
     const user = await userService.createUser(req.body);
 
-    res.json({ user });
+    console.log(user);
+    const userResource: UserResource = new UserResource(user);
+
+    res.json(await userResource.toArray());
   }
 
   /**

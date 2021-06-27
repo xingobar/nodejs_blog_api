@@ -3,6 +3,7 @@ import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import ProfileValidator from "validator/profile.validator";
 import ProfilePolicy from "policy/profile.policy";
 import AccessDeniedException from "exception/access.denied.exception";
+import UserResource from "resource/user.resource";
 
 import { Container } from "typedi";
 import { User } from "entity/user.entity";
@@ -19,7 +20,9 @@ class ProfileController {
     const userService = Container.get(UserService);
     let user: User | undefined = await userService.findByAccount(req.user.account, ["profile"]);
 
-    res.json({ user });
+    const resource: UserResource = new UserResource(user);
+
+    res.json(await resource.toJson());
   }
 
   /**
