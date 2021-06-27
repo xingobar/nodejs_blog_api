@@ -2,26 +2,26 @@ import { ProfileGender, Profile } from "entity/profile.entity";
 
 import ResourceAbstract from "resource/resource.abstract";
 
-export interface IProfile {
+export interface IProfileResource {
   id: number;
   phone: string;
   gender: ProfileGender;
 }
 
 export default class ProfileResource extends ResourceAbstract {
-  private profile: IProfile;
+  private profile: IProfileResource;
 
   constructor(data: Profile) {
     super(data);
-    this.profile = <IProfile>this.format(this.resource);
+    this.profile = <IProfileResource>this.format(this.resource);
   }
 
-  public getFormat() {
-    return this.profile;
+  public async toJson(profile: IProfileResource = this.profile): Promise<IProfileResource> {
+    return profile;
   }
 
-  public format(item: Profile): IProfile {
-    return <IProfile>{
+  public format(item: Profile): IProfileResource {
+    return <IProfileResource>{
       id: item.id,
       phone: item.phone,
       gender: item.gender,

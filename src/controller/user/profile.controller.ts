@@ -4,6 +4,7 @@ import ProfileValidator from "validator/profile.validator";
 import ProfilePolicy from "policy/profile.policy";
 import AccessDeniedException from "exception/access.denied.exception";
 import UserResource from "resource/user.resource";
+import ProfileResource from "resource/profile.resource";
 
 import { Container } from "typedi";
 import { User } from "entity/user.entity";
@@ -47,7 +48,7 @@ class ProfileController {
     if (req.user.profileId && profileService.findById(req.user.profileId)) {
       // 檢查 profile 是否為自己
       const profilePolicy: ProfilePolicy = Container.get(ProfilePolicy);
-      if (!profilePolicy.update(req.user, req.params.userId)) {
+      if (!profilePolicy.update(req.user, parseInt(req.params.userId))) {
         throw new AccessDeniedException();
       }
     }
@@ -55,7 +56,9 @@ class ProfileController {
     // 更新 or 新增資料
     const profile: Profile | undefined = await profileService.updateOrCreate(req.user, payload);
 
-    return res.json({ profile });
+    const profileResource: ProfileResource = new ProfileResource(profile ?? new Profile());
+
+    return res.json(await profileResource.toJson());
   }
 }
 

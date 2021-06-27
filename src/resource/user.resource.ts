@@ -1,5 +1,5 @@
 import { User } from "entity/user.entity";
-import { IProfile } from "resource/profile.resource";
+import { IProfileResource } from "resource/profile.resource";
 
 import ResourceAbstract from "resource/resource.abstract";
 import ProfileResource from "resource/profile.resource";
@@ -9,7 +9,7 @@ export interface IUserResource {
   id: number;
   account: string;
   email: string;
-  profile?: IProfile;
+  profile?: IProfileResource;
 }
 
 // 分頁資料
@@ -37,7 +37,7 @@ export default class UserResource extends ResourceAbstract {
   public async toJson(user: IUserResource = this.user): Promise<IUserResource> {
     // 是否加載 profile
     if (this.when("profile")) {
-      user.profile = new ProfileResource(await this.getResourceByIndex().profile).getFormat();
+      user.profile = await new ProfileResource(await this.getResourceByIndex().profile).toJson();
     }
 
     return user;
@@ -49,10 +49,6 @@ export default class UserResource extends ResourceAbstract {
       this.users.data[key] = await this.toJson(user);
     });
     return this.users;
-  }
-
-  public getFormat() {
-    return this.user;
   }
 
   public format(item: User): IUserResource {

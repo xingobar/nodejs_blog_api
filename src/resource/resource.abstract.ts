@@ -42,9 +42,6 @@ export default abstract class ResourceAbstract {
     this.index = index;
   }
 
-  // 回傳已格式化過的結構
-  public abstract getFormat(): any;
-
   // 整理結構
   public abstract format(item: any): any;
 }
