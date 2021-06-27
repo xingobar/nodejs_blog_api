@@ -130,3 +130,17 @@ npm run typeorm migration:run
 ```
 1.https://saveyourtime.medium.com/typeorm-how-to-seed-data-with-typeorm-seeding-8f0f8273e05f
 ```
+
+# mocha unittest
+
+###### npm install mocha chai supertest --save
+
+```
+1. https://ithelp.ithome.com.tw/articles/10197286
+2. https://stackoverflow.com/questions/49794140/connection-default-was-not-found-with-typeorm?fbclid=IwAR1yCUP_0dNRXboiBpfmbaVMiZIl6MXQoE6-TRqmrmwC7IjqYmU0psLtXhI
+3. https://stackoverflow.com/questions/45253571/typeorm-with-multiple-env-setups
+4. https://github.com/DefinitelyTyped/DefinitelyTyped/issues/46861
+5. https://medium.com/twelvefish/%E4%BD%BF%E7%94%A8-typescript-%E6%92%B0%E5%AF%AB-mocha%E6%B8%AC%E8%A9%A6-a4eda437fa53
+6. https://www.digitalocean.com/community/tutorials/test-a-node-restful-api-with-mocha-and-chai
+7. https://www.tabnine.com/code/javascript/functions/chai/Assertion/an
+```

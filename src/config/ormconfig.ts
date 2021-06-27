@@ -2,7 +2,8 @@ import { ConnectionOptions } from "typeorm";
 import envConfig from "config/index";
 
 const config: ConnectionOptions = {
-  type: "mysql",
+  name: "default",
+  type: envConfig.database.driver as any,
   host: envConfig.database.mysql.host,
   port: envConfig.database.mysql.port,
   username: envConfig.database.mysql.username,

@@ -2,8 +2,11 @@ import dotenv from "dotenv";
 import router from "./routes/router";
 import express from "express";
 import bodyParser from "body-parser";
-import { createConnection, useContainer } from "typeorm";
+
 import config from "config/ormconfig";
+import envConfig from "config/index";
+
+import { createConnection, useContainer } from "typeorm";
 import { Request, Response, NextFunction } from "express";
 import { Container } from "typeorm-typedi-extensions";
 
