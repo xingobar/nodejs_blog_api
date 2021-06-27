@@ -50,6 +50,7 @@ class App {
     }
 
     this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+      console.log(err);
       const { code, message } = err;
       return res.status(code ?? 500).json({ message });
     });

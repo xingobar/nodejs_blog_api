@@ -1,4 +1,4 @@
-import { ProfileGender } from "entity/profile.entity";
+import { ProfileGender, Profile } from "entity/profile.entity";
 
 import ResourceAbstract from "resource/resource.abstract";
 
@@ -11,16 +11,20 @@ export interface IProfile {
 export default class ProfileResource extends ResourceAbstract {
   private profile: IProfile;
 
-  constructor(data: any) {
+  constructor(data: Profile) {
     super(data);
-    this.profile = <IProfile>{
-      id: this.resource.id,
-      phone: this.resource.phone,
-      gender: this.resource.gender,
-    };
+    this.profile = <IProfile>this.format(this.resource);
   }
 
   public getFormat() {
     return this.profile;
+  }
+
+  public format(item: Profile): IProfile {
+    return <IProfile>{
+      id: item.id,
+      phone: item.phone,
+      gender: item.gender,
+    };
   }
 }
