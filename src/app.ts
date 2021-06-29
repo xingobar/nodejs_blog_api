@@ -3,10 +3,9 @@ import router from "./routes/router";
 import express from "express";
 import bodyParser from "body-parser";
 
-import config from "config/ormconfig";
-import envConfig from "config/index";
+import { config } from "config/ormconfig";
 
-import { createConnection, useContainer } from "typeorm";
+import { createConnection, useContainer, ConnectionOptions } from "typeorm";
 import { Request, Response, NextFunction } from "express";
 import { Container } from "typeorm-typedi-extensions";
 
@@ -24,7 +23,12 @@ class App {
   private setDbConnection() {
     // typeorm use typedi
     useContainer(Container);
-    createConnection(config)
+    const dbConfig =
+      process.env.NODE_ENV === "test"
+        ? config.find((item) => item.name === process.env.CONNECTION_NAME)
+        : config.find((item) => item.name === process.env.CONNECTION_NAME);
+    console.log("db connection => ", process.env.CONNECTION_NAME);
+    createConnection(dbConfig as ConnectionOptions)
       .then((connection) => {
         console.log("has connection to db => ", connection.isConnected);
 

@@ -26,7 +26,6 @@ class AuthController {
 
     const user = await userService.createUser(req.body);
 
-    console.log(user);
     const userResource: UserResource = new UserResource(user);
 
     res.json(await userResource.toJson());

@@ -10,6 +10,8 @@ export default {
   // 執行環境
   env: process.env.NODE_ENV ?? "development",
 
+  connectionName: process.env.CONNECTION_NAME ?? "default",
+
   // app port
   port: process.env.APP_PORT ?? 3000,
 
