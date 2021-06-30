@@ -3,21 +3,25 @@ import Faker from "faker";
 import { expect } from "chai";
 import dotenv from "dotenv";
 import { getConnection } from "typeorm";
+import path from "path";
+import { User } from "entity/user.entity";
 
-dotenv.config();
-
-process.env.APP_PORT = "8002";
+dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
 
 import server from "../src/index";
 
 // process.env.API_URL;
-const api = supertest("http://localhost:8002/api");
+const api = supertest(process.env.API_URL);
 // let apiToken;
 
 describe("auth", () => {
   before((done) => {
     getConnection("test").runMigrations();
     done();
+  });
+
+  afterEach(() => {
+    getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
   });
 
   it("register", (done) => {

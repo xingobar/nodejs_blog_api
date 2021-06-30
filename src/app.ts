@@ -23,12 +23,9 @@ class App {
   private setDbConnection() {
     // typeorm use typedi
     useContainer(Container);
-    const dbConfig =
-      process.env.NODE_ENV === "test"
-        ? config.find((item) => item.name === process.env.CONNECTION_NAME)
-        : config.find((item) => item.name === process.env.CONNECTION_NAME);
+
     console.log("db connection => ", process.env.CONNECTION_NAME);
-    createConnection(dbConfig as ConnectionOptions)
+    createConnection(config as ConnectionOptions)
       .then((connection) => {
         console.log("has connection to db => ", connection.isConnected);
 
