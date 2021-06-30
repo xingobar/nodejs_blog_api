@@ -12,9 +12,9 @@ import config from "config/index";
 @Service()
 export class ProfileService {
   constructor(
-    @InjectRepository()
+    @InjectRepository(config.connectionName)
     private readonly profileRepository: ProfileRepository,
-    @InjectRepository()
+    @InjectRepository(config.connectionName)
     private readonly userRepository: UserRepository
   ) {}
 

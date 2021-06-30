@@ -2,20 +2,21 @@ import supertest from "supertest";
 import Faker from "faker";
 import { expect } from "chai";
 import dotenv from "dotenv";
+import { getConnection } from "typeorm";
 
 dotenv.config();
 
 process.env.APP_PORT = "8002";
 
-const server = require("../src/index");
+import server from "../src/index";
 
 // process.env.API_URL;
 const api = supertest("http://localhost:8002/api");
-let apiToken;
+// let apiToken;
 
 describe("auth", () => {
   before((done) => {
-    console.log("before");
+    getConnection("test").runMigrations();
     done();
   });
 
@@ -53,6 +54,20 @@ describe("auth", () => {
       .send(payload)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "帳號至多 20 位" }] });
+      });
+
+    // 註冊成功
+    api
+      .post("/auth/register")
+      .set("Accept", "application/json")
+      .send({
+        account: "garyng01",
+        password: "123456",
+        email: "garyng01@email.com",
+        confirmPassword: "123456",
+      })
+      .expect(200)
+      .end((err, res) => {
         done();
       });
   });

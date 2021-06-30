@@ -13,7 +13,7 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 @Service()
 export default class UserService {
   constructor(
-    @InjectRepository()
+    @InjectRepository(config.connectionName)
     private readonly userRepository: UserRepository
   ) {}
 
