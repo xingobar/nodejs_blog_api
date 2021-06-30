@@ -23,7 +23,7 @@ class AuthValidator extends ValidationAbstractor {
         }),
       password: Joi.string().required().min(6).max(12).messages({
         "any.required": "請輸入密碼",
-        "string.min": `密碼至少要 {#limit} 位 `,
+        "string.min": `密碼至少要 {#limit} 位`,
         "string.max": `密碼至多 {#limit} 位`,
       }),
       confirmPassword: Joi.string().required().equal(Joi.ref("password")).messages({
