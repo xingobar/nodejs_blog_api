@@ -39,9 +39,9 @@ export class User {
   })
   confirmToken: string;
 
-  @OneToOne(() => Profile)
+  @OneToOne(() => Profile, { lazy: true })
   @JoinColumn()
-  profile: Profile;
+  profile: Promise<Profile>;
 
   @Column({ nullable: true })
   profileId: number;
