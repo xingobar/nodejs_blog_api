@@ -5,6 +5,7 @@ import { ICreatePost } from "interface/post.interface";
 import { Container } from "typedi";
 import PostService from "service/post.service";
 import PostResource from "resource/post.resource";
+import logger from "lib/logger.lib";
 
 @Controller("/users/posts")
 export default class PostController {

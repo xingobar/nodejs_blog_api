@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import router from "./routes/router";
 import express from "express";
 import bodyParser from "body-parser";
+import logger from "lib/logger.lib";
 
 import { config } from "config/ormconfig";
 
@@ -56,6 +57,7 @@ class App {
     this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
       console.log(err);
       const { code, message } = err;
+      logger.error(`url = ${req.path}, code => ${res.statusCode}, message => ${message}`);
       return res.status(code ?? 500).json({ message });
     });
   }
