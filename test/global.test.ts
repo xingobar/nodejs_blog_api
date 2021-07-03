@@ -1,6 +1,8 @@
 import supertest from "supertest";
 import dotenv from "dotenv";
 import path from "path";
+import Faker from "faker";
+import { expect } from "chai";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
 

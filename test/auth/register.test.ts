@@ -1,4 +1,4 @@
-import { server, api } from "./global.test";
+import { server, api } from "../global.test";
 
 import Faker from "faker";
 import { expect } from "chai";
@@ -14,7 +14,7 @@ let registerPayload: {
   confirmPassword?: string;
 } = {};
 
-describe("auth", () => {
+describe("register", () => {
   before((done) => {
     done();
     // server = app.listen(process.env.APP_PORT);
@@ -148,22 +148,23 @@ describe("auth", () => {
 
   it("register success", (done) => {
     // // 註冊成功
+    registerPayload = {
+      account: "garyng01",
+      password: "123456",
+      email: "garyng01@gmail.com",
+      confirmPassword: "123456",
+    };
     api
       .post("/auth/register")
       .set("Accept", "application/json")
-      .send({
-        account: "garyng01",
-        password: "123456",
-        email: "garyng01@gmail.com",
-        confirmPassword: "123456",
-      })
+      .send(registerPayload)
       .end((err, res) => {
         done();
       });
   });
 
-  after((done) => {
-    server.close();
-    done();
-  });
+  // after((done) => {
+  //   server.close();
+  //   done();
+  // });
 });
