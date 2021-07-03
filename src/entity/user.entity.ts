@@ -41,7 +41,7 @@ export class User {
 
   @OneToOne(() => Profile, { lazy: true })
   @JoinColumn()
-  profile: Promise<Profile>;
+  profile: Profile;
 
   @Column({ nullable: true })
   profileId: number;

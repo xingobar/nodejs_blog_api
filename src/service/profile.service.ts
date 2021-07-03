@@ -66,7 +66,7 @@ export class ProfileService {
 
       user.profile = newProfile;
 
-      await this.userRepository.save(user);
+      await this.userRepository.update(user);
     }
 
     const profile: Profile | undefined = await this.profileRepository.findById(user.profileId);

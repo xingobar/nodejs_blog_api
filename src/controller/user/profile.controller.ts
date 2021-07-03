@@ -19,7 +19,7 @@ class ProfileController {
   @Get("/:userId/profiles", [AuthenticateMiddleware])
   public async index(@Request() req: any, @Response() res: any) {
     const userService = Container.get(UserService);
-    const user: User | undefined = await userService.findByAccount(req.user.account, ["profile"]);
+    const user: User | undefined = await userService.findByAccount(req.user.account);
 
     const resource: UserResource = new UserResource(user);
 

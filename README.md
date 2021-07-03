@@ -144,3 +144,11 @@ npm run typeorm migration:run
 6. https://www.digitalocean.com/community/tutorials/test-a-node-restful-api-with-mocha-and-chai
 7. https://www.tabnine.com/code/javascript/functions/chai/Assertion/an
 ```
+
+# npm install typeorm-linq-repository --save
+
+#### 將 typeorm repository 在包裝一層
+
+```
+1. https://www.npmjs.com/package/typeorm-linq-repository
+```

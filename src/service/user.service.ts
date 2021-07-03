@@ -62,7 +62,7 @@ export default class UserService {
    */
   public async login(payload: IAuthLogin) {
     // 檢查帳號是否存在
-    const user = await this.userRepository.findByAccount(payload.account);
+    const user: User = await this.userRepository.findByAccount(payload.account);
     if (!user) {
       throw new InvalidException("帳號不存在");
     }
@@ -83,7 +83,7 @@ export default class UserService {
    * @param account
    * @param relations
    */
-  public async findByAccount(account: string, relations: string[] = []): Promise<User | undefined> {
-    return await this.userRepository.findByAccount(account, relations);
+  public async findByAccount(account: string): Promise<User> {
+    return await this.userRepository.findByAccount(account);
   }
 }

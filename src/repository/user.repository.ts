@@ -1,19 +1,25 @@
 import { User } from "entity/user.entity";
+import { RepositoryBase } from "typeorm-linq-repository";
 import { Repository, EntityRepository, getRepository } from "typeorm";
 import { ICreateUser } from "@src/interface/auth.interface";
 import { Service } from "typedi";
 
 @Service()
 @EntityRepository(User)
-export default class UserRepository extends Repository<User> {
+export default class UserRepository extends RepositoryBase<User> {
+  constructor() {
+    super(User);
+  }
+
   /**
    * 新建使用者
    * @param {ICreateUser} data 要先增的會員資料
    * @return {User}
    */
   createUser(data: ICreateUser) {
-    const user = this.create(data);
-    return this.save(user);
+    return this.create(<User>{
+      ...data,
+    });
   }
 
   /**
@@ -21,10 +27,8 @@ export default class UserRepository extends Repository<User> {
    * @param {string} email 電子信箱
    */
   findByEmail(email: string) {
-    return this.findOne({
-      where: {
-        email,
-      },
+    return this.getOne().where((user) => {
+      return user.email === email;
     });
   }
 
@@ -32,13 +36,10 @@ export default class UserRepository extends Repository<User> {
    * 根據帳號取得會員
    * @param {string} account 帳號
    */
-  findByAccount(account: string, relations: string[] = []) {
-    return this.findOne({
-      where: {
-        account,
-      },
-      relations,
-    });
+  findByAccount(account: string) {
+    return this.getOne()
+      .where((user) => user.account)
+      .equal(account);
   }
 
   /**
