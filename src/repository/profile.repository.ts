@@ -2,32 +2,27 @@ import { EntityRepository, Repository } from "typeorm";
 import { Service } from "typedi";
 import { Profile } from "entity/profile.entity";
 import { IProfile } from "interface/profile.interface";
+import { RepositoryBase } from "typeorm-linq-repository";
+
+import config from "config/index";
 
 @Service()
 @EntityRepository(Profile)
-export default class ProfileRepository extends Repository<Profile> {
+export default class ProfileRepository extends RepositoryBase<Profile> {
+  constructor() {
+    super(Profile, {
+      connectionName: config.connectionName,
+    });
+  }
+
   /**
    * 創建 profile
    * @param data
    */
   createProfile(data: IProfile) {
-    return this.create(data);
-  }
-
-  /**
-   * 根據編號更新資料
-   * @param id  - 編號
-   * @param data
-   */
-  updateById(id: number, data: IProfile) {
-    return this.update(
-      {
-        id,
-      },
-      {
-        ...data,
-      }
-    );
+    return this.create(<Profile>{
+      ...data,
+    });
   }
 
   /**
@@ -35,10 +30,8 @@ export default class ProfileRepository extends Repository<Profile> {
    * @param id
    */
   findById(id: number) {
-    return this.findOne({
-      where: {
-        id,
-      },
-    });
+    return this.getOne()
+      .where((profile) => profile.id)
+      .equal(id);
   }
 }

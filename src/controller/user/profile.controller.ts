@@ -1,8 +1,6 @@
 import UserService from "service/user.service";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import ProfileValidator from "validator/profile.validator";
-import ProfilePolicy from "policy/profile.policy";
-import AccessDeniedException from "exception/access.denied.exception";
 import UserResource from "resource/user.resource";
 import ProfileResource from "resource/profile.resource";
 

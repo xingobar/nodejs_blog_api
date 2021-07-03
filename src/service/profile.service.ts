@@ -26,18 +26,14 @@ export class ProfileService {
    * @param data
    */
   public async update(user: User, data: IProfile): Promise<Profile | undefined> {
-    const result: UpdateResult = await this.profileRepository.update(
-      {
-        id: user.profileId,
-      },
-      {
-        ...data,
-      }
-    );
+    let profile: Profile | undefined = await this.profileRepository.findById(user.profileId);
 
-    const profile: Profile | undefined = await this.profileRepository.findById(user.profileId);
+    profile.gender = data.gender;
+    profile.phone = data.phone;
 
-    return profile;
+    const result = await this.profileRepository.update(profile);
+
+    return result;
   }
 
   /**
@@ -54,25 +50,20 @@ export class ProfileService {
    * @param payload
    */
   public async updateOrCreate(user: User, payload: IProfile): Promise<Profile | undefined> {
-    if (await this.profileRepository.findById(user.profileId)) {
-      await this.profileRepository.update(
-        {
-          id: user.profileId,
-        },
-        {
-          ...payload,
-        }
-      );
+    let profile = await this.profileRepository.findById(user.profileId);
+    let result;
+    if (profile) {
+      profile.gender = payload.gender;
+      profile.phone = payload.phone;
+      result = await this.profileRepository.update(profile);
     } else {
-      const newProfile: Profile = await this.profileRepository.save(payload);
+      const result: Profile = await this.profileRepository.createProfile(payload);
 
-      user.profile = newProfile;
+      user.profile = result;
 
       await this.userRepository.update(user);
     }
 
-    const profile: Profile | undefined = await this.profileRepository.findById(user.profileId);
-
-    return profile;
+    return result;
   }
 }
