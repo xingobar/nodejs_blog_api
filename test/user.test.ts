@@ -1,20 +1,11 @@
-import supertest from "supertest";
+import { server, api } from "./global.test";
+
 import Faker from "faker";
 import { expect } from "chai";
-import dotenv from "dotenv";
+
 import { getConnection } from "typeorm";
-import path from "path";
+
 import { User } from "entity/user.entity";
-
-dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
-
-// process.env.API_URL;
-
-import app from "../src/app";
-
-const server = app.listen(process.env.APP_PORT);
-
-const api = supertest(process.env.API_URL);
 
 let registerPayload: {
   account?: string;
@@ -170,18 +161,6 @@ describe("auth", () => {
         done();
       });
   });
-
-  // it("login", (done) => {
-  //   api
-  //     .post("/auth/login")
-  //     .set("Accept", "application/json")
-  //     .send({})
-  //     .expect(200)
-  //     .end((err, res) => {
-  //       expect(res.body).that.deep.equals({ errors: [{ message: "請輸入登入帳號" }] });
-  //       done();
-  //     });
-  // });
 
   after((done) => {
     server.close();
