@@ -21,22 +21,6 @@ export class ProfileService {
   ) {}
 
   /**
-   * 更新資料後回傳
-   * @param user
-   * @param data
-   */
-  public async update(user: User, data: IProfile): Promise<Profile | undefined> {
-    let profile: Profile | undefined = await this.profileRepository.findById(user.profileId);
-
-    profile.gender = data.gender;
-    profile.phone = data.phone;
-
-    const result = await this.profileRepository.update(profile);
-
-    return result;
-  }
-
-  /**
    * 根據編號取得個人資料
    * @param profileId
    */
@@ -53,9 +37,14 @@ export class ProfileService {
     let profile = await this.profileRepository.findById(user.profileId);
     let result;
     if (profile) {
-      profile.gender = payload.gender;
-      profile.phone = payload.phone;
-      result = await this.profileRepository.update(profile);
+      const updateResult: UpdateResult = await this.profileRepository
+        .createQueryBuilder("profiles")
+        .update(Profile)
+        .set({ ...payload })
+        .where("id = :id", { id: user.profileId })
+        .execute();
+
+      result = await this.profileRepository.findById(user.profileId);
     } else {
       const result: Profile = await this.profileRepository.createProfile(payload);
 
