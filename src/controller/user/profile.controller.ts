@@ -16,7 +16,7 @@ import { Controller, Get, Post, Request, Response } from "@decorators/express";
 @Controller("/users")
 class ProfileController {
   // 取得個人資料
-  @Get("/:userId/profiles", [AuthenticateMiddleware])
+  @Get("/profiles", [AuthenticateMiddleware])
   public async index(@Request() req: any, @Response() res: any) {
     const userService = Container.get(UserService);
     const user: User | undefined = await userService.findByAccount(req.user.account);
@@ -32,7 +32,7 @@ class ProfileController {
    * @param req
    * @param res
    */
-  @Post("/:userId/profiles", [AuthenticateMiddleware])
+  @Post("/profiles", [AuthenticateMiddleware])
   public async store(@Request() req: any, @Response() res: any) {
     const payload: IProfile = req.body;
 
@@ -44,15 +44,6 @@ class ProfileController {
     }
 
     const profileService: ProfileService = Container.get(ProfileService);
-
-    // 已經有 profile 的資料的話，就要檢查是否更新自己的 profile
-    if (req.user.profileId && profileService.findById(req.user.profileId)) {
-      // 檢查 profile 是否為自己
-      const profilePolicy: ProfilePolicy = Container.get(ProfilePolicy);
-      if (!profilePolicy.update(req.user, parseInt(req.params.userId, 10))) {
-        throw new AccessDeniedException();
-      }
-    }
 
     // 更新 or 新增資料
     const profile: Profile | undefined = await profileService.updateOrCreate(req.user, payload);

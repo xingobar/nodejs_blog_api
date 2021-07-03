@@ -8,6 +8,7 @@ import PostResource from "resource/post.resource";
 
 @Controller("/users/posts")
 export default class PostController {
+  // 新增文章
   @Post("/", [AuthenticateMiddleware])
   public async store(@Request() req: any, @Response() res: any) {
     const params: ICreatePost = req.body;
