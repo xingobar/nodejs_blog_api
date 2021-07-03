@@ -16,8 +16,8 @@ class App {
     dotenv.config();
     this.app = express();
     this.setConfig();
-    this.setRoutes();
     this.setDbConnection();
+    this.setRoutes();
   }
 
   private setDbConnection() {

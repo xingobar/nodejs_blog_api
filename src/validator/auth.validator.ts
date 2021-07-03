@@ -3,8 +3,7 @@ import ValidationAbstractor from "validator/validator.abstract";
 
 class AuthValidator extends ValidationAbstractor {
   constructor(payload: any) {
-    super();
-    this.payload = payload;
+    super(payload);
   }
 
   public register(): ValidationAbstractor {

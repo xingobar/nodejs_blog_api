@@ -4,8 +4,7 @@ import ValidatorAbstract from "validator/validator.abstract";
 
 export default class ProfileValidator extends ValidatorAbstract {
   constructor(payload: any) {
-    super();
-    this.payload = payload;
+    super(payload);
   }
 
   /**

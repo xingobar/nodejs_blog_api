@@ -10,6 +10,10 @@ abstract class ValidatorAbstract {
 
   private _value?: ValidationResult;
 
+  constructor(payload: any) {
+    this.payload = payload;
+  }
+
   /**
    * 驗證
    */

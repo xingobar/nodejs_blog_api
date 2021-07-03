@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, OneToMany } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+  ManyToOne,
+  DeleteDateColumn,
+} from "typeorm";
 import { User } from "entity/user.entity";
 
 @Entity("posts")
@@ -6,7 +15,7 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, (user) => user.post)
+  @ManyToOne(() => User, (user) => user.post)
   @JoinColumn()
   user: User;
 
@@ -63,4 +72,10 @@ export class Post {
     comment: "更新時間",
   })
   updatedAt: Date;
+
+  @DeleteDateColumn({
+    name: "deleted_at",
+    comment: "刪除時間",
+  })
+  deletedAt: Date;
 }

@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToOne,
+  OneToMany,
   JoinColumn,
 } from "typeorm";
 
@@ -49,7 +50,7 @@ export class User {
   @Column({ nullable: true })
   profileId: number;
 
-  @OneToOne(() => Post, (post) => post.user)
+  @OneToMany(() => Post, (post) => post.user)
   post: Post;
 
   @CreateDateColumn({
