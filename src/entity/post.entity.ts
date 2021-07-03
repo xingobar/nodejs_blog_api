@@ -24,6 +24,14 @@ export class Post {
   body: string;
 
   @Column({
+    name: "feedback_score",
+    type: "float",
+    default: 0,
+    comment: "評論分數",
+  })
+  feedbackScore: number;
+
+  @Column({
     name: "like_count",
     comment: "喜歡的個數",
     default: 0,
