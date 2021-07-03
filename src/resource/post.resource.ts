@@ -6,25 +6,28 @@ interface IPostResource {
   id: number;
   title: string;
   body: string;
+  createdAt: Date;
+  updatedAt: Date;
   owner?: IUserResource;
 }
 
 export default class PostResource extends ResourceAbstract {
-  private post: IPostResource;
-
   constructor(data: any) {
     super(data);
-
-    this.post = this.format(this.resource) as IPostResource;
   }
 
-  public async toJson(post: IPostResource = this.post): Promise<IPostResource> {
+  public async toJson(post: any = this.resource): Promise<IPostResource> {
+    const data = <IPostResource>this.format(post);
+
     // 是否加載 profile
     if (this.when("user")) {
-      post.owner = await new UserResource(await this.getResourceByIndex().user).toJson();
+      data.owner = await new UserResource(await this.getCurrentResource().user).toJson();
     }
+    return data;
+  }
 
-    return post;
+  public async toArray(): Promise<any> {
+    return await super.toArray();
   }
 
   public format(item: Post): Post {
@@ -32,6 +35,8 @@ export default class PostResource extends ResourceAbstract {
       id: item.id,
       title: item.title,
       body: item.body,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
     };
   }
 }

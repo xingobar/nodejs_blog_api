@@ -15,7 +15,7 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.post)
+  @ManyToOne(() => User, (user) => user.post, { lazy: true })
   @JoinColumn()
   user: User;
 

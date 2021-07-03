@@ -6,21 +6,26 @@ export default abstract class ResourceAbstract {
     this.resource = resource;
   }
 
-  /**
-   * 是否為 promise
-   * @param {any} data
-   * @param {string} key
-   */
-  public isPromise(key: string): boolean {
-    return this.getResourceByIndex()[key] && this.getResourceByIndex()[key].then && typeof this.getResourceByIndex()[key] === "function";
-  }
-
   public when(key: string): boolean {
     // 是 promise ||  已經加載
-    return Object.keys(this.getResourceByIndex()).includes(key) || Object.keys(this.getResourceByIndex()).includes(`__has_${key}__`);
+    return Object.keys(this.getCurrentResource()).includes(key) || Object.keys(this.getCurrentResource()).includes(`__has_${key}__`);
   }
 
-  public getResourceByIndex() {
+  /**
+   * 回傳陣列資料
+   */
+  public async toArray() {
+    const array = [];
+    for (let key in this.resource) {
+      this.setIndex(parseInt(key));
+      // 轉成 json 格式
+      array.push(await this.toJson(this.resource[key]));
+    }
+
+    return array;
+  }
+
+  public getCurrentResource() {
     if (Array.isArray(this.resource)) {
       return this.resource[this.index];
     }
@@ -44,4 +49,6 @@ export default abstract class ResourceAbstract {
 
   // 整理結構
   public abstract format(item: any): any;
+
+  public abstract toJson(item: any): any;
 }

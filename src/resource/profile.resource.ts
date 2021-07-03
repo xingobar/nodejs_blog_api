@@ -9,15 +9,13 @@ export interface IProfileResource {
 }
 
 export default class ProfileResource extends ResourceAbstract {
-  private profile: IProfileResource;
-
   constructor(data: Profile) {
     super(data);
-    this.profile = (this.format(this.resource) as IProfileResource);
   }
 
-  public async toJson(profile: IProfileResource = this.profile): Promise<IProfileResource> {
-    return profile;
+  public async toJson(profile: any = this.resource): Promise<IProfileResource> {
+    const data = <IProfileResource>this.format(profile);
+    return data;
   }
 
   public format(item: Profile): IProfileResource {
