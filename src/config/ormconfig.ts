@@ -14,6 +14,11 @@ export const config: ConnectionOptions = {
   subscribers: ["dist/subscriber/**/*{.js,.ts}", __dirname + "/../subscriber/**/*{.js,.ts}"],
   synchronize: false, // 之後改 modal 的話會同步資料庫
   logging: false,
+  cli: {
+    entitiesDir: "src/entity",
+    migrationsDir: "src/migration",
+    subscribersDir: "src/subscriber",
+  },
   // migrations: ["src/migration/**/*.ts"],
 };
 

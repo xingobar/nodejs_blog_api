@@ -8,7 +8,10 @@ import {
   OneToOne,
   JoinColumn,
 } from "typeorm";
-import { Profile } from "./profile.entity";
+
+import { Post } from "entity/post.entity";
+import { Profile } from "entity/profile.entity";
+
 @Entity("users") // 資料表名稱 users
 export class User {
   @PrimaryGeneratedColumn()
@@ -45,6 +48,9 @@ export class User {
 
   @Column({ nullable: true })
   profileId: number;
+
+  @OneToOne(() => Post, (post) => post.user)
+  post: Post;
 
   @CreateDateColumn({
     type: "timestamp",

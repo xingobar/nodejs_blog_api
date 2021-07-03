@@ -17,9 +17,9 @@ export default class UserRepository extends RepositoryBase<User> {
    * @return {User}
    */
   createUser(data: ICreateUser) {
-    return this.create(<User>{
+    return this.create({
       ...data,
-    });
+    } as User);
   }
 
   /**
