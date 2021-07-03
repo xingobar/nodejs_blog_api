@@ -21,6 +21,7 @@ class ProfileController {
     const userService = Container.get(UserService);
     const user: User | undefined = await userService.findByAccount(req.user.account);
 
+    await user.profile;
     const resource: UserResource = new UserResource(user);
 
     res.json(await resource.toJson());

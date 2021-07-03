@@ -17,7 +17,7 @@ export default abstract class ResourceAbstract {
 
   public when(key: string): boolean {
     // 是 promise ||  已經加載
-    return this.isPromise(key) || (this.getResourceByIndex()[key] && !this.isPromise(key));
+    return Object.keys(this.getResourceByIndex()).includes(key) || Object.keys(this.getResourceByIndex()).includes(`__has_${key}__`);
   }
 
   public getResourceByIndex() {

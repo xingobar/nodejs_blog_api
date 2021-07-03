@@ -83,7 +83,7 @@ export default class UserService {
    * @param account
    * @param relations
    */
-  public async findByAccount(account: string): Promise<User> {
-    return await this.userRepository.findByAccount(account);
+  public findByAccount(account: string) {
+    return this.userRepository.findByAccount(account);
   }
 }
