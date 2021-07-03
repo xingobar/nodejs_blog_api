@@ -18,7 +18,7 @@ export default class UserResource extends ResourceAbstract {
   }
 
   public async toJson(user: any = this.resource): Promise<IUserResource> {
-    const data = <IUserResource>this.format(user);
+    const data = this.format(user) as IUserResource;
 
     // 是否加載 profile
     if (this.when("profile")) {

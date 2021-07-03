@@ -17,7 +17,7 @@ export default class PostResource extends ResourceAbstract {
   }
 
   public async toJson(post: any = this.resource): Promise<IPostResource> {
-    const data = <IPostResource>this.format(post);
+    const data = this.format(post) as IPostResource;
 
     // 是否加載 profile
     if (this.when("user")) {
@@ -31,12 +31,12 @@ export default class PostResource extends ResourceAbstract {
   }
 
   public format(item: Post): Post {
-    return <Post>{
+    return {
       id: item.id,
       title: item.title,
       body: item.body,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
-    };
+    } as Post;
   }
 }

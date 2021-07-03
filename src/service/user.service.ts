@@ -10,7 +10,9 @@ import { User } from "entity/user.entity";
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
-@Service()
+@Service({
+  transient: true,
+})
 export default class UserService {
   constructor(
     @InjectRepository(config.connectionName)

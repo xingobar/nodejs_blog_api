@@ -14,28 +14,24 @@ class App {
   public app: express.Application;
 
   constructor() {
-    dotenv.config();
     this.app = express();
     this.setConfig();
-    this.setDbConnection();
     this.setRoutes();
+    this.setDbConnection();
   }
 
-  private setDbConnection() {
+  private async setDbConnection() {
     // typeorm use typedi
     useContainer(Container);
 
     console.log("db connection => ", process.env.CONNECTION_NAME);
-    createConnection(config as ConnectionOptions)
-      .then((connection) => {
-        console.log("has connection to db => ", connection.isConnected);
 
-        // connection.synchronize(true);
-        // connection.runMigrations({
-        //   transaction: "all",
-        // });
-      })
-      .catch((error) => console.log("connection error: ", error));
+    try {
+      const connection = await createConnection(config as ConnectionOptions);
+      console.log("has connection to db => ", connection.isConnected);
+    } catch (error) {
+      console.log("connection error: ", error);
+    }
   }
 
   /**

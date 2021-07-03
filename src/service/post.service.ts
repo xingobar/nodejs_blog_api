@@ -19,8 +19,8 @@ export default class PostService {
    * @param {ICreatePost} payload
    */
   public async createPost(payload: ICreatePost) {
-    return await this.postRepository.create(<Post>{
+    return await this.postRepository.create({
       ...payload,
-    });
+    } as Post);
   }
 }

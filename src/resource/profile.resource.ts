@@ -14,7 +14,7 @@ export default class ProfileResource extends ResourceAbstract {
   }
 
   public async toJson(profile: any = this.resource): Promise<IProfileResource> {
-    const data = <IProfileResource>this.format(profile);
+    const data = this.format(profile) as IProfileResource;
     return data;
   }
 

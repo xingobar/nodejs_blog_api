@@ -16,10 +16,12 @@ export default abstract class ResourceAbstract {
    */
   public async toArray() {
     const array = [];
-    for (let key in this.resource) {
-      this.setIndex(parseInt(key));
-      // 轉成 json 格式
-      array.push(await this.toJson(this.resource[key]));
+    for (const key in this.resource) {
+      if (this.resource.hasOwnProperty(key)) {
+        this.setIndex(parseInt(key, 10));
+        // 轉成 json 格式
+        array.push(await this.toJson(this.resource[key]));
+      }
     }
 
     return array;

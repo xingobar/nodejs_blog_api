@@ -8,135 +8,164 @@ import { User } from "entity/user.entity";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
 
-import server from "../src/index";
-
 // process.env.API_URL;
+
+import app from "../src/app";
+
+const server = app.listen(process.env.APP_PORT);
+
 const api = supertest(process.env.API_URL);
-// let apiToken;
+
+let registerPayload: {
+  account?: string;
+  password?: string;
+  email?: string;
+  confirmPassword?: string;
+} = {};
 
 describe("auth", () => {
   before((done) => {
-    getConnection("test").runMigrations();
     done();
+    // server = app.listen(process.env.APP_PORT);
+    // getConnection("test").runMigrations();
   });
 
   afterEach(() => {
     getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
   });
 
-  it("register", (done) => {
-    let payload: {
-      account?: string;
-      password?: string;
-      email?: string;
-      confirmPassword?: string;
-    } = {};
-
-    const apiPrefix = api.post("/auth/register").set("Accept", "application/json");
-
+  it("account no input", (done) => {
     // 帳號沒有輸入
     api
       .post("/auth/register")
       .set("Accept", "application/json")
-      .send(payload)
+      .send({})
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "請輸入帳號" }] });
+        done();
       });
+  });
 
-    payload = {
+  it("account min", (done) => {
+    registerPayload = {
       account: "123",
     };
     // 帳號長度過小
     api
       .post("/auth/register")
       .set("Accept", "application/json")
-      .send(payload)
+      .send(registerPayload)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "帳號至少要 6 位" }] });
+        done();
       });
+  });
 
+  it("account max", (done) => {
     // 帳號長度過大
-    payload = {
+    registerPayload = {
       account: Faker.lorem.words(30),
     };
     api
       .post("/auth/register")
       .set("Accept", "application/json")
-      .send(payload)
+      .send(registerPayload)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "帳號至多 20 位" }] });
+        done();
       });
+  });
 
-    // 沒有輸入信箱
-    payload.account = Faker.lorem.word(15);
-
+  it("no email input", (done) => {
+    // // 沒有輸入信箱
+    registerPayload.account = "garyng01";
     api
       .post("/auth/register")
       .set("Accept", "application/json")
-      .send(payload)
+      .send(registerPayload)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "請輸入電子郵件" }] });
+        done();
       });
+  });
 
-    // 信箱格式不符
-    payload.email = "test";
+  it("email invalid", (done) => {
+    // // 信箱格式不符
+    registerPayload.email = "test";
     api
       .post("/auth/register")
       .set("Accept", "application/json")
-      .send(payload)
+      .send(registerPayload)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "電子郵件格式不符" }] });
+        done();
       });
+  });
 
-    // 密碼長度驗證, 密碼長度不夠
-    payload.email = Faker.internet.email();
-    payload.password = "123";
+  it("password min", (done) => {
+    // // 密碼長度驗證, 密碼長度不夠
+    registerPayload.email = Faker.internet.email();
+    registerPayload.password = "123";
     api
       .post("/auth/register")
       .set("Accept", "application/json")
-      .send(payload)
+      .send(registerPayload)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "密碼至少要 6 位" }] });
+        done();
       });
+  });
 
-    // 密碼長度過長
-    payload.password = Faker.internet.password(30);
+  it("password max", (done) => {
+    // // 密碼長度過長
+    registerPayload.password = Faker.internet.password(30);
     api
       .post("/auth/register")
       .set("Accept", "application/json")
-      .send(payload)
+      .send(registerPayload)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "密碼至多 12 位" }] });
+        done();
       });
+  });
 
-    // 確認密碼尚未輸入
-    payload.password = "123456";
+  it("no confirm password", (done) => {
+    // // 確認密碼尚未輸入
+    registerPayload.password = "123456";
     api
       .post("/auth/register")
       .set("Accept", "application/json")
-      .send(payload)
+      .send(registerPayload)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "請輸入確認密碼" }] });
+        done();
       });
+  });
 
-    // 密碼不一致
-    payload.confirmPassword = "123";
+  it("password mismatch", (done) => {
+    // // 密碼不一致
+    registerPayload.confirmPassword = "123";
     api
       .post("/auth/register")
       .set("Accept", "application/json")
-      .send(payload)
+      .send(registerPayload)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "密碼不一致" }] });
+        done();
       });
+  });
 
-    payload.confirmPassword = payload.password;
-
-    // 註冊成功
+  it("register success", (done) => {
+    // // 註冊成功
     api
       .post("/auth/register")
       .set("Accept", "application/json")
-      .send(payload)
-      .expect(200)
+      .send({
+        account: "garyng01",
+        password: "123456",
+        email: "garyng01@gmail.com",
+        confirmPassword: "123456",
+      })
       .end((err, res) => {
         done();
       });
@@ -146,15 +175,10 @@ describe("auth", () => {
   //   api
   //     .post("/auth/login")
   //     .set("Accept", "application/json")
-  //     .send({
-  //       account: "garyng02",
-  //       password: "123456",
-  //     })
+  //     .send({})
   //     .expect(200)
   //     .end((err, res) => {
-  //       console.log("end => ", res.body);
-  //       apiToken = res.body.token;
-  //       expect(res.body).to.property("token");
+  //       expect(res.body).that.deep.equals({ errors: [{ message: "請輸入登入帳號" }] });
   //       done();
   //     });
   // });

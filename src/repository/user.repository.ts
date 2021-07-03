@@ -3,12 +3,15 @@ import { RepositoryBase } from "typeorm-linq-repository";
 import { Repository, EntityRepository, getRepository } from "typeorm";
 import { ICreateUser } from "@src/interface/auth.interface";
 import { Service } from "typedi";
+import config from "config/index";
 
 @Service()
 @EntityRepository(User)
 export default class UserRepository extends RepositoryBase<User> {
   constructor() {
-    super(User);
+    super(User, {
+      connectionName: config.connectionName,
+    });
   }
 
   /**
@@ -27,9 +30,9 @@ export default class UserRepository extends RepositoryBase<User> {
    * @param {string} email 電子信箱
    */
   findByEmail(email: string) {
-    return this.getOne().where((user) => {
-      return user.email === email;
-    });
+    return this.getOne()
+      .where((user) => user.email)
+      .equal(email);
   }
 
   /**

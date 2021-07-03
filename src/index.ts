@@ -1,4 +1,8 @@
 import "reflect-metadata";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 import app from "app";
 
 const port = process.env.APP_PORT ?? 8001; // default port to listen
