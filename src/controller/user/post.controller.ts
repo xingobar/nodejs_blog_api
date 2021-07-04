@@ -1,4 +1,4 @@
-import { Controller, Post, Request, Response, Put } from "@decorators/express";
+import { Controller, Post, Request, Response, Put, Delete } from "@decorators/express";
 import PostValidator from "validator/post.validator";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import { ICreatePost, IUpdatePost } from "interface/post.interface";
@@ -57,5 +57,23 @@ export default class PostController {
     const resource = new PostResource(post);
 
     return res.json(await resource.toJson());
+  }
+
+  // 刪除文章
+  @Delete("/:postId")
+  public async destroy(@Request() req: any, @Response() res: any) {
+    const postService: PostService = Container.get(PostService);
+
+    let post = await postService.findById(req.params.postId);
+
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    await postService.deleteById(req.params.postId);
+
+    return res.json({
+      ok: "ok",
+    });
   }
 }

@@ -5,6 +5,7 @@ import { Post } from "entity/post.entity";
 
 import PostRepository from "repository/post.repository";
 import config from "config/index";
+import { DeleteResult } from "typeorm";
 
 @Service({
   transient: true,
@@ -55,5 +56,13 @@ export default class PostService {
       .getOne()
       .where((post) => post.id)
       .equal(id);
+  }
+
+  /**
+   * 根據編號刪除文章
+   * @param post
+   */
+  public async deleteById(id: number): Promise<DeleteResult> {
+    return this.postRepository.createQueryBuilder("posts").softDelete().from(Post).where("id = :id", { id: id }).execute();
   }
 }
