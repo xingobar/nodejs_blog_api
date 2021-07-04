@@ -5,12 +5,14 @@ import { User } from "entity/user.entity";
 
 import Faker from "faker";
 
-let payload: {
+const payload: {
   account?: string;
   password?: string;
 } = {};
 
 let fakeUser: User | undefined;
+
+let apiToken: string;
 
 describe("login test", () => {
   before((done) => {
@@ -21,6 +23,8 @@ describe("login test", () => {
 
   after(() => {
     getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
+    // server.close();
+    // done();
   });
 
   it("no account", (done) => {
@@ -77,6 +81,18 @@ describe("login test", () => {
       })
       .end((err, res) => {
         expect(res.body).includes.keys("token");
+        apiToken = res.body?.token;
+        done();
+      });
+  });
+
+  it("check can login", (done) => {
+    api
+      .get("/users")
+      .set("Accept", "application/json")
+      .set("authorization", `Bearer ${apiToken}`)
+      .expect(200)
+      .end((err, res) => {
         done();
       });
   });

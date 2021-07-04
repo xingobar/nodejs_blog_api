@@ -34,7 +34,7 @@ export class ProfileService {
    * @param payload
    */
   public async updateOrCreate(user: User, payload: IProfile): Promise<Profile | undefined> {
-    let profile = await this.profileRepository.findById(user.profileId);
+    const profile = await this.profileRepository.findById(user.profileId);
     let result;
     if (profile) {
       const updateResult: UpdateResult = await this.profileRepository
@@ -46,7 +46,7 @@ export class ProfileService {
 
       result = await this.profileRepository.findById(user.profileId);
     } else {
-      const result: Profile = await this.profileRepository.createProfile(payload);
+      result = await this.profileRepository.createProfile(payload);
 
       user.profile = result;
 

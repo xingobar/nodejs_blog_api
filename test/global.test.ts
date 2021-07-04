@@ -2,12 +2,11 @@ import supertest from "supertest";
 import dotenv from "dotenv";
 import path from "path";
 import argon2 from "argon2";
-import UserService from "service/user.service";
+import jwt from "jsonwebtoken";
 
 import { getConnection } from "typeorm";
 import { User } from "entity/user.entity";
 import { randomBytes } from "crypto";
-import { Container } from "typedi";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
 
@@ -25,7 +24,7 @@ interface IRegisterPayload {
   email: string;
 }
 
-let fakeUser: IRegisterPayload = {
+const fakeUser: IRegisterPayload = {
   account: "garyng01",
   password: "123456",
   email: "garyng01@gmail.com",
@@ -83,16 +82,12 @@ export const fakeLogin = async (account?: string): Promise<string> => {
         },
       });
   } else {
-    user = await getConnection("test")
-      .getRepository(User)
-      .findOne({
-        where: {
-          account: account,
-        },
-      });
+    user = await getConnection("test").getRepository(User).findOne({
+      where: {
+        account,
+      },
+    });
   }
 
-  const service = Container.get(UserService);
-
-  return service.generateJwtToken(user ?? new User());
+  return jwt.sign({ ...user }, process.env.TOKEN_SECRET || randomBytes(20).toString("hex"), { expiresIn: "1h" });
 };

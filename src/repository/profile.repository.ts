@@ -20,9 +20,9 @@ export default class ProfileRepository extends RepositoryBase<Profile> {
    * @param data
    */
   createProfile(data: IProfile) {
-    return this.create(<Profile>{
+    return this.create({
       ...data,
-    });
+    } as Profile);
   }
 
   /**
