@@ -1,4 +1,4 @@
-import { server, api } from "../global.test";
+import { server, api, createUser, defaultPassword } from "../global.test";
 import { expect } from "chai";
 import { getConnection } from "typeorm";
 import { User } from "entity/user.entity";
@@ -10,11 +10,17 @@ let payload: {
   password?: string;
 } = {};
 
+let fakeUser: User | undefined;
+
 describe("login test", () => {
   before((done) => {
     done();
     // server = app.listen(process.env.APP_PORT);
     // getConnection("test").runMigrations();
+  });
+
+  after(() => {
+    getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
   });
 
   it("no account", (done) => {
@@ -50,6 +56,27 @@ describe("login test", () => {
       .expect(400)
       .end((err, res) => {
         expect(res.body.message).to.equal("帳號不存在");
+        done();
+      });
+  });
+
+  it("register", (done) => {
+    createUser().then((user) => {
+      fakeUser = user;
+      done();
+    });
+  });
+
+  it("login successful", (done) => {
+    api
+      .post("/auth/login")
+      .set("Accept", "application/json")
+      .send({
+        account: fakeUser?.account,
+        password: defaultPassword,
+      })
+      .end((err, res) => {
+        expect(res.body).includes.keys("token");
         done();
       });
   });
