@@ -10,6 +10,11 @@ import {
 } from "typeorm";
 import { User } from "entity/user.entity";
 
+enum PostStatus {
+  DRAFT = "DRAFT",
+  PUBLISH = "PUBLISH",
+}
+
 @Entity("posts")
 export class Post {
   @PrimaryGeneratedColumn()
@@ -31,6 +36,22 @@ export class Post {
     comment: "內容",
   })
   body: string;
+
+  @Column({
+    comment: "封面圖",
+    name: "image",
+    nullable: true,
+  })
+  image: string;
+
+  @Column({
+    type: "enum",
+    enum: PostStatus,
+    name: "status",
+    comment: "文章狀態",
+    default: PostStatus.DRAFT,
+  })
+  status: PostStatus;
 
   @Column({
     name: "feedback_score",
