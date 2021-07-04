@@ -1,8 +1,9 @@
 import { Service } from "typedi";
-import { ICreatePost } from "interface/post.interface";
+import { ICreatePost, IUpdatePost } from "interface/post.interface";
 import { InjectRepository } from "typeorm-typedi-extensions";
-import PostRepository from "repository/post.repository";
 import { Post } from "entity/post.entity";
+
+import PostRepository from "repository/post.repository";
 import config from "config/index";
 
 @Service({
@@ -22,5 +23,37 @@ export default class PostService {
     return await this.postRepository.create({
       ...payload,
     } as Post);
+  }
+
+  /**
+   * 根據編號取得文章
+   * @param {number} id - 文章編號
+   */
+  public findById(id: number) {
+    return this.postRepository
+      .getOne()
+      .where((post) => post.id)
+      .equal(id);
+  }
+
+  /**
+   * 根據編號更新文章
+   * @param {number} id - 文章編號
+   * @param {IUpdatePost} data
+   */
+  public async updateById(id: number, data: IUpdatePost): Promise<Post> {
+    await this.postRepository
+      .createQueryBuilder("posts")
+      .update(Post)
+      .set({
+        ...data,
+      })
+      .where("id = :id", { id })
+      .execute();
+
+    return await this.postRepository
+      .getOne()
+      .where((post) => post.id)
+      .equal(id);
   }
 }

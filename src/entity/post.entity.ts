@@ -10,8 +10,9 @@ import {
 } from "typeorm";
 import { User } from "entity/user.entity";
 
-enum PostStatus {
+export enum PostStatus {
   DRAFT = "DRAFT",
+  OFFLINE = "OFFLINE",
   PUBLISH = "PUBLISH",
 }
 
