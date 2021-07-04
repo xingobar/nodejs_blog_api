@@ -10,7 +10,7 @@ export default class AuthenticateMiddleware implements Middleware {
     const token = authHeader && authHeader.split(" ")[1];
 
     // token 找不到
-    if (!token) return res.status(403).json({ message: "尚未登入" });
+    if (!token) return res.status(401).json({ message: "尚未登入" });
 
     // jwt token 驗證
     jwt.verify(token ?? "", config.jwt.secret, (err: any, user: any) => {

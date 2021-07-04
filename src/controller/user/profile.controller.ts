@@ -3,6 +3,7 @@ import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import ProfileValidator from "validator/profile.validator";
 import UserResource from "resource/user.resource";
 import ProfileResource from "resource/profile.resource";
+import NotFoundException from "exception/notfound.exception";
 
 import { Container } from "typedi";
 import { User } from "entity/user.entity";
@@ -17,9 +18,14 @@ class ProfileController {
   @Get("/profiles", [AuthenticateMiddleware])
   public async index(@Request() req: any, @Response() res: any) {
     const userService = Container.get(UserService);
-    const user: User | undefined = await userService.findByAccount(req.user.account);
+    const user: User | undefined = await userService.findByAccount(req.user.account).join((user) => user.profile);
 
     await user.profile;
+
+    if (!user.hasOwnProperty("profile")) {
+      throw new NotFoundException();
+    }
+
     const resource: UserResource = new UserResource(user);
 
     res.json(await resource.toJson());
@@ -38,7 +44,7 @@ class ProfileController {
     v.update().validate();
 
     if (v.isError()) {
-      return res.json({ error: v.detail });
+      return res.json({ errors: v.detail });
     }
 
     const profileService: ProfileService = Container.get(ProfileService);

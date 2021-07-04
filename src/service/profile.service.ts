@@ -48,7 +48,7 @@ export class ProfileService {
     } else {
       result = await this.profileRepository.createProfile(payload);
 
-      user.profile = result;
+      user.profileId = result.id;
 
       await this.userRepository.update(user);
     }
