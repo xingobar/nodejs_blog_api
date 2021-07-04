@@ -5,13 +5,49 @@ import UserService from "service/user.service";
 import AuthValidator from "validator/auth.validator";
 import UserResource from "resource/user.resource";
 
+import { ApiPath, ApiOperationPost, SwaggerDefinitionConstant } from "swagger-express-ts";
+import { injectable } from "inversify";
+import { interfaces } from "inversify-express-utils";
+
+@ApiPath({
+  path: "/auth",
+  name: "Auth",
+})
+@injectable()
 @Controller("/auth")
-class AuthController {
+class AuthController implements interfaces.Controller {
+  public static TARGET_NAME: string = "AuthController";
+
   /**
    * 註冊
    * @param req
    * @param res
    */
+  @ApiOperationPost({
+    description: "註冊",
+    summary: "註冊",
+    parameters: {
+      formData: {
+        account: {
+          required: true,
+          description: "帳號",
+          type: "string",
+        },
+        password: {
+          required: true,
+          description: "密碼",
+          type: "string",
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: "成功",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "UserResponse",
+      },
+    },
+  })
   @Post("/register")
   public async register(@Request() req: any, @Response() res: any) {
     const v = new AuthValidator(req.body);

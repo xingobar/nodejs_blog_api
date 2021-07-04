@@ -1,6 +1,7 @@
 import MainRoute from "routes/route.abstract";
 import AuthController from "controller/auth.controller";
 import { attachControllers } from "@decorators/express";
+
 class AuthRoute extends MainRoute {
   private authController: AuthController = new AuthController();
 
