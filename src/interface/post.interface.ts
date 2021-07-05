@@ -16,3 +16,15 @@ export interface IUpdatePost {
   user: User;
   status: PostStatus;
 }
+
+/**
+ * 取得所有文章 payload
+ */
+export interface IGetAllPostParams {
+  orderBy?: {
+    column: string;
+    sort: string;
+  };
+  keyword?: string;
+  userId?: number;
+}

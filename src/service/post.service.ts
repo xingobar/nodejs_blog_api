@@ -1,7 +1,7 @@
 import { Service } from "typedi";
-import { ICreatePost, IUpdatePost } from "interface/post.interface";
+import { ICreatePost, IUpdatePost, IGetAllPostParams } from "interface/post.interface";
 import { InjectRepository } from "typeorm-typedi-extensions";
-import { Post } from "entity/post.entity";
+import { Post, PostStatus } from "entity/post.entity";
 
 import PostRepository from "repository/post.repository";
 import config from "config/index";
@@ -64,5 +64,34 @@ export default class PostService {
    */
   public async deleteById(id: number): Promise<DeleteResult> {
     return this.postRepository.createQueryBuilder("posts").softDelete().from(Post).where("id = :id", { id: id }).execute();
+  }
+
+  /**
+   * 取得多篇文章資訊
+   * @param params
+   */
+  public async findAllByFilter(params: IGetAllPostParams, excludeUser: number = 0): Promise<Post[]> {
+    // 抓取發布的文章
+    let query = this.postRepository.createQueryBuilder("posts").where(`posts.status = :status`, { status: PostStatus.PUBLISH });
+
+    // 文章排序
+    switch (params.orderBy?.sort) {
+      case "ASC":
+      case "DESC":
+        query = query.orderBy(`posts.${params.orderBy.column}`, params?.orderBy?.sort);
+        break;
+      default:
+        query = query.orderBy(`posts.created_at`, "DESC");
+        break;
+    }
+
+    // 排除自己
+    if (excludeUser > 0) {
+      query = query.where("posts.userId != :userId ", { userId: excludeUser });
+    }
+
+    const posts = await query.getMany();
+
+    return posts;
   }
 }
