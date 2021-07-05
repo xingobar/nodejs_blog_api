@@ -8,7 +8,7 @@ export default abstract class ResourceAbstract {
 
   public when(key: string): boolean {
     // 是 promise ||  已經加載
-    return Object.keys(this.getCurrentResource()).includes(key) || Object.keys(this.getCurrentResource()).includes(`__has_${key}__`);
+    return Object.keys(this.getCurrentResource()).includes(key) || Object.keys(this.getCurrentResource()).includes(`__${key}__`);
   }
 
   /**

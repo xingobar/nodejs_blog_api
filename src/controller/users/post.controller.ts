@@ -21,11 +21,13 @@ export default class PostController {
       return res.json({ errors: v.detail });
     }
 
-    params.user = req.user;
-
     const postService: PostService = Container.get(PostService);
 
     const post = await postService.createPost(params);
+
+    post.user = req.user;
+
+    await postService.updateById(post.id, post);
 
     const resource = new PostResource(post);
 

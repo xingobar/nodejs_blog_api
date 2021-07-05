@@ -72,7 +72,10 @@ export default class PostService {
    */
   public async findAllByFilter(params: IGetAllPostParams, excludeUser: number = 0): Promise<Post[]> {
     // 抓取發布的文章
-    let query = this.postRepository.createQueryBuilder("posts").where(`posts.status = :status`, { status: PostStatus.PUBLISH });
+    let query = this.postRepository
+      .createQueryBuilder("posts")
+      .innerJoinAndSelect("posts.user", "users", "users.id")
+      .where(`posts.status = :status`, { status: PostStatus.PUBLISH });
 
     // 文章排序
     switch (params.orderBy?.sort) {

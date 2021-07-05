@@ -5,6 +5,7 @@ import { Post as PostEntity } from "entity/post.entity";
 
 import PostService from "service/post.service";
 import VerifyTokenMiddleware from "middleware/verify.token.middleware";
+import PostResource from "resource/post.resource";
 
 @Controller("/posts")
 export default class PostController {
@@ -26,6 +27,15 @@ export default class PostController {
 
     const posts: PostEntity[] = await postService.findAllByFilter(params, excludeUser);
 
-    return res.json({ posts });
+    for (let key in posts) {
+      await posts[key].user;
+    }
+
+    const resource: PostResource = new PostResource(posts);
+
+    return res.json(await resource.toArray());
   }
+
+  @Get("/:postId")
+  public show(@Request() req: any, @Response() res: any) {}
 }
