@@ -6,9 +6,11 @@ import { Post as PostEntity } from "entity/post.entity";
 import PostService from "service/post.service";
 import VerifyTokenMiddleware from "middleware/verify.token.middleware";
 import PostResource from "resource/post.resource";
+import NotFoundException from "exception/notfound.exception";
 
 @Controller("/posts")
 export default class PostController {
+  // 取得文章列表
   @Get("/", [VerifyTokenMiddleware])
   public async index(@Request() req: any, @Response() res: any) {
     const params: IGetAllPostParams = req.params;
@@ -36,6 +38,21 @@ export default class PostController {
     return res.json(await resource.toArray());
   }
 
+  // 顯示單一文章
   @Get("/:postId")
-  public show(@Request() req: any, @Response() res: any) {}
+  public async show(@Request() req: any, @Response() res: any) {
+    const postService: PostService = Container.get(PostService);
+
+    const post: PostEntity = await postService.findById(req.params.postId).join((post) => post.user);
+
+    await post.user;
+
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    const resource: PostResource = new PostResource(post);
+
+    return res.json(await resource.toJson());
+  }
 }
