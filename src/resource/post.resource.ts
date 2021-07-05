@@ -6,6 +6,10 @@ interface IPostResource {
   id: number;
   title: string;
   body: string;
+  likeCount: number;
+  bookmarkCount: number;
+  viewCount: number;
+  feedbackScore: number;
   createdAt: Date;
   updatedAt: Date;
   owner?: IUserResource;
@@ -35,6 +39,10 @@ export default class PostResource extends ResourceAbstract {
       id: item.id,
       title: item.title,
       body: item.body,
+      likeCount: item.likeCount,
+      bookmarkCount: item.bookmarkCount,
+      viewCount: item.viewCount,
+      feedbackScore: item.feedbackScore,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
     } as Post;
