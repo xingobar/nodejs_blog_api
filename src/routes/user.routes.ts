@@ -1,8 +1,8 @@
 import MainRoute from "routes/route.abstract";
 import { attachControllers } from "@decorators/express";
 import UserController from "controller/user.controller";
-import ProfileController from "controller/user/profile.controller";
-import PostController from "controller/user/post.controller";
+import ProfileController from "controller/users/profile.controller";
+import PostController from "controller/users/post.controller";
 
 class UserRoute extends MainRoute {
   constructor() {
