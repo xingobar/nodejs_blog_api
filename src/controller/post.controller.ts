@@ -1,4 +1,4 @@
-import { Controller, Get, Request, Response } from "@decorators/express";
+import { Controller, Get, Request, Response, Post } from "@decorators/express";
 import { Container } from "typedi";
 import { IGetAllPostParams } from "interface/post.interface";
 import { Post as PostEntity } from "entity/post.entity";
@@ -7,6 +7,7 @@ import PostService from "service/post.service";
 import VerifyTokenMiddleware from "middleware/verify.token.middleware";
 import PostResource from "resource/post.resource";
 import NotFoundException from "exception/notfound.exception";
+import AuthenticateMiddleware from "middleware/authenticate.middleware";
 
 @Controller("/posts")
 export default class PostController {
@@ -54,5 +55,22 @@ export default class PostController {
     const resource: PostResource = new PostResource(post);
 
     return res.json(await resource.toJson());
+  }
+
+  // 喜歡文章
+  @Post("/:postId/likes", [AuthenticateMiddleware])
+  public async likes(@Request() req: any, @Response() res: any) {
+    const postService: PostService = Container.get(PostService);
+
+    const post: PostEntity = await postService.findById(req.params.postId);
+
+    // 找不到文章
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    const likes = await postService.likePost(req.user.id, post);
+
+    return res.json({ likes });
   }
 }

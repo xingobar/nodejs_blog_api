@@ -159,3 +159,10 @@ npm run typeorm migration:run
 1. https://stackoverflow.com/questions/58444404/how-to-seperate-logs-into-separate-files-daily-in-node-js-using-winston-library
 2. https://github.com/winstonjs/winston/blob/master/UPGRADE-3.0.md
 ```
+
+# npm install typeorm-polymorphic --save
+
+```
+1. https://www.npmjs.com/package/typeorm-polymorphic
+2. https://github.com/typeorm/typeorm/issues/5331
+```

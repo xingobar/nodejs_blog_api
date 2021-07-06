@@ -12,6 +12,7 @@ import {
 
 import { Post } from "entity/post.entity";
 import { Profile } from "entity/profile.entity";
+import { LikeAble } from "entity/likeable.entity";
 
 @Entity("users") // 資料表名稱 users
 export class User {
@@ -43,6 +44,7 @@ export class User {
   })
   confirmToken: string;
 
+  // 個人資料
   @OneToOne(() => Profile, { lazy: true })
   @JoinColumn()
   profile: Profile;
@@ -50,6 +52,7 @@ export class User {
   @Column({ nullable: true })
   profileId: number;
 
+  // 使用者的文章
   @OneToMany(() => Post, (post) => post.user)
   post: Post;
 
@@ -73,4 +76,8 @@ export class User {
     name: "deleted_at",
   })
   deletedAt: Date;
+
+  // 喜歡的文章
+  @OneToMany(() => LikeAble, (likeables) => likeables.user, { lazy: true })
+  likes: LikeAble[];
 }

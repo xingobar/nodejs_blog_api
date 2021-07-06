@@ -9,6 +9,8 @@ import {
   DeleteDateColumn,
 } from "typeorm";
 import { User } from "entity/user.entity";
+import { PolymorphicChildren } from "typeorm-polymorphic";
+import { LikeAble } from "entity/likeable.entity";
 
 export enum PostStatus {
   DRAFT = "DRAFT",
@@ -100,4 +102,9 @@ export class Post {
     comment: "刪除時間",
   })
   deletedAt: Date;
+
+  @PolymorphicChildren(() => LikeAble, {
+    eager: false,
+  })
+  likes: LikeAble[];
 }

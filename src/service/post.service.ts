@@ -2,18 +2,21 @@ import { Service } from "typedi";
 import { ICreatePost, IUpdatePost, IGetAllPostParams } from "interface/post.interface";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Post, PostStatus } from "entity/post.entity";
+import { DeleteResult, InsertResult } from "typeorm";
+import { LikeAble } from "entity/likeable.entity";
 
 import PostRepository from "repository/post.repository";
 import config from "config/index";
-import { DeleteResult } from "typeorm";
-
+import LikeableRepository from "repository/likeable.repository";
 @Service({
   transient: true,
 })
 export default class PostService {
   constructor(
     @InjectRepository(config.connectionName)
-    private readonly postRepository: PostRepository
+    private readonly postRepository: PostRepository,
+    @InjectRepository(config.connectionName)
+    private readonly likeableRepository: LikeableRepository
   ) {}
 
   /**
@@ -96,5 +99,45 @@ export default class PostService {
     const posts = await query.getMany();
 
     return posts;
+  }
+
+  /**
+   * 喜歡文章
+   * @param {number} userId 會員編號
+   * @param {Post} post 文章
+   */
+  public async likePost(userId: number, post: Post): Promise<boolean> {
+    const exists: LikeAble | undefined = await this.likeableRepository.findOne({
+      where: {
+        entityId: post.id,
+        entityType: "Post",
+        userId,
+      },
+    });
+
+    let likes: boolean = false;
+
+    if (exists) {
+      // 已存在, 所以要取消喜歡
+      await this.likeableRepository.delete({
+        entityId: post.id,
+        userId,
+        entityType: "Post",
+      });
+
+      likes = false;
+    } else {
+      // 喜歡文章
+      let likeable: LikeAble = new LikeAble();
+
+      likeable.userId = userId;
+      likeable.post = post;
+
+      await this.likeableRepository.save(likeable);
+
+      likes = true;
+    }
+
+    return likes;
   }
 }
