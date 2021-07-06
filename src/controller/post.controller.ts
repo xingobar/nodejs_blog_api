@@ -2,12 +2,14 @@ import { Controller, Get, Request, Response, Post } from "@decorators/express";
 import { Container } from "typedi";
 import { IGetAllPostParams } from "interface/post.interface";
 import { Post as PostEntity } from "entity/post.entity";
+import { LikeableEntityType } from "entity/likeable.entity";
 
 import PostService from "service/post.service";
 import VerifyTokenMiddleware from "middleware/verify.token.middleware";
 import PostResource from "resource/post.resource";
 import NotFoundException from "exception/notfound.exception";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
+import LikeableService from "service/likeable.service";
 
 @Controller("/posts")
 export default class PostController {
@@ -69,8 +71,30 @@ export default class PostController {
       throw new NotFoundException();
     }
 
-    const likes = await postService.likePost(req.user.id, post);
+    const likeableService: LikeableService = Container.get(LikeableService);
+    const like = await likeableService.findById({
+      userId: req.user.id,
+      entityId: post.id,
+      entityType: LikeableEntityType.Post,
+    });
 
-    return res.json({ likes });
+    let status: boolean = false;
+
+    if (like) {
+      await likeableService.deleteById({
+        userId: req.user.id,
+        entityType: LikeableEntityType.Post,
+        entity: post,
+      });
+      status = false;
+    } else {
+      await likeableService.likePost({
+        userId: req.user.id,
+        post,
+      });
+      status = true;
+    }
+
+    return res.json({ status });
   }
 }

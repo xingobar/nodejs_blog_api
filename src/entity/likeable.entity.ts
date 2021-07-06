@@ -4,6 +4,10 @@ import { PolymorphicParent } from "typeorm-polymorphic";
 import { User } from "entity/user.entity";
 import { Post } from "entity/post.entity";
 
+export const enum LikeableEntityType {
+  Post = "Post",
+}
+
 @Entity("likeables")
 export class LikeAble implements PolymorphicChildInterface {
   @PrimaryGeneratedColumn()

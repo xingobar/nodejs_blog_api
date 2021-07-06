@@ -100,44 +100,4 @@ export default class PostService {
 
     return posts;
   }
-
-  /**
-   * 喜歡文章
-   * @param {number} userId 會員編號
-   * @param {Post} post 文章
-   */
-  public async likePost(userId: number, post: Post): Promise<boolean> {
-    const exists: LikeAble | undefined = await this.likeableRepository.findOne({
-      where: {
-        entityId: post.id,
-        entityType: "Post",
-        userId,
-      },
-    });
-
-    let likes: boolean = false;
-
-    if (exists) {
-      // 已存在, 所以要取消喜歡
-      await this.likeableRepository.delete({
-        entityId: post.id,
-        userId,
-        entityType: "Post",
-      });
-
-      likes = false;
-    } else {
-      // 喜歡文章
-      let likeable: LikeAble = new LikeAble();
-
-      likeable.userId = userId;
-      likeable.post = post;
-
-      await this.likeableRepository.save(likeable);
-
-      likes = true;
-    }
-
-    return likes;
-  }
 }
