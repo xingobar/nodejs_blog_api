@@ -1,6 +1,6 @@
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
-import { LikeAble, LikeableEntityType } from "entity/likeable.entity";
+import { Likeable, LikeableEntityType } from "entity/likeable.entity";
 import { Post } from "entity/post.entity";
 import { DeleteResult, InsertResult } from "typeorm";
 import LikeableRepository from "repository/likeable.repository";
@@ -29,7 +29,7 @@ export default class LikeableService {
     userId: number;
     entityType: string;
     entityId: number;
-  }): Promise<LikeAble | undefined> {
+  }): Promise<Likeable | undefined> {
     return await this.likeableRepository.findOne({
       where: {
         userId,
@@ -60,8 +60,8 @@ export default class LikeableService {
    * @param {number} param.userId 會員編號
    * @param {Post} param.post - 文章
    */
-  public async likePost({ userId, post }: { userId: number; post: Post }): Promise<LikeAble> {
-    let likeable: LikeAble = new LikeAble();
+  public async likePost({ userId, post }: { userId: number; post: Post }): Promise<Likeable> {
+    let likeable: Likeable = new Likeable();
 
     likeable.userId = userId;
     likeable.post = post;

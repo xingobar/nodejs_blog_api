@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { User } from "entity/user.entity";
 import { PolymorphicChildren } from "typeorm-polymorphic";
-import { LikeAble } from "entity/likeable.entity";
+import { Likeable } from "entity/likeable.entity";
 
 export enum PostStatus {
   DRAFT = "DRAFT",
@@ -103,8 +103,8 @@ export class Post {
   })
   deletedAt: Date;
 
-  @PolymorphicChildren(() => LikeAble, {
+  @PolymorphicChildren(() => Likeable, {
     eager: false,
   })
-  likes: LikeAble[];
+  likes: Likeable[];
 }

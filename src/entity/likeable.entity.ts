@@ -9,7 +9,7 @@ export const enum LikeableEntityType {
 }
 
 @Entity("likeables")
-export class LikeAble implements PolymorphicChildInterface {
+export class Likeable implements PolymorphicChildInterface {
   @PrimaryGeneratedColumn()
   id: number;
 

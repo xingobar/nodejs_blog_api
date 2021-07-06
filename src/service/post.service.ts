@@ -3,7 +3,7 @@ import { ICreatePost, IUpdatePost, IGetAllPostParams } from "interface/post.inte
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Post, PostStatus } from "entity/post.entity";
 import { DeleteResult, InsertResult } from "typeorm";
-import { LikeAble } from "entity/likeable.entity";
+import { Likeable } from "entity/likeable.entity";
 
 import PostRepository from "repository/post.repository";
 import config from "config/index";
