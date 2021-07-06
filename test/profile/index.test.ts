@@ -7,7 +7,7 @@ import { useRefreshDatabase, tearDownDatabase } from "typeorm-seeding";
 
 let jwtToken: string;
 
-let profilePayload: {
+const profilePayload: {
   gender?: string;
   phone?: string;
 } = {};

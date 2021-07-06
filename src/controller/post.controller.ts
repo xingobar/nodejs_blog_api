@@ -32,8 +32,10 @@ export default class PostController {
 
     const posts: PostEntity[] = await postService.findAllByFilter(params, excludeUser);
 
-    for (let key in posts) {
-      await posts[key].user;
+    for (const key in posts) {
+      if (posts.hasOwnProperty(key)) {
+        await posts[key].user;
+      }
     }
 
     const resource: PostResource = new PostResource(posts);
@@ -46,7 +48,7 @@ export default class PostController {
   public async show(@Request() req: any, @Response() res: any) {
     const postService: PostService = Container.get(PostService);
 
-    const post: PostEntity = await postService.findById(req.params.postId).join((post) => post.user);
+    const post: PostEntity = await postService.findById(req.params.postId).join((p) => p.user);
 
     await post.user;
 
@@ -81,11 +83,7 @@ export default class PostController {
     let status: boolean = false;
 
     if (like) {
-      await likeableService.deleteById({
-        userId: req.user.id,
-        entityType: LikeableEntityType.Post,
-        entity: post,
-      });
+      await likeableService.deleteByEntity(like);
       status = false;
     } else {
       await likeableService.likePost({

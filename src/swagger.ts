@@ -40,6 +40,6 @@ class Swagger {
 
   // 設定 error config
   public setErrorConfig() {
-    this.server.setErrorConfig((app: any) => {});
+    // this.server.setErrorConfig((app: any) => {});
   }
 }

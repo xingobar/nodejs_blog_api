@@ -28,13 +28,13 @@ class App {
 
   constructor() {
     this.swaggerContainer = new SwaggerContainer();
-    //this.app = express();
+    // this.app = express();
     this.setSwaggerDefinition();
     this.setSwaggerConfig();
     this.setErrorConfig();
     this.buildServer();
-    //this.setConfig();
-    //this.setRoutes();
+    // this.setConfig();
+    // this.setRoutes();
     this.setDbConnection();
   }
 

@@ -66,7 +66,7 @@ export default class PostService {
    * @param post
    */
   public async deleteById(id: number): Promise<DeleteResult> {
-    return this.postRepository.createQueryBuilder("posts").softDelete().from(Post).where("id = :id", { id: id }).execute();
+    return this.postRepository.createQueryBuilder("posts").softDelete().from(Post).where("id = :id", { id }).execute();
   }
 
   /**

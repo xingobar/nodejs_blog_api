@@ -46,12 +46,8 @@ export default class LikeableService {
    * @param {string} params.entity entity
    * @param {string} params.entityType entity type
    */
-  public async deleteById({ userId, entity, entityType }: { userId: number; entity: Post; entityType: string }): Promise<DeleteResult> {
-    return await this.likeableRepository.delete({
-      userId,
-      entityType,
-      entityId: entity.id,
-    });
+  public async deleteByEntity(entity: Likeable): Promise<Likeable> {
+    return await this.likeableRepository.remove(entity);
   }
 
   /**
@@ -61,7 +57,7 @@ export default class LikeableService {
    * @param {Post} param.post - 文章
    */
   public async likePost({ userId, post }: { userId: number; post: Post }): Promise<Likeable> {
-    let likeable: Likeable = new Likeable();
+    const likeable: Likeable = new Likeable();
 
     likeable.userId = userId;
     likeable.post = post;
