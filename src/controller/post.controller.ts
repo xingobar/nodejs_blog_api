@@ -4,6 +4,7 @@ import { IGetAllPostParams } from "interface/post.interface";
 import { Post as PostEntity } from "entity/post.entity";
 import { LikeableEntityType } from "entity/likeable.entity";
 import { Bookmark, BookmarkEntityType } from "entity/bookmark.entity";
+import { ViewLog, ViewLogEntityType } from "entity/view.log.entity";
 
 import PostService from "service/post.service";
 import VerifyTokenMiddleware from "middleware/verify.token.middleware";
@@ -12,6 +13,7 @@ import NotFoundException from "exception/notfound.exception";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import LikeableService from "service/likeable.service";
 import BookmarkService from "service/bookmark.service";
+import ViewLogService from "service/view.log.service";
 
 @Controller("/posts")
 export default class PostController {
@@ -46,9 +48,10 @@ export default class PostController {
   }
 
   // 顯示單一文章
-  @Get("/:postId")
+  @Get("/:postId", [VerifyTokenMiddleware])
   public async show(@Request() req: any, @Response() res: any) {
     const postService: PostService = Container.get(PostService);
+    const viewLogService: ViewLogService = Container.get(ViewLogService);
 
     const post: PostEntity = await postService.findById(req.params.postId).join((p) => p.user);
 
@@ -56,6 +59,19 @@ export default class PostController {
 
     if (!post) {
       throw new NotFoundException();
+    }
+
+    // 有登入的話新增觀看紀錄
+    if (req.user) {
+      const viewLog: ViewLog | undefined = await viewLogService.findById({
+        userId: req.user.id,
+        entityType: ViewLogEntityType.Post,
+        entityId: post.id,
+      });
+
+      if (!viewLog) {
+        await viewLogService.createLog({ userId: req.user.id, entity: post });
+      }
     }
 
     const resource: PostResource = new PostResource(post);
