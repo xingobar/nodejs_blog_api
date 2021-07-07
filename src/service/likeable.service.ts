@@ -1,8 +1,7 @@
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
-import { Likeable, LikeableEntityType } from "entity/likeable.entity";
+import { Likeable } from "entity/likeable.entity";
 import { Post } from "entity/post.entity";
-import { DeleteResult, InsertResult } from "typeorm";
 import LikeableRepository from "repository/likeable.repository";
 
 @Service({
@@ -21,7 +20,7 @@ export default class LikeableService {
    * @param {LikeableEntityType} entityType entity type
    * @param {number} entityId entity id
    */
-  public async findById({
+  public async findByIdAndEntity({
     userId,
     entityType,
     entityId,

@@ -13,6 +13,7 @@ import {
 import { Post } from "entity/post.entity";
 import { Profile } from "entity/profile.entity";
 import { Likeable } from "entity/likeable.entity";
+import { Bookmark } from "entity/bookmark.entity";
 
 @Entity("users") // 資料表名稱 users
 export class User {
@@ -80,4 +81,7 @@ export class User {
   // 喜歡的文章
   @OneToMany(() => Likeable, (likeables) => likeables.user, { lazy: true })
   likes: Likeable[];
+
+  @OneToMany(() => Bookmark, (bookmarks) => bookmarks.user, { lazy: true })
+  bookmarks: Bookmark[];
 }

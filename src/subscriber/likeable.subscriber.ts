@@ -16,6 +16,7 @@ export class LikeableSubscriber implements EntitySubscriberInterface<Likeable> {
         .createQueryBuilder()
         .update(Post)
         .where("id = :entityId", { entityId: entity.entityId })
+        .andWhere("like_count >= 0")
         .set({
           likeCount: () => "like_count + 1",
         })
@@ -31,6 +32,7 @@ export class LikeableSubscriber implements EntitySubscriberInterface<Likeable> {
         .createQueryBuilder()
         .update(Post)
         .where("id = :entityId", { entityId: entity.entityId })
+        .andWhere("like_count >= 1")
         .set({
           likeCount: () => "like_count - 1",
         })

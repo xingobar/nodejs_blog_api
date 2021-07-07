@@ -3,6 +3,7 @@ import { Container } from "typedi";
 import { IGetAllPostParams } from "interface/post.interface";
 import { Post as PostEntity } from "entity/post.entity";
 import { LikeableEntityType } from "entity/likeable.entity";
+import { Bookmark, BookmarkEntityType } from "entity/bookmark.entity";
 
 import PostService from "service/post.service";
 import VerifyTokenMiddleware from "middleware/verify.token.middleware";
@@ -10,6 +11,7 @@ import PostResource from "resource/post.resource";
 import NotFoundException from "exception/notfound.exception";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import LikeableService from "service/likeable.service";
+import BookmarkService from "service/bookmark.service";
 
 @Controller("/posts")
 export default class PostController {
@@ -74,7 +76,7 @@ export default class PostController {
     }
 
     const likeableService: LikeableService = Container.get(LikeableService);
-    const like = await likeableService.findById({
+    const like = await likeableService.findByIdAndEntity({
       userId: req.user.id,
       entityId: post.id,
       entityType: LikeableEntityType.Post,
@@ -94,5 +96,39 @@ export default class PostController {
     }
 
     return res.json({ status });
+  }
+
+  // 收藏文章
+  @Post("/:postId/bookmarks", [AuthenticateMiddleware])
+  public async bookmarked(@Request() req: any, @Response() res: any) {
+    const bookmarkService: BookmarkService = Container.get(BookmarkService);
+
+    const postService: PostService = Container.get(PostService);
+
+    const post: PostEntity = await postService.findById(req.params.postId);
+
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    /**
+     * 檢查是否已加入過標籤
+     * 倘若已加入的話則取消書籤,
+     * 反之則加入
+     */
+    const bookmark: Bookmark | undefined = await bookmarkService.findByUserIdAndEntity({
+      userId: req.user.id,
+      entityType: BookmarkEntityType.Post,
+      entityId: post.id,
+    });
+    if (bookmark) {
+      await bookmarkService.unBookmarkedPost(bookmark);
+
+      return res.json({ status: false });
+    }
+
+    await bookmarkService.bookmarkedPost({ userId: req.user.id, entity: post });
+
+    return res.json({ status: true });
   }
 }
