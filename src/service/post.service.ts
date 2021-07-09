@@ -102,12 +102,45 @@ export default class PostService {
    * 推薦最多人觀看的 4 篇文章
    * @param {number} postId - 文章編號
    */
-  public async recommends(postId: number) {
+  public async getPopularity(postId: number, limit: number = 4) {
     return await this.postRepository
       .getAll()
       .where((p) => p.id)
       .notEqual(postId)
       .orderByDescending((p) => p.viewCount)
-      .take(4);
+      .take(limit);
+  }
+
+  /**
+   * 取得其他人也觀看的熱門文章
+   *
+   * 排除目前的文章,
+   * 取得其他人也觀看的熱門文章
+   *
+   * @param {number} postId - 文章編號
+   * @param {number} userId - 會員編號
+   * @param {number} limit - 取得多少筆資料
+   */
+  public async getOtherPopularityRead(postId: number, userId: number, limit: number = 4) {
+    return await this.postRepository
+      .createQueryBuilder("posts")
+      .select("posts.*")
+      .innerJoin(
+        (subquery) => {
+          return subquery
+            .from((subquery) => {
+              return subquery.from(ViewLog, "view_logs").where("entityId != :entityId", { entityId: postId });
+            }, "tmp")
+            .select("tmp.entityId")
+            .addSelect("COUNT(*)", "total")
+            .where("userId != :userId", { userId })
+            .groupBy("tmp.entityId")
+            .orderBy("total", "DESC")
+            .take(limit);
+        },
+        "popularity",
+        "popularity.entityId = posts.id"
+      )
+      .getRawMany();
   }
 }
