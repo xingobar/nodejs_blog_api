@@ -1,3 +1,23 @@
+簡單文章 api
+
+功能 | api |
+--- | --- | 
+登入 | [POST]/api/auth/login | 
+註冊 | [POST]/api/auth/register |
+取得文章 | [GET] /api/posts |
+取得會員資料 | [GET] /api/users |
+儲存個人資料 | [POST] /api/users/profile
+取得個人資料 | [GET] /api/users/profile |
+新增文章 | [POST] /api/users/posts | 
+更新文章 | [PUT] /api/users/posts |
+刪除文章 | [DELETE] /api/users/posts |
+顯示文章 | [GET] /api/posts/{postId} |
+喜歡文章 | [POST] /api/posts/{postId}/likes |
+加入書籤 | [POST] /api/posts/{postId}/bookmarks |
+推薦文章 | [GET] /api/posts/{postId}/popularity
+
+
+
 # nodejs_blog_api
 
 nodejs + ts + express blog api
