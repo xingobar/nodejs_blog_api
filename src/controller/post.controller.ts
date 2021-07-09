@@ -62,6 +62,7 @@ export default class PostController {
     }
 
     // 有登入的話新增觀看紀錄
+
     if (req.user) {
       const viewLog: ViewLog | undefined = await viewLogService.findById({
         userId: req.user.id,

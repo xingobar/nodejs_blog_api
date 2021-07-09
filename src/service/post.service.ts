@@ -2,21 +2,18 @@ import { Service } from "typedi";
 import { ICreatePost, IUpdatePost, IGetAllPostParams } from "interface/post.interface";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Post, PostStatus } from "entity/post.entity";
-import { DeleteResult, InsertResult } from "typeorm";
-import { Likeable } from "entity/likeable.entity";
+import { DeleteResult } from "typeorm";
+import { ViewLog } from "entity/view.log.entity";
 
 import PostRepository from "repository/post.repository";
 import config from "config/index";
-import LikeableRepository from "repository/likeable.repository";
 @Service({
   transient: true,
 })
 export default class PostService {
   constructor(
     @InjectRepository(config.connectionName)
-    private readonly postRepository: PostRepository,
-    @InjectRepository(config.connectionName)
-    private readonly likeableRepository: LikeableRepository
+    private readonly postRepository: PostRepository
   ) {}
 
   /**
@@ -99,5 +96,18 @@ export default class PostService {
     const posts = await query.getMany();
 
     return posts;
+  }
+
+  /**
+   * 推薦最多人觀看的 4 篇文章
+   * @param {number} postId - 文章編號
+   */
+  public async recommends(postId: number) {
+    return await this.postRepository
+      .getAll()
+      .where((p) => p.id)
+      .notEqual(postId)
+      .orderByDescending((p) => p.viewCount)
+      .take(4);
   }
 }
