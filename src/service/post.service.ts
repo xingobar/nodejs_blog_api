@@ -106,16 +106,16 @@ export default class PostService {
      * 搜尋標題以及內文是否有關鍵字
      */
     if (params.keyword) {
-      query = query
-        .where("title like :title", { title: `%${params.keyword}%` })
-        .orWhere("body like :body", { body: `%${params.keyword}%` });
+      query = query.where((qb) => {
+        qb.where("title like :title ", { title: `%${params.keyword}%` }).orWhere("body like :body", { body: `%${params.keyword}%` });
+      });
     }
 
     /**
      * 搜尋作者
      */
     if (params.account) {
-      query = query.where((qb) => {
+      query = query.andWhere((qb) => {
         const subquery = qb
           .subQuery()
           .select("users.id")
