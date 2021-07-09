@@ -7,6 +7,7 @@ import { ViewLog } from "entity/view.log.entity";
 
 import PostRepository from "repository/post.repository";
 import config from "config/index";
+import { User } from "entity/user.entity";
 @Service({
   transient: true,
 })
@@ -68,6 +69,13 @@ export default class PostService {
 
   /**
    * 取得多篇文章資訊
+   *
+   * 抓取發布的文章
+   * 且會按照傳進來的參數排序
+   * created_at, feedback_count, view_count, like_count
+   * 且排除自己的文章
+   * 搜尋作者名稱等
+   *
    * @param params
    */
   public async findAllByFilter(params: IGetAllPostParams, excludeUser: number = 0): Promise<Post[]> {
@@ -91,6 +99,31 @@ export default class PostService {
     // 排除自己
     if (excludeUser > 0) {
       query = query.where("posts.userId != :userId ", { userId: excludeUser });
+    }
+
+    /**
+     * 關鍵字
+     * 搜尋標題以及內文是否有關鍵字
+     */
+    if (params.keyword) {
+      query = query
+        .where("title like :title", { title: `%${params.keyword}%` })
+        .orWhere("body like :body", { body: `%${params.keyword}%` });
+    }
+
+    /**
+     * 搜尋作者
+     */
+    if (params.account) {
+      query = query.where((qb) => {
+        const subquery = qb
+          .subQuery()
+          .select("users.id")
+          .from(User, "users")
+          .where("account like :account ", { account: `%${params.account}%` })
+          .getQuery();
+        return "posts.userId IN " + subquery;
+      });
     }
 
     const posts = await query.getMany();

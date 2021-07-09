@@ -20,7 +20,11 @@ export default class PostController {
   // 取得文章列表
   @Get("/", [VerifyTokenMiddleware])
   public async index(@Request() req: any, @Response() res: any) {
-    const params: IGetAllPostParams = req.params;
+    const params: IGetAllPostParams = req.query;
+
+    // 設定預設值
+    params.page = params.page ?? 1;
+    params.limit = params.limit ?? 10;
 
     // 排除使用者
     let excludeUser: number = 0;
@@ -29,7 +33,12 @@ export default class PostController {
       excludeUser = req.user.id;
     }
 
-    // 預設依照創建時間排序
+    /**
+     * 預設依照創建時間排序
+     * 評價分數
+     * 觀看次數
+     * 喜歡次數
+     */
     params.orderBy = params?.orderBy ?? { column: "created_at", sort: "DESC" };
 
     const postService: PostService = Container.get(PostService);
