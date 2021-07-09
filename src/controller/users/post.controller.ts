@@ -6,6 +6,7 @@ import { Container } from "typedi";
 import PostService from "service/post.service";
 import PostResource from "resource/post.resource";
 import NotFoundException from "exception/notfound.exception";
+import PaginatorLib from "lib/paginator.lib";
 
 @Controller("/users/posts")
 export default class PostController {
@@ -18,7 +19,15 @@ export default class PostController {
 
     const postResource = new PostResource(posts);
 
-    return res.json(await postResource.toArray());
+    const allPosts = await postService.findByUserId(req.user.id);
+
+    return res.json(
+      PaginatorLib.paginate({
+        data: await postResource.toArray(),
+        total: allPosts.length,
+        page: req.query.page ?? 1,
+      })
+    );
   }
 
   // 新增文章
