@@ -8,9 +8,7 @@ import { ViewLog } from "entity/view.log.entity";
 import PostRepository from "repository/post.repository";
 import config from "config/index";
 import { User } from "entity/user.entity";
-@Service({
-  transient: true,
-})
+@Service()
 export default class PostService {
   constructor(
     @InjectRepository(config.connectionName)
@@ -25,6 +23,34 @@ export default class PostService {
     return await this.postRepository.create({
       ...payload,
     } as Post);
+  }
+
+  /**
+   * 根據會員編號取得文章
+   * @param {number} userId - 會員編號
+   */
+  public async findByUserId(userId: number) {
+    return await this.postRepository
+      .getAll()
+      .where((p) => p.userId)
+      .equal(userId)
+      .orderByDescending((p) => p.updatedAt);
+  }
+
+  /**
+   * 根據會員編號取得分頁資料
+   * @param {number} userId 會員編號
+   * @param {number} page 分頁
+   * @param {number} limit 每頁幾筆資料
+   */
+  public async findByUserIdPaginator(userId: number, page: number = 1, limit: number = 10) {
+    return await this.postRepository
+      .getAll()
+      .where((p) => p.userId)
+      .equal(userId)
+      .skip((page - 1) * limit)
+      .take(page * limit)
+      .orderByDescending((p) => p.updatedAt);
   }
 
   /**

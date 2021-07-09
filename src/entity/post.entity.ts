@@ -23,6 +23,12 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({
+    name: "userId",
+    comment: "會員編號",
+  })
+  userId: number;
+
   @ManyToOne(() => User, (user) => user.post, { lazy: true })
   @JoinColumn()
   user: User;

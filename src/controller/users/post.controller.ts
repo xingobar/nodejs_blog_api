@@ -1,4 +1,4 @@
-import { Controller, Post, Request, Response, Put, Delete } from "@decorators/express";
+import { Controller, Post, Request, Response, Put, Delete, Get } from "@decorators/express";
 import PostValidator from "validator/post.validator";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import { ICreatePost, IUpdatePost } from "interface/post.interface";
@@ -9,6 +9,18 @@ import NotFoundException from "exception/notfound.exception";
 
 @Controller("/users/posts")
 export default class PostController {
+  // 取得文章列表
+  @Get("/", [AuthenticateMiddleware])
+  public async index(@Request() req: any, @Response() res: any) {
+    const postService: PostService = Container.get(PostService);
+
+    const posts = await postService.findByUserIdPaginator(req.user.id);
+
+    const postResource = new PostResource(posts);
+
+    return res.json(await postResource.toArray());
+  }
+
   // 新增文章
   @Post("/", [AuthenticateMiddleware])
   public async store(@Request() req: any, @Response() res: any) {

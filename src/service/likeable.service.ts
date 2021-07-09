@@ -4,9 +4,7 @@ import { Likeable } from "entity/likeable.entity";
 import { Post } from "entity/post.entity";
 import LikeableRepository from "repository/likeable.repository";
 
-@Service({
-  transient: true,
-})
+@Service()
 export default class LikeableService {
   constructor(
     @InjectRepository()

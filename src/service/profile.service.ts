@@ -9,9 +9,7 @@ import ProfileRepository from "repository/profile.repository";
 import UserRepository from "repository/user.repository";
 import config from "config/index";
 
-@Service({
-  transient: true,
-})
+@Service()
 export class ProfileService {
   constructor(
     @InjectRepository(config.connectionName)
