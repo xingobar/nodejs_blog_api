@@ -14,7 +14,8 @@
 顯示文章 | [GET] /api/posts/{postId} |
 喜歡文章 | [POST] /api/posts/{postId}/likes |
 加入書籤 | [POST] /api/posts/{postId}/bookmarks |
-推薦文章 | [GET] /api/posts/{postId}/popularity
+觀看次數的文章 | [GET] /api/posts/{postId}/popularity |
+其他人也觀看的文章 | [GET] /api/posts/{postId}/recommends |
 
 
 
