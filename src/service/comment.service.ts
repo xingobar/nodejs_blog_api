@@ -71,4 +71,26 @@ export default class CommentService {
     children.postId = parent.postId;
     return await this.commentRepository.create(children);
   }
+
+  /**
+   * 取得子留言
+   * @param {number} parentId 父曾留言
+   * @param {number} childrenId 子留言編號
+   */
+  public findChildrenCommentById(parentId: number, childrenId: number) {
+    return this.commentRepository
+      .getOne()
+      .where((c) => c.parentId)
+      .equal(parentId)
+      .and((c) => c.id)
+      .equal(childrenId);
+  }
+
+  /**
+   * 更新子留言
+   * @param children
+   */
+  public async updateChildren(children: Comment) {
+    return await this.commentRepository.update(children);
+  }
 }

@@ -33,4 +33,11 @@ export default class CommentValidator extends ValidatorAbstract {
   public storeChildrenRule() {
     return this.storeParentRule();
   }
+
+  /**
+   * 更新子留言
+   */
+  public updateChildrenRule() {
+    return this.storeParentRule();
+  }
 }
