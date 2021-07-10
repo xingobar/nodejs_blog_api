@@ -39,18 +39,39 @@ export default class PostService {
 
   /**
    * 根據會員編號取得分頁資料
-   * @param {number} userId 會員編號
-   * @param {number} page 分頁
-   * @param {number} limit 每頁幾筆資料
+   * @param {object} params
+   * @param {number} params.userId 會員編號
+   * @param {number} params.page 分頁
+   * @param {number} params.limit 每頁幾筆資料
+   * @param {string} params.keyword 關鍵字
    */
-  public async findByUserIdPaginator(userId: number, page: number = 1, limit: number = 10) {
-    return await this.postRepository
+  public async findByUserIdPaginator({
+    userId,
+    page = 1,
+    limit = 10,
+    keyword,
+  }: {
+    userId: number;
+    page?: number;
+    limit?: number;
+    keyword?: string;
+  }) {
+    const repo = this.postRepository
       .getAll()
       .where((p) => p.userId)
       .equal(userId)
       .skip((page - 1) * limit)
       .take(page * limit)
       .orderByDescending((p) => p.updatedAt);
+
+    // 判斷是否有關鍵字
+    if (keyword) {
+      repo
+        .where((p) => p.title)
+        .contains(keyword)
+        .isolatedOr((q) => q.where((p) => p.body).contains(keyword));
+    }
+    return await repo;
   }
 
   /**

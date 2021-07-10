@@ -8,6 +8,11 @@ import PostResource from "resource/post.resource";
 import NotFoundException from "exception/notfound.exception";
 import PaginatorLib from "lib/paginator.lib";
 
+// 使用者文章
+interface IPostIndex {
+  keyword?: string;
+}
+
 @Controller("/users/posts")
 export default class PostController {
   // 取得文章列表
@@ -15,7 +20,10 @@ export default class PostController {
   public async index(@Request() req: any, @Response() res: any) {
     const postService: PostService = Container.get(PostService);
 
-    const posts = await postService.findByUserIdPaginator(req.user.id);
+    // 關鍵字查詢
+    const params: IPostIndex = req.query;
+
+    const posts = await postService.findByUserIdPaginator({ userId: req.user.id, keyword: params.keyword });
 
     const postResource = new PostResource(posts);
 
