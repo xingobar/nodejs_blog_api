@@ -15,6 +15,7 @@ import { Profile } from "entity/profile.entity";
 import { Likeable } from "entity/likeable.entity";
 import { Bookmark } from "entity/bookmark.entity";
 import { ViewLog } from "entity/view.log.entity";
+import { Comment } from "entity/comment.entity";
 
 @Entity("users") // 資料表名稱 users
 export class User {
@@ -88,4 +89,8 @@ export class User {
 
   @OneToMany(() => ViewLog, (viewLogs) => viewLogs.user, { lazy: true })
   viewLogs: ViewLog[];
+
+  // 使用者留言
+  @OneToMany(() => Comment, (comments) => comments.user)
+  comments: Comment[];
 }

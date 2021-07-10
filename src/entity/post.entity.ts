@@ -7,10 +7,12 @@ import {
   JoinColumn,
   ManyToOne,
   DeleteDateColumn,
+  OneToMany,
 } from "typeorm";
 import { User } from "entity/user.entity";
 import { PolymorphicChildren } from "typeorm-polymorphic";
 import { Likeable } from "entity/likeable.entity";
+import { Comment } from "entity/comment.entity";
 
 export enum PostStatus {
   DRAFT = "DRAFT",
@@ -113,4 +115,7 @@ export class Post {
     eager: false,
   })
   likes: Likeable[];
+
+  @OneToMany(() => Comment, (comments) => comments.post)
+  comments: Comment[];
 }
