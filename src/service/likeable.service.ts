@@ -1,6 +1,6 @@
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
-import { Likeable } from "entity/likeable.entity";
+import { Likeable, LikeableEntityType } from "entity/likeable.entity";
 import { Post } from "entity/post.entity";
 import LikeableRepository from "repository/likeable.repository";
 
@@ -60,5 +60,19 @@ export default class LikeableService {
     likeable.post = post;
 
     return await this.likeableRepository.save(likeable);
+  }
+
+  /**
+   * 取得使用者喜歡的文章
+   * @param userId
+   * @param entityType
+   */
+  public async findAllByUserId(userId: number, entityType: LikeableEntityType) {
+    return this.likeableRepository.find({
+      where: {
+        userId,
+        entityType,
+      },
+    });
   }
 }

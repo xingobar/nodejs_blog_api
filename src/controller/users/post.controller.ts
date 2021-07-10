@@ -5,10 +5,11 @@ import { BookmarkEntityType } from "entity/bookmark.entity";
 import PostService from "service/post.service";
 import PostResource from "resource/post.resource";
 import NotFoundException from "exception/notfound.exception";
-import PaginatorLib from "lib/paginator.lib";
 import BookmarkService from "service/bookmark.service";
 import PostValidator from "validator/post.validator";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
+import LikeableService from "service/likeable.service";
+import { LikeableEntityType } from "entity/likeable.entity";
 
 // 使用者文章
 interface IPostIndex {
@@ -115,6 +116,20 @@ export default class PostController {
 
     const postResource = new PostResource(posts);
 
-    res.json(await postResource.toArray());
+    return res.json(await postResource.toArray());
+  }
+
+  // 取得使用者喜歡的文章
+  @Get("/likes", [AuthenticateMiddleware])
+  public async likes(@Request() req: any, @Response() res: any) {
+    const likeableService: LikeableService = Container.get(LikeableService);
+
+    const likes = await likeableService.findAllByUserId(req.user.id, LikeableEntityType.Post);
+
+    const posts = likes.map((like) => like.post);
+
+    const postResource = new PostResource(posts);
+
+    return res.json(await postResource.toArray());
   }
 }
