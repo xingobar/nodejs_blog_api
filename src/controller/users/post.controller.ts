@@ -2,6 +2,8 @@ import { Controller, Post, Request, Response, Put, Delete, Get } from "@decorato
 import { ICreatePost, IUpdatePost } from "interface/post.interface";
 import { Container } from "typedi";
 import { BookmarkEntityType } from "entity/bookmark.entity";
+import { LikeableEntityType } from "entity/likeable.entity";
+
 import PostService from "service/post.service";
 import PostResource from "resource/post.resource";
 import NotFoundException from "exception/notfound.exception";
@@ -9,7 +11,7 @@ import BookmarkService from "service/bookmark.service";
 import PostValidator from "validator/post.validator";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import LikeableService from "service/likeable.service";
-import { LikeableEntityType } from "entity/likeable.entity";
+import PaginatorLib from "lib/paginator.lib";
 
 // 使用者文章
 interface IPostIndex {
@@ -108,15 +110,29 @@ export default class PostController {
   // 取得使用者書籤
   @Get("/bookmarks", [AuthenticateMiddleware])
   public async bookmarks(@Request() req: any, @Response() res: any) {
+    const page = req.query.page ?? 1;
+    const limit = req.query.limit ?? 10;
+
     const bookmarkService: BookmarkService = Container.get(BookmarkService);
 
-    const bookmarks = await bookmarkService.findAllByUserId(req.user.id, BookmarkEntityType.Post);
+    // 取得分頁資料
+    const bookmarks = await bookmarkService.findPaginatorByUserId(req.user.id, BookmarkEntityType.Post, { page, limit });
+
+    // 取得總共的比數
+    const total = await bookmarkService.findTotalByUserId(req.user.id, BookmarkEntityType.Post);
 
     const posts = bookmarks.map((bookmark) => bookmark.post);
 
     const postResource = new PostResource(posts);
 
-    return res.json(await postResource.toArray());
+    return res.json(
+      PaginatorLib.paginate({
+        data: await postResource.toArray(),
+        total,
+        page,
+        limit,
+      })
+    );
   }
 
   // 取得使用者喜歡的文章

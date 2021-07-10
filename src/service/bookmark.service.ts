@@ -64,8 +64,28 @@ export default class BookmarkService {
    * @param entityId
    * @param entityType
    */
-  public async findAllByUserId(userId: number, entityType: BookmarkEntityType) {
-    return await this.bookmarkRepository.find({
+  public findPaginatorByUserId(
+    userId: number,
+    entityType: BookmarkEntityType,
+    { page = 1, limit = 10 }: { page?: number; limit?: number }
+  ) {
+    return this.bookmarkRepository.find({
+      where: {
+        userId,
+        entityType,
+      },
+      take: page * limit,
+      skip: (page - 1) * limit,
+    });
+  }
+
+  /**
+   * 取得使用收藏文章的總數
+   * @param userId
+   * @param entityType
+   */
+  public findTotalByUserId(userId: number, entityType: BookmarkEntityType) {
+    return this.bookmarkRepository.count({
       where: {
         userId,
         entityType,
