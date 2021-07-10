@@ -93,4 +93,12 @@ export default class CommentService {
   public async updateChildren(children: Comment) {
     return await this.commentRepository.update(children);
   }
+
+  /**
+   * 刪除子留言
+   * @param children 
+   */
+  public async deleteChildren(children: Comment) {
+    return await this.commentRepository.delete(children)
+  })
 }

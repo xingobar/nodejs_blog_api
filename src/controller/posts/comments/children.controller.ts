@@ -1,4 +1,4 @@
-import { Controller, Post, Request, Response, Put } from "@decorators/express";
+import { Controller, Post, Request, Response, Put. Delete } from "@decorators/express";
 import { Container } from "typedi";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import CommentService from "service/comment.service";
@@ -70,5 +70,31 @@ export default class ChildrenController {
     children = await commentService.updateChildren(children);
 
     return res.json(children);
+  }
+
+  /**
+   * 刪除子留言
+   * @param req 
+   * @param res 
+   */
+  @Delete('/:postId/comments/:parentId/children/:childrenId')
+  public async destroy(@Request() req: any, @Response() res: any){
+     const commentService: CommentService = Container.get(CommentService);
+
+    const parent = await commentService.findParentCommentById(req.params.postId, req.params.parentId);
+
+    if (!parent) {
+      throw new NotFoundException();
+    }
+
+    let children = await commentService.findChildrenCommentById(parent.id, req.params.childrenId);
+
+    if (!children) {
+      throw new NotFoundException();
+    }
+
+    await commentService.deleteChildren(children)
+
+    return res.json('ok')
   }
 }
