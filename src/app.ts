@@ -14,6 +14,8 @@ import * as swagger from "swagger-express-ts";
 import { SwaggerDefinitionConstant } from "swagger-express-ts";
 import { Container as SwaggerContainer } from "inversify";
 import { interfaces, InversifyExpressServer, TYPE } from "inversify-express-utils";
+import { pagination } from "typeorm-pagination";
+
 import UserResponse from "swagger/response/user.response";
 
 import AuthController from "controller/auth.controller";
@@ -123,6 +125,7 @@ class App {
     app.use("/api-docs/swagger/assets", express.static("node_modules/swagger-ui-dist"));
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(pagination);
   }
 
   /**

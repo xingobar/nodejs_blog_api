@@ -187,3 +187,12 @@ npm run typeorm migration:run
 2. https://github.com/typeorm/typeorm/issues/5331
 3. https://stackoverflow.com/questions/54246615/what-s-the-difference-between-remove-and-delete
 ```
+
+# npm install typeorm-pagination --save
+
+### 處理 typeorm 分頁
+
+```
+1. https://www.npmjs.com/package/typeorm-pagination
+
+```

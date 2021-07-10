@@ -73,6 +73,7 @@
     "typedi": "^0.10.0",
     "typeorm": "^0.2.34",
     "typeorm-linq-repository": "^1.1.1",
+    "typeorm-pagination": "^2.0.3",
     "typeorm-polymorphic": "0.0.10",
     "typeorm-seeding": "^1.6.1",
     "typeorm-typedi-extensions": "^0.4.1",

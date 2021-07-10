@@ -39,6 +39,9 @@ export default class PostService {
 
   /**
    * 根據會員編號取得分頁資料
+   *
+   * 註解的地方是原先 linq 的寫法
+   *
    * @param {object} params
    * @param {number} params.userId 會員編號
    * @param {number} params.page 分頁
@@ -57,21 +60,31 @@ export default class PostService {
     keyword?: string;
   }) {
     const repo = this.postRepository
-      .getAll()
-      .where((p) => p.userId)
-      .equal(userId)
-      .skip((page - 1) * limit)
+      .createQueryBuilder("posts")
+      .where("userId = :userId", { userId })
+      .offset((page - 1) * limit)
       .take(page * limit)
-      .orderByDescending((p) => p.updatedAt);
+      .orderBy("updated_at", "DESC");
+
+    // const repo = this.postRepository
+    //   .getAll()
+    //   .where((p) => p.userId)
+    //   .equal(userId)
+    //   .skip((page - 1) * limit)
+    //   .take(page * limit)
+    //   .orderByDescending((p) => p.updatedAt);
 
     // 判斷是否有關鍵字
     if (keyword) {
-      repo
-        .where((p) => p.title)
-        .contains(keyword)
-        .isolatedOr((q) => q.where((p) => p.body).contains(keyword));
+      repo.where((qb) => {
+        qb.where("title like :title", { title: `%${keyword}%` }).orWhere("body like :body", { body: `%${keyword}%` });
+      });
+      // repo
+      //   .where((p) => p.title)
+      //   .contains(keyword)
+      //   .isolatedOr((q) => q.where((p) => p.body).contains(keyword));
     }
-    return await repo;
+    return await repo.paginate(limit);
   }
 
   /**
@@ -222,5 +235,9 @@ export default class PostService {
         "popularity.entityId = posts.id"
       )
       .getRawMany();
+  }
+
+  public async postsPaginator() {
+    return await this.postRepository.createQueryBuilder("posts").paginate(1);
   }
 }

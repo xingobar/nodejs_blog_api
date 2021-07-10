@@ -27,17 +27,11 @@ export default class PostController {
 
     const posts = await postService.findByUserIdPaginator({ userId: req.user.id, keyword: params.keyword });
 
-    const postResource = new PostResource(posts);
+    const postResource = new PostResource(posts.data);
 
-    const allPosts = await postService.findByUserId(req.user.id);
+    posts.data = await postResource.toArray();
 
-    return res.json(
-      PaginatorLib.paginate({
-        data: await postResource.toArray(),
-        total: allPosts.length,
-        page: req.query.page ?? 1,
-      })
-    );
+    return res.json(posts);
   }
 
   // 新增文章
