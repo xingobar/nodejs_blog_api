@@ -57,4 +57,19 @@ export default class BookmarkService {
   public async unBookmarkedPost(entity: Bookmark): Promise<Bookmark> {
     return await this.bookmarkRepository.remove(entity);
   }
+
+  /**
+   * 取得使用者藏的文章
+   * @param userId
+   * @param entityId
+   * @param entityType
+   */
+  public async findAllByUserId(userId: number, entityType: BookmarkEntityType) {
+    return await this.bookmarkRepository.find({
+      where: {
+        userId,
+        entityType,
+      },
+    });
+  }
 }

@@ -1,12 +1,14 @@
 import { Controller, Post, Request, Response, Put, Delete, Get } from "@decorators/express";
-import PostValidator from "validator/post.validator";
-import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import { ICreatePost, IUpdatePost } from "interface/post.interface";
 import { Container } from "typedi";
+import { BookmarkEntityType } from "entity/bookmark.entity";
 import PostService from "service/post.service";
 import PostResource from "resource/post.resource";
 import NotFoundException from "exception/notfound.exception";
 import PaginatorLib from "lib/paginator.lib";
+import BookmarkService from "service/bookmark.service";
+import PostValidator from "validator/post.validator";
+import AuthenticateMiddleware from "middleware/authenticate.middleware";
 
 // 使用者文章
 interface IPostIndex {
@@ -106,5 +108,19 @@ export default class PostController {
     return res.json({
       ok: "ok",
     });
+  }
+
+  // 取得使用者書籤
+  @Get("/bookmarks", [AuthenticateMiddleware])
+  public async bookmarks(@Request() req: any, @Response() res: any) {
+    const bookmarkService: BookmarkService = Container.get(BookmarkService);
+
+    const bookmarks = await bookmarkService.findAllByUserId(req.user.id, BookmarkEntityType.Post);
+
+    const posts = bookmarks.map((bookmark) => bookmark.post);
+
+    const postResource = new PostResource(posts);
+
+    res.json(await postResource.toArray());
   }
 }
