@@ -67,8 +67,28 @@ export default class LikeableService {
    * @param userId
    * @param entityType
    */
-  public async findAllByUserId(userId: number, entityType: LikeableEntityType) {
+  public findPaginatorByUserId(
+    userId: number,
+    entityType: LikeableEntityType,
+    { page = 1, limit = 10 }: { page?: number; limit?: number }
+  ) {
     return this.likeableRepository.find({
+      where: {
+        userId,
+        entityType,
+      },
+      take: page * limit,
+      skip: (page - 1) * limit,
+    });
+  }
+
+  /**
+   * 取得使用者總共收藏文章的個數
+   * @param userId
+   * @param entityType
+   */
+  public findTotalByUserId(userId: number, entityType: LikeableEntityType) {
+    return this.likeableRepository.count({
       where: {
         userId,
         entityType,

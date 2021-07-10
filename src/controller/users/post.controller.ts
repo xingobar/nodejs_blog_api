@@ -138,14 +138,26 @@ export default class PostController {
   // 取得使用者喜歡的文章
   @Get("/likes", [AuthenticateMiddleware])
   public async likes(@Request() req: any, @Response() res: any) {
+    const page = req.query.page ?? 1;
+    const limit = req.query.limit ?? 10;
+
     const likeableService: LikeableService = Container.get(LikeableService);
 
-    const likes = await likeableService.findAllByUserId(req.user.id, LikeableEntityType.Post);
+    const likes = await likeableService.findPaginatorByUserId(req.user.id, LikeableEntityType.Post, { page, limit });
 
     const posts = likes.map((like) => like.post);
 
+    const total = await likeableService.findTotalByUserId(req.user.id, LikeableEntityType.Post);
+
     const postResource = new PostResource(posts);
 
-    return res.json(await postResource.toArray());
+    return res.json(
+      PaginatorLib.paginate({
+        data: await postResource.toArray(),
+        page,
+        limit,
+        total,
+      })
+    );
   }
 }
