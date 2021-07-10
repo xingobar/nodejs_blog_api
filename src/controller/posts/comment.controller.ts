@@ -4,6 +4,7 @@ import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import CommentService from "service/comment.service";
 import PostService from "service/post.service";
 import NotFoundException from "exception/notfound.exception";
+import CommentValidator from "validator/comment.validator";
 
 @Controller("/posts")
 export default class CommentController {
@@ -15,6 +16,13 @@ export default class CommentController {
     }
 
     const params: ICreateComment = req.body;
+
+    const v: CommentValidator = new CommentValidator(params);
+    v.storeParentRule().validate();
+
+    if (v.isError()) {
+      return res.json({ errors: v.detail });
+    }
 
     const commentService: CommentService = Container.get(CommentService);
 
@@ -65,6 +73,14 @@ export default class CommentController {
     }
 
     const params: IUpdateComment = req.body;
+
+    const v: CommentValidator = new CommentValidator(params);
+
+    v.updateParentRule().validate();
+
+    if (v.isError()) {
+      return res.json({ errors: v.detail });
+    }
 
     const postService: PostService = Container.get(PostService);
 

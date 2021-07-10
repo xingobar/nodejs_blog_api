@@ -3,6 +3,7 @@ import { Container } from "typedi";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import CommentService from "service/comment.service";
 import NotFoundException from "exception/notfound.exception";
+import CommentValidator from "validator/comment.validator";
 
 @Controller("/posts")
 export default class ChildrenController {
@@ -13,6 +14,13 @@ export default class ChildrenController {
       body: string;
     }
     const params: ICreateChildrenComment = req.body;
+
+    const v: CommentValidator = new CommentValidator(params);
+    v.storeChildrenRule().validate();
+
+    if (v.isError()) {
+      return res.json({ errors: v.detail });
+    }
 
     const commentService: CommentService = Container.get(CommentService);
 
