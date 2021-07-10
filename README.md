@@ -17,6 +17,8 @@
 | 觀看次數的文章       | [GET] /api/posts/{postId}/popularity |
 | 其他人也觀看的文章   | [GET] /api/posts/{postId}/recommends |
 | 取得使用者自己的文章 | [GET] /api/users/posts               |
+| 取得使用者收藏的文章 | [GET] /api/users/posts/bookmarks     |
+| 取得使用者點讚的文章 | [GET] /api/users/posts/likes         |
 
 # nodejs_blog_api
 
