@@ -55,4 +55,20 @@ export default class CommentService {
   public updateComment(comment: Comment) {
     return this.commentRepository.update(comment);
   }
+
+  /**
+   * 新增子留言
+   * @param {Comment} parent
+   * @param {object} children
+   * @param {number} children.userId
+   * @param {string} children.body
+   */
+  public async createChildrenComment(parent: Comment, { userId, body }: { userId: number; body: string }) {
+    const children: Comment = new Comment();
+    children.body = body;
+    children.userId = userId;
+    children.parent = parent;
+    children.postId = parent.postId;
+    return await this.commentRepository.create(children);
+  }
 }

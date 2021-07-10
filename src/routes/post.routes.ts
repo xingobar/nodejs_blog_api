@@ -3,6 +3,7 @@ import { attachControllers } from "@decorators/express";
 import PostController from "controller/post.controller";
 import RecommendController from "controller/posts/recommend.controller";
 import CommentController from "controller/posts/comment.controller";
+import ChildrenController from "controller/posts/comments/children.controller";
 
 export default class PostRoute extends MainRoute {
   constructor() {
@@ -11,6 +12,6 @@ export default class PostRoute extends MainRoute {
   }
 
   public setRoutes() {
-    attachControllers(this.router, [PostController, RecommendController, CommentController]);
+    attachControllers(this.router, [PostController, RecommendController, CommentController, ChildrenController]);
   }
 }

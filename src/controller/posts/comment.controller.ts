@@ -5,15 +5,15 @@ import CommentService from "service/comment.service";
 import PostService from "service/post.service";
 import NotFoundException from "exception/notfound.exception";
 
-interface ICreateComment {
-  body: string;
-}
-
 @Controller("/posts")
 export default class CommentController {
   // 新增留言
   @Post("/:postId/comments", [AuthenticateMiddleware])
   public async store(@Request() req: any, @Response() res: any) {
+    interface ICreateComment {
+      body: string;
+    }
+
     const params: ICreateComment = req.body;
 
     const commentService: CommentService = Container.get(CommentService);
