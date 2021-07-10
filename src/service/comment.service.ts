@@ -2,6 +2,7 @@ import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import CommentRepository from "repository/comment.repository";
 import { Comment } from "entity/comment.entity";
+import { getManager } from "typeorm";
 
 @Service()
 export default class CommentService {
@@ -35,7 +36,8 @@ export default class CommentService {
       .equal(commentId)
       .where((c) => c.postId)
       .equal(postId)
-      .include((c) => c.parent);
+      .where((c) => c.parentId)
+      .isNull();
   }
 
   /**
@@ -44,5 +46,13 @@ export default class CommentService {
    */
   public deleteParentByCommentId(comment: Comment) {
     return this.commentRepository.delete(comment);
+  }
+
+  /**
+   * 更新評論
+   * @param comment
+   */
+  public updateComment(comment: Comment) {
+    return this.commentRepository.update(comment);
   }
 }

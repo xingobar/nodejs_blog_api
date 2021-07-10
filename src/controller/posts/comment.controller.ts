@@ -53,6 +53,38 @@ export default class CommentController {
     return res.json("ok");
   }
 
-  @Put("/:postId/comments/:commentId")
-  public update(@Request() req: any, @Response() res: any) {}
+  /**
+   * 更新評論
+   * @param req
+   * @param res
+   */
+  @Put("/:postId/comments/:commentId", [AuthenticateMiddleware])
+  public async update(@Request() req: any, @Response() res: any) {
+    interface IUpdateComment {
+      body: string;
+    }
+
+    const params: IUpdateComment = req.body;
+
+    const postService: PostService = Container.get(PostService);
+
+    const post = await postService.findById(req.params.postId);
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    const commentService: CommentService = Container.get(CommentService);
+
+    let comment = await commentService.findParentCommentById(req.params.postId, req.params.commentId);
+
+    if (!comment) {
+      throw new NotFoundException();
+    }
+
+    comment.body = params.body;
+
+    comment = await commentService.updateComment(comment);
+
+    return res.json(comment);
+  }
 }

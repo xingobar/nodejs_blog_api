@@ -47,6 +47,12 @@ export class Comment {
   @TreeParent()
   parent: Comment;
 
+  @Column({
+    nullable: true,
+    comment: "父向編號",
+  })
+  parentId: number;
+
   @CreateDateColumn({
     name: "created_at",
     comment: "新增時間",
