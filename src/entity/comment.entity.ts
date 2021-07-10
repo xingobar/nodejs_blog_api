@@ -19,7 +19,7 @@ export class Comment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.comments)
+  @ManyToOne(() => User, (user) => user.comments, { lazy: true })
   user: User;
 
   @Column({
@@ -27,7 +27,7 @@ export class Comment {
   })
   userId: number;
 
-  @ManyToOne(() => Post, (post) => post.comments)
+  @ManyToOne(() => Post, (post) => post.comments, { lazy: true })
   post: Post;
 
   @Column({
