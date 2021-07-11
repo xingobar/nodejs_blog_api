@@ -206,3 +206,15 @@ npm run typeorm migration:run
 1. https://www.npmjs.com/package/typeorm-pagination
 
 ```
+
+# npm install @types/multer --save
+
+```
+1. https://www.npmjs.com/package/multer
+2. https://www.positronx.io/multer-file-type-validation-tutorial-with-example/
+3. https://iamdanielglover.medium.com/implementing-multer-using-a-controller-model-pattern-typescript-4212392cf77c
+4. http://expressjs.com/en/resources/middleware/multer.html
+5. https://dev.to/joaosczip/build-a-file-upload-service-with-nodejs-typescript-clean-architecture-and-aws-s3-3h9b
+6. https://www.digitalocean.com/community/tutorials/nodejs-uploading-files-multer-express
+7. https://medium.com/codebase/using-aws-s3-buckets-in-a-nodejs-app-74da2fc547a6
+```
