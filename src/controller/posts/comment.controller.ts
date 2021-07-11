@@ -13,7 +13,7 @@ export default class CommentController {
   public async index(@Request() req: any, @Response() res: any) {
     const commentService: CommentService = Container.get(CommentService);
 
-    const comments = await commentService.findAllChildrenComment(req.params.postId);
+    const comments = await commentService.findPaginatorChildrenComment(req.params.postId);
 
     return res.json(comments);
   }
@@ -65,8 +65,6 @@ export default class CommentController {
 
     // 刪除父留言成功
     await commentService.deleteParentByCommentId(comment);
-
-    // TODO: 刪除子留言
 
     return res.json("ok");
   }

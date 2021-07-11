@@ -105,8 +105,9 @@ export default class CommentService {
   /**
    * 取得文章的子留言
    * @param {number} postId - 文章編號
+   * @param {number} limit 每頁幾筆資料
    */
-  public findAllChildrenComment(postId: number) {
+  public findPaginatorChildrenComment(postId: number, limit: number = 10) {
     return this.commentRepository
       .createQueryBuilder("comments")
       .where((qb) => {
@@ -122,6 +123,6 @@ export default class CommentService {
       .addSelect("comments.createdAt")
       .addSelect("comments.updatedAt")
       .orderBy("comments.createdAt", "DESC")
-      .getMany();
+      .paginate(limit);
   }
 }
