@@ -1,25 +1,32 @@
 簡單文章 api
 
-| 功能                 | api                                  |
-| -------------------- | ------------------------------------ |
-| 登入                 | [POST]/api/auth/login                |
-| 註冊                 | [POST]/api/auth/register             |
-| 取得文章             | [GET] /api/posts                     |
-| 取得會員資料         | [GET] /api/users                     |
-| 儲存個人資料         | [POST] /api/users/profile            |
-| 取得個人資料         | [GET] /api/users/profile             |
-| 新增文章             | [POST] /api/users/posts              |
-| 更新文章             | [PUT] /api/users/posts               |
-| 刪除文章             | [DELETE] /api/users/posts            |
-| 顯示文章             | [GET] /api/posts/{postId}            |
-| 喜歡文章             | [POST] /api/posts/{postId}/likes     |
-| 加入書籤             | [POST] /api/posts/{postId}/bookmarks |
-| 觀看次數的文章       | [GET] /api/posts/{postId}/popularity |
-| 其他人也觀看的文章   | [GET] /api/posts/{postId}/recommends |
-| 取得使用者自己的文章 | [GET] /api/users/posts               |
-| 取得使用者收藏的文章 | [GET] /api/users/posts/bookmarks     |
-| 取得使用者點讚的文章 | [GET] /api/users/posts/likes         |
-| 上傳圖片             | [POST] /api/uploader/images          |
+| 功能                 | api                                                                    |
+| -------------------- | ---------------------------------------------------------------------- |
+| 登入                 | [POST]/api/auth/login                                                  |
+| 註冊                 | [POST]/api/auth/register                                               |
+| 取得文章             | [GET] /api/posts                                                       |
+| 取得會員資料         | [GET] /api/users                                                       |
+| 儲存個人資料         | [POST] /api/users/profile                                              |
+| 取得個人資料         | [GET] /api/users/profile                                               |
+| 新增文章             | [POST] /api/users/posts                                                |
+| 更新文章             | [PUT] /api/users/posts                                                 |
+| 刪除文章             | [DELETE] /api/users/posts                                              |
+| 顯示文章             | [GET] /api/posts/{postId}                                              |
+| 喜歡文章             | [POST] /api/posts/{postId}/likes                                       |
+| 加入書籤             | [POST] /api/posts/{postId}/bookmarks                                   |
+| 觀看次數的文章       | [GET] /api/posts/{postId}/popularity                                   |
+| 其他人也觀看的文章   | [GET] /api/posts/{postId}/recommends                                   |
+| 取得使用者自己的文章 | [GET] /api/users/posts                                                 |
+| 取得使用者收藏的文章 | [GET] /api/users/posts/bookmarks                                       |
+| 取得使用者點讚的文章 | [GET] /api/users/posts/likes                                           |
+| 上傳圖片             | [POST] /api/uploader/images                                            |
+| 取得文章留言         | [GET] /api/posts/{postId}/comments                                     |
+| 新增父留言           | [POST] /api/posts/{postId}/comments                                    |
+| 更新留言             | [PUT] /api/posts/{postId}/comments/{commentId}                         |
+| 刪除父留言           | [DELETE] /api/posts/{postId}/comments/{commentId}                      |
+| 新增子留言           | [POST] /api/posts/{postId}/comments/{parentId}/children                |
+| 更新子留言           | [PUT] /api/posts/{postId}/comments/{parentId}/children/{childrenId}    |
+| 刪除子留言           | [DELETE] /api/posts/{postId}/comments/{parentId}/children/{childrenId} |
 
 # nodejs_blog_api
 
