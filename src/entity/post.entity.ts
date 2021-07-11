@@ -13,6 +13,8 @@ import { User } from "entity/user.entity";
 import { PolymorphicChildren } from "typeorm-polymorphic";
 import { Likeable } from "entity/likeable.entity";
 import { Comment } from "entity/comment.entity";
+import { Tag } from "entity/tag.entity";
+import { Taggable } from "entity/taggable.entity";
 
 export enum PostStatus {
   DRAFT = "DRAFT",
@@ -118,4 +120,9 @@ export class Post {
 
   @OneToMany(() => Comment, (comments) => comments.post)
   comments: Comment[];
+
+  @OneToMany(() => Taggable, (taggable) => taggable.post, {
+    eager: false,
+  })
+  tags: Taggable[];
 }
