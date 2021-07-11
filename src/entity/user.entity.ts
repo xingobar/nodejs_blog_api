@@ -93,4 +93,10 @@ export class User {
   // 使用者留言
   @OneToMany(() => Comment, (comments) => comments.user)
   comments: Comment[];
+
+  @Column({
+    comment: "使用者頭像",
+    nullable: true,
+  })
+  avatar: string;
 }
