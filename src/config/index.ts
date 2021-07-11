@@ -44,6 +44,6 @@ export default {
     secretKey: process.env.AWS_SECRET_ACCESS_KEY ?? "",
     region: process.env.region ?? "ap-northeast-1",
     bucket: process.env.AWS_BUCKET ?? "",
-    folder: process.env.AWS_BUCKET_FOLDER ?? "dev",
+    folder: process.env.AWS_BUCKET_FOLDER ?? "dev/",
   },
 };
