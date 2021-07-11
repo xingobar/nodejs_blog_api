@@ -8,6 +8,16 @@ import CommentValidator from "validator/comment.validator";
 
 @Controller("/posts")
 export default class CommentController {
+  // 取得文章留言
+  @Get("/:postId/comments")
+  public async index(@Request() req: any, @Response() res: any) {
+    const commentService: CommentService = Container.get(CommentService);
+
+    const comments = await commentService.findAllChildrenComment(req.params.postId);
+
+    return res.json(comments);
+  }
+
   // 新增留言
   @Post("/:postId/comments", [AuthenticateMiddleware])
   public async store(@Request() req: any, @Response() res: any) {

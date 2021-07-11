@@ -96,9 +96,32 @@ export default class CommentService {
 
   /**
    * 刪除子留言
-   * @param children 
+   * @param children
    */
   public async deleteChildren(children: Comment) {
-    return await this.commentRepository.delete(children)
-  })
+    return await this.commentRepository.delete(children);
+  }
+
+  /**
+   * 取得文章的子留言
+   * @param {number} postId - 文章編號
+   */
+  public findAllChildrenComment(postId: number) {
+    return this.commentRepository
+      .createQueryBuilder("comments")
+      .where((qb) => {
+        qb.where("comments.postId = :postId", { postId }).andWhere("comments.parentId IS NULL");
+      })
+      .leftJoinAndSelect("comments.children", "children")
+      .select("children.body")
+      .addSelect("children.id")
+      .addSelect("children.createdAt")
+      .addSelect("children.updatedAt")
+      .addSelect("comments.body")
+      .addSelect("comments.id")
+      .addSelect("comments.createdAt")
+      .addSelect("comments.updatedAt")
+      .orderBy("comments.createdAt", "DESC")
+      .getMany();
+  }
 }
