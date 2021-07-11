@@ -19,6 +19,7 @@
 | 取得使用者自己的文章 | [GET] /api/users/posts               |
 | 取得使用者收藏的文章 | [GET] /api/users/posts/bookmarks     |
 | 取得使用者點讚的文章 | [GET] /api/users/posts/likes         |
+| 上傳圖片             | [POST] /api/uploader/images          |
 
 # nodejs_blog_api
 

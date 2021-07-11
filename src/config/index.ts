@@ -38,4 +38,12 @@ export default {
   jwt: {
     secret: process.env.TOKEN_SECRET ?? "blog_api",
   },
+
+  aws: {
+    accessKey: process.env.AWS_ACCESS_KEY_ID ?? "",
+    secretKey: process.env.AWS_SECRET_ACCESS_KEY ?? "",
+    region: process.env.region ?? "ap-northeast-1",
+    bucket: process.env.AWS_BUCKET ?? "",
+    folder: process.env.AWS_BUCKET_FOLDER ?? "dev",
+  },
 };
