@@ -39,7 +39,7 @@ export default class CommentController {
     const comment = await commentService.createParentComment({
       body: params.body,
       postId: req.params.postId,
-      userId: req.user.id,
+      userId: req.session.user.id,
     });
 
     return res.json({ comment });

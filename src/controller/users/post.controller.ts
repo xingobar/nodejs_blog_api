@@ -28,7 +28,7 @@ export default class PostController {
     // 關鍵字查詢
     const params: IPostIndex = req.query;
 
-    const posts = await postService.findByUserIdPaginator({ userId: req.user.id, keyword: params.keyword });
+    const posts = await postService.findByUserIdPaginator({ userId: req.session.user.id, keyword: params.keyword });
 
     const postResource = new PostResource(posts.data);
 
@@ -53,7 +53,7 @@ export default class PostController {
 
     const post = await postService.createPost(params);
 
-    post.user = req.user;
+    post.user = req.session.user;
 
     await postService.updateById(post.id, post);
 
@@ -116,10 +116,10 @@ export default class PostController {
     const bookmarkService: BookmarkService = Container.get(BookmarkService);
 
     // 取得分頁資料
-    const bookmarks = await bookmarkService.findPaginatorByUserId(req.user.id, BookmarkEntityType.Post, { page, limit });
+    const bookmarks = await bookmarkService.findPaginatorByUserId(req.session.user.id, BookmarkEntityType.Post, { page, limit });
 
     // 取得總共的比數
-    const total = await bookmarkService.findTotalByUserId(req.user.id, BookmarkEntityType.Post);
+    const total = await bookmarkService.findTotalByUserId(req.session.user.id, BookmarkEntityType.Post);
 
     const posts = bookmarks.map((bookmark) => bookmark.post);
 
@@ -143,11 +143,11 @@ export default class PostController {
 
     const likeableService: LikeableService = Container.get(LikeableService);
 
-    const likes = await likeableService.findPaginatorByUserId(req.user.id, LikeableEntityType.Post, { page, limit });
+    const likes = await likeableService.findPaginatorByUserId(req.session.user.id, LikeableEntityType.Post, { page, limit });
 
     const posts = likes.map((like) => like.post);
 
-    const total = await likeableService.findTotalByUserId(req.user.id, LikeableEntityType.Post);
+    const total = await likeableService.findTotalByUserId(req.session.user.id, LikeableEntityType.Post);
 
     const postResource = new PostResource(posts);
 

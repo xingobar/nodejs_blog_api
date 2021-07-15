@@ -18,7 +18,10 @@ export default class AuthenticateMiddleware implements Middleware {
         throw new InvalidException("token 有誤請重新登入");
       }
 
-      req.user = user;
+      // jwt token user not equal session user
+      if (req.session.user.id !== user.id) {
+        throw new InvalidException("登入的帳號異常, 請重新登入");
+      }
 
       next();
     });

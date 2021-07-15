@@ -30,7 +30,7 @@ export default class ChildrenController {
       throw new NotFoundException();
     }
 
-    const children = await commentService.createChildrenComment(parent, { userId: req.user.id, body: params.body });
+    const children = await commentService.createChildrenComment(parent, { userId: req.session.user.id, body: params.body });
 
     return res.json(children);
   }

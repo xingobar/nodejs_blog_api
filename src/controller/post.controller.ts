@@ -7,7 +7,6 @@ import { Bookmark, BookmarkEntityType } from "entity/bookmark.entity";
 import { ViewLog, ViewLogEntityType } from "entity/view.log.entity";
 
 import PostService from "service/post.service";
-import VerifyTokenMiddleware from "middleware/verify.token.middleware";
 import PostResource from "resource/post.resource";
 import NotFoundException from "exception/notfound.exception";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
@@ -18,7 +17,7 @@ import ViewLogService from "service/view.log.service";
 @Controller("/posts")
 export default class PostController {
   // 取得文章列表
-  @Get("/", [VerifyTokenMiddleware])
+  @Get("/")
   public async index(@Request() req: any, @Response() res: any) {
     const params: IGetAllPostParams = req.query;
 
@@ -29,8 +28,8 @@ export default class PostController {
     // 排除使用者
     let excludeUser: number = 0;
 
-    if (req.user) {
-      excludeUser = req.user.id;
+    if (req.session.user) {
+      excludeUser = req.session.user.id;
     }
 
     /**
@@ -57,7 +56,7 @@ export default class PostController {
   }
 
   // 顯示單一文章
-  @Get("/:postId", [VerifyTokenMiddleware])
+  @Get("/:postId")
   public async show(@Request() req: any, @Response() res: any) {
     const postService: PostService = Container.get(PostService);
     const viewLogService: ViewLogService = Container.get(ViewLogService);
@@ -72,15 +71,15 @@ export default class PostController {
 
     // 有登入的話新增觀看紀錄
 
-    if (req.user) {
+    if (req.session.user) {
       const viewLog: ViewLog | undefined = await viewLogService.findById({
-        userId: req.user.id,
+        userId: req.session.user.id,
         entityType: ViewLogEntityType.Post,
         entityId: post.id,
       });
 
       if (!viewLog) {
-        await viewLogService.createLog({ userId: req.user.id, entity: post });
+        await viewLogService.createLog({ userId: req.session.user.id, entity: post });
       }
     }
 
@@ -103,7 +102,7 @@ export default class PostController {
 
     const likeableService: LikeableService = Container.get(LikeableService);
     const like = await likeableService.findByIdAndEntity({
-      userId: req.user.id,
+      userId: req.session.user.id,
       entityId: post.id,
       entityType: LikeableEntityType.Post,
     });
@@ -115,7 +114,7 @@ export default class PostController {
       status = false;
     } else {
       await likeableService.likePost({
-        userId: req.user.id,
+        userId: req.session.user.id,
         post,
       });
       status = true;
@@ -143,7 +142,7 @@ export default class PostController {
      * 反之則加入
      */
     const bookmark: Bookmark | undefined = await bookmarkService.findByUserIdAndEntity({
-      userId: req.user.id,
+      userId: req.session.user.id,
       entityType: BookmarkEntityType.Post,
       entityId: post.id,
     });
@@ -153,7 +152,7 @@ export default class PostController {
       return res.json({ status: false });
     }
 
-    await bookmarkService.bookmarkedPost({ userId: req.user.id, entity: post });
+    await bookmarkService.bookmarkedPost({ userId: req.session.user.id, entity: post });
 
     return res.json({ status: true });
   }
