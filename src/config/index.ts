@@ -46,4 +46,9 @@ export default {
     bucket: process.env.AWS_BUCKET ?? "",
     folder: process.env.AWS_BUCKET_FOLDER ?? "dev/",
   },
+
+  // session
+  session: {
+    secret: process.env.SESSION_SECRET ?? "",
+  },
 };

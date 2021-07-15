@@ -3,6 +3,9 @@ import router from "./routes/router";
 import express from "express";
 import bodyParser from "body-parser";
 import logger from "lib/logger.lib";
+import session from "express-session";
+import cookieParser from "cookie-parser";
+import envConfig from "config/index";
 
 import { config } from "config/ormconfig";
 
@@ -96,6 +99,10 @@ class App {
     });
   }
 
+  /**
+   * swagger response
+   * @param responses
+   */
   private setSwaggerBindResponse(responses: any[]) {
     // this.swaggerContainer.bind(UserResponse.name).to(UserResponse);
     responses.forEach((item) => {
@@ -103,6 +110,9 @@ class App {
     });
   }
 
+  /**
+   * 設定資料庫連線
+   */
   private async setDbConnection() {
     // typeorm use typedi
     useContainer(Container);
@@ -126,6 +136,15 @@ class App {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(pagination);
+    app.use(cookieParser());
+    app.use(
+      session({
+        secret: envConfig.session.secret,
+        resave: false,
+        saveUninitialized: true,
+        cookie: { maxAge: 60 * 60 * 1000 }, // 1 hour
+      })
+    );
   }
 
   /**

@@ -8,6 +8,10 @@ import UserResource from "resource/user.resource";
 import { ApiPath, ApiOperationPost, SwaggerDefinitionConstant } from "swagger-express-ts";
 import { injectable } from "inversify";
 import { interfaces } from "inversify-express-utils";
+import { IAuthInput } from "interface/auth.interface";
+
+import NotFoundException from "exception/notfound.exception";
+import InvalidException from "exception/invalid.exception";
 
 @ApiPath({
   path: "/auth",
@@ -50,6 +54,8 @@ class AuthController implements interfaces.Controller {
   })
   @Post("/register")
   public async register(@Request() req: any, @Response() res: any) {
+    const params: IAuthInput = req.body;
+
     const v = new AuthValidator(req.body);
 
     v.register().validate();
@@ -60,6 +66,17 @@ class AuthController implements interfaces.Controller {
 
     const userService: UserService = Container.get(UserService);
 
+    // 檢查信箱
+    if ((await userService.findByEmail(params.email)) !== undefined) {
+      throw new InvalidException("電子信箱已存在");
+    }
+
+    // 帳號檢查
+    if ((await userService.findByAccount(params.account)) !== undefined) {
+      throw new InvalidException("帳號已存在");
+    }
+
+    // 新增會員
     const user = await userService.createUser(req.body);
 
     const userResource: UserResource = new UserResource(user);
@@ -82,9 +99,24 @@ class AuthController implements interfaces.Controller {
     }
 
     const userService: UserService = Container.get(UserService);
-    const token: string = await userService.login(req.body);
 
-    return res.json({ token });
+    // 找不到使用者
+    const user = await userService.findByAccount(req.body.account);
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    // 檢查密碼是否一致
+    if (await userService.checkPasswordMatch(req.body)) {
+      const token = userService.generateJwtToken(user);
+
+      // 將 user 存入 session
+      req.session.user = user;
+
+      return res.json({ token });
+    } else {
+      throw new InvalidException("密碼錯誤");
+    }
   }
 }
 
