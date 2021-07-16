@@ -1,58 +1,29 @@
-import dotenv from "dotenv";
 import router from "./routes/router";
 import express from "express";
 import bodyParser from "body-parser";
-import logger from "lib/logger.lib";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import envConfig from "config/index";
+import swaggerLib from "./swagger.lib"; // swagger init
+import * as swagger from "swagger-express-ts";
 
 import { config } from "config/ormconfig";
-
 import { createConnection, useContainer, ConnectionOptions } from "typeorm";
-import { Request, Response, NextFunction } from "express";
 import { Container } from "typeorm-typedi-extensions";
-
-import * as swagger from "swagger-express-ts";
-import { SwaggerDefinitionConstant } from "swagger-express-ts";
-import { Container as SwaggerContainer } from "inversify";
-import { interfaces, InversifyExpressServer, TYPE } from "inversify-express-utils";
 import { pagination } from "typeorm-pagination";
-
-import UserResponse from "swagger/response/user.response";
-
-import AuthController from "controller/auth.controller";
-import UserController from "controller/user.controller";
 
 class App {
   public app: express.Application;
 
-  public swaggerContainer: SwaggerContainer;
-
-  public server: InversifyExpressServer;
-
   constructor() {
-    this.swaggerContainer = new SwaggerContainer();
-    // this.app = express();
-    this.setSwaggerDefinition();
-    this.setSwaggerConfig();
-    this.setErrorConfig();
+    this.setSwaggerConfigAndRoutes();
     this.buildServer();
-    // this.setConfig();
-    // this.setRoutes();
     this.setDbConnection();
   }
 
-  private setSwaggerDefinition() {
-    // note that you *must* bind your controllers to Controller
-    this.setSwaggerBindController([AuthController]);
-    this.setSwaggerBindResponse([UserResponse]);
-  }
-
-  private setSwaggerConfig() {
-    this.server = new InversifyExpressServer(this.swaggerContainer);
-
-    this.server.setConfig((app: any) => {
+  // 建置 swagger & route
+  private setSwaggerConfigAndRoutes() {
+    swaggerLib.server.setConfig((app: any) => {
       this.setConfig(app);
 
       app.use(
@@ -70,43 +41,10 @@ class App {
         })
       );
 
+      // 建置 swagger route
       for (const route of router) {
         app.use(route.getPrefix(), route.getRouter());
       }
-    });
-  }
-
-  // 設定 error config
-  private setErrorConfig() {
-    this.server.setErrorConfig((app: any) => {
-      app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-        console.log(err);
-        const { code, message } = err;
-        logger.error(`url = ${req.path}, code => ${res.statusCode}, message => ${message}`);
-        return res.status(code ?? 500).json({ message });
-      });
-    });
-  }
-
-  // swagger bind controller
-  private setSwaggerBindController(controllers: any[]) {
-    controllers.forEach((controller) => {
-      this.swaggerContainer
-        .bind<interfaces.Controller>(TYPE.Controller)
-        .to(controller)
-        .inSingletonScope()
-        .whenTargetNamed(controller.TARGET_NAME);
-    });
-  }
-
-  /**
-   * swagger response
-   * @param responses
-   */
-  private setSwaggerBindResponse(responses: any[]) {
-    // this.swaggerContainer.bind(UserResponse.name).to(UserResponse);
-    responses.forEach((item) => {
-      this.swaggerContainer.bind(item.name).to(item);
     });
   }
 
@@ -147,24 +85,9 @@ class App {
     );
   }
 
-  /**
-   * 設定 router
-   */
-  private setRoutes() {
-    for (const route of router) {
-      this.app.use(route.getPrefix(), route.getRouter());
-    }
-
-    this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-      console.log(err);
-      const { code, message } = err;
-      logger.error(`url = ${req.path}, code => ${res.statusCode}, message => ${message}`);
-      return res.status(code ?? 500).json({ message });
-    });
-  }
-
+  // build server
   private buildServer() {
-    this.app = this.server.build();
+    this.app = swaggerLib.server.build();
   }
 }
 
