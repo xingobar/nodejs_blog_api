@@ -140,3 +140,45 @@ describe("like post test", () => {
     assert.equal(unlikeRes.body.status, false);
   });
 });
+
+describe("bookmark post test", () => {
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
+
+  it("no login", (done) => {
+    api
+      .post("/posts/1/bookmarks")
+      .expect(401)
+      .end((err, res) => {
+        assert.deepEqual(res.body, { message: "尚未登入" });
+        done();
+      });
+  });
+
+  it("not found post", async () => {
+    const token = await createUserAndLogin();
+    await api.post("/posts/1/bookmarks").set("authorization", `Bearer ${token}`).expect(404);
+  });
+
+  it("not found because post is unpublish", async () => {
+    const token = await createUserAndLogin();
+    const post = await createPost({ status: PostStatus.DRAFT });
+    await api.post(`/posts/${post?.id}/bookmarks`).set("authorization", `Bearer ${token}`).expect(404);
+  });
+
+  it("bookmark and unbookmark", async () => {
+    const token = await createUserAndLogin();
+    const post = await createPost({ status: PostStatus.PUBLISH });
+
+    // 測試收藏
+    const res = await api.post(`/posts/${post?.id}/bookmarks`).set("authorization", `Bearer ${token}`).expect(200);
+
+    assert.equal(res.body.status, true);
+
+    // 取消收藏
+    const unBookmarkRes = await api.post(`/posts/${post?.id}/bookmarks`).set("authorization", `Bearer ${token}`).expect(200);
+
+    assert.equal(unBookmarkRes.body.status, false);
+  });
+});
