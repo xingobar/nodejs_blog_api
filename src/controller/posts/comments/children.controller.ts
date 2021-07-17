@@ -4,6 +4,8 @@ import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import CommentService from "service/comment.service";
 import NotFoundException from "exception/notfound.exception";
 import CommentValidator from "validator/comment.validator";
+import CommentPolicy from "policy/comment.policy";
+import AccessDeniedException from "exception/access.denied.exception";
 
 @Controller("/posts")
 export default class ChildrenController {
@@ -36,7 +38,7 @@ export default class ChildrenController {
   }
 
   // 更新子留言
-  @Put("/:postId/comments/:parentId/children/:childrenId")
+  @Put("/:postId/comments/:parentId/children/:childrenId", [AuthenticateMiddleware])
   public async update(@Request() req: any, @Response() res: any) {
     interface IUpdateChildrenComment {
       body: string;
@@ -48,7 +50,7 @@ export default class ChildrenController {
     v.updateChildrenRule().validate();
 
     if (v.isError()) {
-      return res.json({ errors: v.detail });
+      return res.status(400).json({ errors: v.detail });
     }
 
     const commentService: CommentService = Container.get(CommentService);
@@ -63,6 +65,12 @@ export default class ChildrenController {
 
     if (!children) {
       throw new NotFoundException();
+    }
+
+    const commentPolicy: CommentPolicy = Container.get(CommentPolicy);
+
+    if (!commentPolicy.update(req.session.user, children)) {
+      throw new AccessDeniedException();
     }
 
     children.body = params.body;

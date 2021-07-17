@@ -60,6 +60,30 @@ export const createPostUserComment = async () => {
   return { user, post, comment };
 };
 
+// 新增子留言
+export const createChildrenComment = async (parent: Comment | undefined): Promise<Comment | undefined> => {
+  await getConnection("test")
+    .getRepository(Comment)
+    .createQueryBuilder()
+    .insert()
+    .into(Comment)
+    .values({
+      postId: parent?.postId,
+      userId: parent?.userId,
+      body: parent?.body,
+      parentId: parent?.id,
+    })
+    .execute();
+
+  return await getConnection("test")
+    .getRepository(Comment)
+    .createQueryBuilder()
+    .where("postId = :postId", { postId: parent?.postId })
+    .where("userId = :userId", { userId: parent?.userId })
+    .where("parentId = :parentId", { parentId: parent?.id })
+    .getOne();
+};
+
 describe("create children comment test", () => {
   beforeEach(async () => {
     await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
@@ -94,6 +118,17 @@ describe("create children comment test", () => {
     assert.deepEqual(res.body, { errors: [{ message: "留言內容最少 10 個字" }] });
   });
 
+  it("not found parent comment", async () => {
+    const token = await createUserAndLogin();
+    const payload: {
+      body?: string;
+    } = {
+      body: Faker.lorem.paragraph(1),
+    };
+
+    await api.post(`/posts/1/comments/1/children`).set("authorization", `Bearer ${token}`).send(payload).expect(404);
+  });
+
   it("create post successful", async () => {
     const { user, post, comment } = await createPostUserComment();
     const payload: {
@@ -105,5 +140,106 @@ describe("create children comment test", () => {
     const token = await fakeLogin(user?.account);
 
     await api.post(`/posts/${post?.id}/comments/${comment?.id}/children`).set("authorization", `Bearer ${token}`).send(payload).expect(200);
+  });
+});
+
+describe("update children comment test", () => {
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
+
+  it("no login", (done) => {
+    api
+      .put("/posts/1/comments/1/children/1")
+      .expect(401)
+      .end((err, res) => {
+        assert.deepEqual(res.body, { message: "尚未登入" });
+        done();
+      });
+  });
+
+  it("no input data", async () => {
+    const payload: {
+      body?: string;
+    } = {};
+    const token = await createUserAndLogin();
+
+    let res = await api.put("/posts/1/comments/1/children/1").set("authorization", `Bearer ${token}`).send(payload).expect(400);
+
+    // 都沒有輸入
+    assert.deepEqual(res.body, { errors: [{ message: "請輸入留言內容" }] });
+
+    // 長度不夠
+    payload.body = "demo";
+
+    res = await api.put("/posts/1/comments/1/children/1").set("authorization", `Bearer ${token}`).send(payload).expect(400);
+
+    assert.deepEqual(res.body, { errors: [{ message: "留言內容最少 10 個字" }] });
+  });
+
+  it("not found parent comment", async () => {
+    const token = await createUserAndLogin();
+    const payload: {
+      body?: string;
+    } = {
+      body: Faker.lorem.paragraph(1),
+    };
+
+    await api.put("/posts/1/comments/1/children/1").set("authorization", `Bearer ${token}`).send(payload).expect(404);
+  });
+
+  it("not found children comment", async () => {
+    const { user, post, comment } = await createPostUserComment();
+    const token = await fakeLogin(user?.account);
+
+    const payload: {
+      body?: string;
+    } = {
+      body: Faker.lorem.paragraph(1),
+    };
+
+    await api
+      .put(`/posts/${post?.id}/comments/${comment?.id}/children/1`)
+      .set("authorization", `Bearer ${token}`)
+      .send(payload)
+      .expect(404);
+  });
+
+  it("update not own children comment", async () => {
+    const { user, post, comment } = await createPostUserComment();
+    const token = await fakeLogin(user?.account);
+    const children = await createChildrenComment(comment);
+
+    const payload: {
+      body?: string;
+    } = {
+      body: Faker.lorem.paragraph(1),
+    };
+
+    const otherUserToken = await createUserAndLogin();
+
+    await api
+      .put(`/posts/${post?.id}/comments/${comment?.id}/children/${children?.id}`)
+      .set("authorization", `Bearer ${otherUserToken}`)
+      .send(payload)
+      .expect(403);
+  });
+
+  it("update children comment successful", async () => {
+    const { user, post, comment } = await createPostUserComment();
+    const token = await fakeLogin(user?.account);
+    const children = await createChildrenComment(comment);
+
+    const payload: {
+      body?: string;
+    } = {
+      body: Faker.lorem.paragraph(1),
+    };
+
+    await api
+      .put(`/posts/${post?.id}/comments/${comment?.id}/children/${children?.id}`)
+      .set("authorization", `Bearer ${token}`)
+      .send(payload)
+      .expect(200);
   });
 });
