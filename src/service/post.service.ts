@@ -91,11 +91,13 @@ export default class PostService {
    * 根據編號取得文章
    * @param {number} id - 文章編號
    */
-  public findById(id: number) {
+  public findByIdWithPublished(id: number) {
     return this.postRepository
       .getOne()
       .where((post) => post.id)
-      .equal(id);
+      .equal(id)
+      .where((post) => post.status)
+      .equal(PostStatus.PUBLISH);
   }
 
   /**

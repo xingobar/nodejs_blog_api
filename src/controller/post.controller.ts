@@ -62,7 +62,7 @@ export default class PostController {
     const postService: PostService = Container.get(PostService);
     const viewLogService: ViewLogService = Container.get(ViewLogService);
 
-    const post: PostEntity = await postService.findById(req.params.postId).join((p) => p.user);
+    const post: PostEntity = await postService.findByIdWithPublished(req.params.postId).join((p) => p.user);
 
     await post.user;
 
@@ -93,7 +93,7 @@ export default class PostController {
   public async likes(@Request() req: any, @Response() res: any) {
     const postService: PostService = Container.get(PostService);
 
-    const post: PostEntity = await postService.findById(req.params.postId);
+    const post: PostEntity = await postService.findByIdWithPublished(req.params.postId);
 
     // 找不到文章
     if (!post) {
@@ -130,7 +130,7 @@ export default class PostController {
 
     const postService: PostService = Container.get(PostService);
 
-    const post: PostEntity = await postService.findById(req.params.postId);
+    const post: PostEntity = await postService.findByIdWithPublished(req.params.postId);
 
     if (!post) {
       throw new NotFoundException();

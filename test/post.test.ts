@@ -70,6 +70,10 @@ describe("get post index ", () => {
 });
 
 describe("show post", () => {
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
+
   it("post not found", () => {
     api.get("/posts/1").expect(404);
   });
@@ -90,5 +94,49 @@ describe("show post", () => {
       .getOne();
 
     assert.exists(viewLog);
+  });
+});
+
+describe("like post test", () => {
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
+  it("no login", (done) => {
+    api
+      .post("/posts/1/likes")
+      .expect(401)
+      .end((err, res) => {
+        assert.deepEqual(res.body, { message: "尚未登入" });
+        done();
+      });
+  });
+
+  it("not found post", async () => {
+    const token = await createUserAndLogin();
+
+    await api.post("/posts/1/likes").set("authorization", `Bearer ${token}`).expect(404);
+  });
+
+  it("get 404 not found when like unpublished post", async () => {
+    const token = await createUserAndLogin();
+    const post = await createPost({ status: PostStatus.DRAFT });
+
+    await api.post(`/posts/${post?.id}/likes`).set("authorization", `Bearer ${token}`).expect(404);
+  });
+
+  it("like post and unlike", async () => {
+    const user = await createUser();
+    const token = await fakeLogin(user?.account);
+    const post = await createPost({ status: PostStatus.PUBLISH });
+
+    // 測試喜歡文章
+    const res = await api.post(`/posts/${post?.id}/likes`).set("authorization", `Bearer ${token}`).expect(200);
+
+    assert.equal(res.body.status, true);
+
+    // 取消喜歡文章
+    const unlikeRes = await api.post(`/posts/${post?.id}/likes`).set("authorization", `Bearer ${token}`).expect(200);
+
+    assert.equal(unlikeRes.body.status, false);
   });
 });

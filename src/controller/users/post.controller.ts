@@ -76,7 +76,7 @@ export default class PostController {
 
     const postService: PostService = Container.get(PostService);
 
-    let post = await postService.findById(req.params.postId);
+    let post = await postService.findByIdWithPublished(req.params.postId);
 
     if (!post) {
       throw new NotFoundException();
@@ -94,7 +94,7 @@ export default class PostController {
   public async destroy(@Request() req: any, @Response() res: any) {
     const postService: PostService = Container.get(PostService);
 
-    const post = await postService.findById(req.params.postId);
+    const post = await postService.findByIdWithPublished(req.params.postId);
 
     if (!post) {
       throw new NotFoundException();
