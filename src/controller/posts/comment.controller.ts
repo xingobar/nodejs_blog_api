@@ -7,6 +7,7 @@ import NotFoundException from "exception/notfound.exception";
 import CommentValidator from "validator/comment.validator";
 import CommentPolicy from "policy/comment.policy";
 import AccessDeniedException from "exception/access.denied.exception";
+import InvalidException from "@src/exception/invalid.exception";
 
 @Controller("/posts")
 export default class CommentController {
@@ -109,6 +110,7 @@ export default class CommentController {
     const postService: PostService = Container.get(PostService);
 
     const post = await postService.findByIdWithPublished(req.params.postId);
+
     if (!post) {
       throw new NotFoundException();
     }
@@ -119,6 +121,12 @@ export default class CommentController {
 
     if (!comment) {
       throw new NotFoundException();
+    }
+
+    // 檢查是否有權限更新評論
+    const commentPolicy: CommentPolicy = Container.get(CommentPolicy);
+    if (!commentPolicy.update(req.session.user, comment)) {
+      throw new AccessDeniedException();
     }
 
     comment.body = params.body;
