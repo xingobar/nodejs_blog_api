@@ -3,7 +3,8 @@ import { getConnection } from "typeorm";
 import { api, createUser, createUserAndLogin, getCurrentUser, fakeLogin } from "./global.test";
 import { Post, PostStatus } from "entity/post.entity";
 import { User } from "entity/user.entity";
-import { factory, useRefreshDatabase } from "typeorm-seeding";
+import { useRefreshDatabase } from "typeorm-seeding";
+import { ViewLog } from "entity/view.log.entity";
 
 let post: Post | undefined;
 
@@ -74,8 +75,20 @@ describe("show post", () => {
   });
 
   it("get post", async () => {
+    const user = await createUser();
+    const token = await fakeLogin(user?.account);
     const post = await createPost({ status: PostStatus.PUBLISH });
 
-    api.get(`/posts/${post?.id}`).expect(200);
+    const res = await api.get(`/posts/${post?.id}`).set("authorization", `Bearer ${token}`).expect(200);
+
+    // 檢查 view logs 是否有資料
+    const viewLog = await getConnection("test")
+      .getRepository(ViewLog)
+      .createQueryBuilder()
+      .where("userId = :userId", { userId: user?.id })
+      .where("entityId = :entityId", { entityId: post?.id })
+      .getOne();
+
+    assert.exists(viewLog);
   });
 });

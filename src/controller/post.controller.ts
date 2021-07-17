@@ -13,6 +13,7 @@ import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import LikeableService from "service/likeable.service";
 import BookmarkService from "service/bookmark.service";
 import ViewLogService from "service/view.log.service";
+import VerifyTokenMiddleware from "middleware/verify.token.middleware";
 
 @Controller("/posts")
 export default class PostController {
@@ -56,7 +57,7 @@ export default class PostController {
   }
 
   // 顯示單一文章
-  @Get("/:postId")
+  @Get("/:postId", [VerifyTokenMiddleware])
   public async show(@Request() req: any, @Response() res: any) {
     const postService: PostService = Container.get(PostService);
     const viewLogService: ViewLogService = Container.get(ViewLogService);
@@ -70,7 +71,6 @@ export default class PostController {
     }
 
     // 有登入的話新增觀看紀錄
-
     if (req.session.user) {
       const viewLog: ViewLog | undefined = await viewLogService.findById({
         userId: req.session.user.id,
