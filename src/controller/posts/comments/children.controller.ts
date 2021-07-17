@@ -19,7 +19,7 @@ export default class ChildrenController {
     v.storeChildrenRule().validate();
 
     if (v.isError()) {
-      return res.json({ errors: v.detail });
+      return res.status(400).json({ errors: v.detail });
     }
 
     const commentService: CommentService = Container.get(CommentService);
