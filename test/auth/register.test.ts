@@ -1,4 +1,4 @@
-import { server, api } from "../global.test";
+import { api } from "../global.test";
 
 import Faker from "faker";
 import { expect } from "chai";

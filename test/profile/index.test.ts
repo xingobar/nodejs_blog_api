@@ -1,4 +1,4 @@
-import { server, api, createUser, defaultPassword, fakeLogin, getCurrentUser } from "../global.test";
+import { api, createUser, defaultPassword, fakeLogin, getCurrentUser } from "../global.test";
 import { expect } from "chai";
 import { getConnection } from "typeorm";
 import { User } from "entity/user.entity";
