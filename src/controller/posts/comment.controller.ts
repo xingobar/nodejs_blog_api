@@ -5,6 +5,8 @@ import CommentService from "service/comment.service";
 import PostService from "service/post.service";
 import NotFoundException from "exception/notfound.exception";
 import CommentValidator from "validator/comment.validator";
+import CommentPolicy from "policy/comment.policy";
+import AccessDeniedException from "exception/access.denied.exception";
 
 @Controller("/posts")
 export default class CommentController {
@@ -69,6 +71,12 @@ export default class CommentController {
 
     if (!comment) {
       throw new NotFoundException();
+    }
+
+    const commentPolicy: CommentPolicy = Container.get(CommentPolicy);
+
+    if (!commentPolicy.delete(req.session.user, comment)) {
+      throw new AccessDeniedException();
     }
 
     // 刪除父留言成功
