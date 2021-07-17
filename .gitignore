@@ -10,4 +10,5 @@ dist/
 
 src/logs/*
 
+test.ormconfig.json
 

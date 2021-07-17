@@ -28,6 +28,12 @@
 | 更新子留言           | [PUT] /api/posts/{postId}/comments/{parentId}/children/{childrenId}    |
 | 刪除子留言           | [DELETE] /api/posts/{postId}/comments/{parentId}/children/{childrenId} |
 
+# 跑測試前先將 test.ormconfig.json.example cp 一份
+
+```
+cp test.ormconfig.json.example test.ormconfig.json
+```
+
 # nodejs_blog_api
 
 nodejs + ts + express blog api
