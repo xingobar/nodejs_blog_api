@@ -23,6 +23,9 @@ export default class AuthenticateMiddleware implements Middleware {
         if (req.session.user.id !== user.id) {
           throw new InvalidException("登入的帳號異常, 請重新登入");
         }
+      } else {
+        // 測試的時候不會打 login api, 因此將 user 塞進 req.session.user
+        req.session.user = user;
       }
 
       next();
