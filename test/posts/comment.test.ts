@@ -163,13 +163,13 @@ describe("update comment test", () => {
     const payload: { body?: string } = {};
 
     const token = await fakeLogin();
-    let res = await api.put(`/posts/1/comments/1`).set("authorization", `Bearer ${token}`).send(payload).expect(200);
+    let res = await api.put(`/posts/1/comments/1`).set("authorization", `Bearer ${token}`).send(payload).expect(400);
 
     assert.deepEqual(res.body, { errors: [{ message: "請輸入留言內容" }] });
 
     // 內容長度不夠
     payload.body = "demo";
-    res = await api.put(`/posts/1/comments/1`).set("authorization", `Bearer ${token}`).send(payload).expect(200);
+    res = await api.put(`/posts/1/comments/1`).set("authorization", `Bearer ${token}`).send(payload).expect(400);
 
     assert.deepEqual(res.body, { errors: [{ message: "留言內容最少 10 個字" }] });
   });
@@ -190,5 +190,50 @@ describe("update comment test", () => {
 
     // 可以更新自己的評論
     await api.put(`/posts/${post?.id}/comments/${comment?.id}`).set("authorization", `Bearer ${token}`).send(payload).expect(200);
+  });
+});
+
+describe("create comment test", () => {
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
+
+  it("no login", (done) => {
+    api
+      .post("/posts/1/comments")
+      .send({})
+      .end((err, res) => {
+        assert.deepEqual(res.body, { message: "尚未登入" });
+        done();
+      });
+  });
+
+  it("no input data", async () => {
+    const token = await createUserAndLogin();
+    const post = await createPost({ status: PostStatus.PUBLISH });
+    const payload: {
+      body?: string;
+    } = {};
+    let res = await api.post(`/posts/${post?.id}/comments`).set("authorization", `Bearer ${token}`).send(payload).expect(400);
+
+    assert.deepEqual(res.body, { errors: [{ message: "請輸入留言內容" }] });
+
+    // 長度不夠
+    payload.body = "demo";
+    res = await api.post(`/posts/${post?.id}/comments`).set("authorization", `Bearer ${token}`).send(payload).expect(400);
+
+    assert.deepEqual(res.body, { errors: [{ message: "留言內容最少 10 個字" }] });
+  });
+
+  it("create comment successful", async () => {
+    const token = await createUserAndLogin();
+    const post = await createPost({ status: PostStatus.PUBLISH });
+    const payload: {
+      body?: string;
+    } = {
+      body: Faker.lorem.paragraph(1),
+    };
+
+    await api.post(`/posts/${post?.id}/comments`).set("authorization", `Bearer ${token}`).send(payload).expect(200);
   });
 });

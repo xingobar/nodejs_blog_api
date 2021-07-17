@@ -42,7 +42,7 @@ export default class CommentController {
     v.storeParentRule().validate();
 
     if (v.isError()) {
-      return res.json({ errors: v.detail });
+      return res.status(400).json({ errors: v.detail });
     }
 
     const commentService: CommentService = Container.get(CommentService);
@@ -104,7 +104,7 @@ export default class CommentController {
     v.updateParentRule().validate();
 
     if (v.isError()) {
-      return res.json({ errors: v.detail });
+      return res.status(400).json({ errors: v.detail });
     }
 
     const postService: PostService = Container.get(PostService);
