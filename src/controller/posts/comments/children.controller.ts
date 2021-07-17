@@ -87,7 +87,7 @@ export default class ChildrenController {
       throw new NotFoundException();
     }
 
-    let children = await commentService.findChildrenCommentById(parent.id, req.params.childrenId);
+    const children = await commentService.findChildrenCommentById(parent.id, req.params.childrenId);
 
     if (!children) {
       throw new NotFoundException();

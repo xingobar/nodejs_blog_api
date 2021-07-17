@@ -16,7 +16,7 @@ export default class UploaderController {
     awsLib.upload({
       filePath: req.file.path,
       callback: (err: any, data: any) => {
-        //handle error
+        // handle error
         if (err) {
           console.log("Error", err);
 
@@ -25,7 +25,7 @@ export default class UploaderController {
           throw new InvalidException("上傳失敗");
         }
 
-        //success
+        // success
         if (data) {
           console.log("Uploaded in:", data.Location);
 

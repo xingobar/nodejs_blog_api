@@ -8,11 +8,11 @@ export default class UploadAvatarImageMiddleware implements Middleware {
     try {
       const storage = multer.diskStorage({
         // 圖片上傳的位置
-        destination: function (req, file, cb) {
+        destination(reqDes, file, cb) {
           cb(null, "./uploads");
         },
         // 檔名
-        filename: function (req, file, cb) {
+        filename(reqFileName, file, cb) {
           cb(null, file.originalname);
         },
       });
@@ -20,7 +20,7 @@ export default class UploadAvatarImageMiddleware implements Middleware {
       const uploadImage = multer({
         storage,
         // 驗證檔案副檔名
-        fileFilter: (req, file, cb) => {
+        fileFilter: (reqFileFilter, file, cb) => {
           const mimeTypes = ["image/jpg", "image/png", "image/jpeg"];
 
           if (mimeTypes.includes(file.mimetype)) {

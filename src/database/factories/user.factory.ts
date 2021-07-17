@@ -15,5 +15,7 @@ define(User, (faker: typeof Faker) => {
 
   user.profile = factory(Profile)() as any;
 
+  user.avatar = faker.image.avatar();
+
   return user;
 });

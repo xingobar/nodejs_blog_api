@@ -17,7 +17,7 @@ export default class VerifyTokenMiddleware implements Middleware {
         return next();
       }
 
-      req.user = user;
+      req.session.user = user;
 
       next();
     });

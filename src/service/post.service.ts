@@ -221,8 +221,8 @@ export default class PostService {
       .innerJoin(
         (subquery) => {
           return subquery
-            .from((subquery) => {
-              return subquery.from(ViewLog, "view_logs").where("entityId != :entityId", { entityId: postId });
+            .from((viewLogsQuery) => {
+              return viewLogsQuery.from(ViewLog, "view_logs").where("entityId != :entityId", { entityId: postId });
             }, "tmp")
             .select("tmp.entityId")
             .addSelect("COUNT(*)", "total")

@@ -95,7 +95,7 @@ describe("store profile test", () => {
   });
 });
 
-describe("update profile", () => {
+describe("update profile test", () => {
   after((done) => {
     getConnection("test").getRepository(Profile).createQueryBuilder().delete().execute();
     getConnection("test").getRepository(User).createQueryBuilder().delete().execute();

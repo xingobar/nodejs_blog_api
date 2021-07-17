@@ -35,10 +35,10 @@ export default class AwsLib {
     bucket?: string;
     filePath: string;
     folder?: string;
-    callback: Function;
+    callback: (err: any, data: any) => void;
   }) {
     // key => 資料夾/時間_圖片檔名
-    var params = {
+    const params = {
       Bucket: bucket,
       Body: fs.createReadStream(filePath),
       Key: `${folder}${Date.now()}_${path.basename(filePath)}`,
