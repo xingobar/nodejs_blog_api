@@ -85,7 +85,7 @@ export default class ChildrenController {
    * @param req
    * @param res
    */
-  @Delete("/:postId/comments/:parentId/children/:childrenId")
+  @Delete("/:postId/comments/:parentId/children/:childrenId", [AuthenticateMiddleware])
   public async destroy(@Request() req: any, @Response() res: any) {
     const commentService: CommentService = Container.get(CommentService);
 
@@ -99,6 +99,12 @@ export default class ChildrenController {
 
     if (!children) {
       throw new NotFoundException();
+    }
+
+    const commentPolicy: CommentPolicy = Container.get(CommentPolicy);
+
+    if (!commentPolicy.delete(req.session.user, children)) {
+      throw new AccessDeniedException();
     }
 
     await commentService.deleteChildren(children);

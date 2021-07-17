@@ -243,3 +243,55 @@ describe("update children comment test", () => {
       .expect(200);
   });
 });
+
+describe("delete post test", () => {
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
+
+  it("no login", (done) => {
+    api
+      .delete("/posts/1/comments/1/children/1")
+      .expect(401)
+      .end((err, res) => {
+        assert.deepEqual(res.body, { message: "尚未登入" });
+        done();
+      });
+  });
+
+  it("not found parent comment", async () => {
+    const token = await createUserAndLogin();
+
+    await api.delete("/posts/1/comments/1/children/1").set("authorization", `Bearer ${token}`).expect(404);
+  });
+
+  it("not found children comment", async () => {
+    const { user, post, comment } = await createPostUserComment();
+    const token = await fakeLogin(user?.account);
+    await api.delete(`/posts/${post?.id}/comments/${comment?.id}/children/1`).set("authorization", `Bearer ${token}`).expect(404);
+  });
+
+  it("no delete other children comment", async () => {
+    const { user, post, comment } = await createPostUserComment();
+    const children = await createChildrenComment(comment);
+
+    const otherUserToken = await createUserAndLogin();
+
+    await api
+      .delete(`/posts/${post?.id}/comments/${comment?.id}/children/${children?.id}`)
+      .set("authorization", `Bearer ${otherUserToken}`)
+      .expect(403);
+  });
+
+  it("delete own children comment successful", async () => {
+    const { user, post, comment } = await createPostUserComment();
+    const children = await createChildrenComment(comment);
+
+    const token = await fakeLogin(user?.account);
+
+    await api
+      .delete(`/posts/${post?.id}/comments/${comment?.id}/children/${children?.id}`)
+      .set("authorization", `Bearer ${token}`)
+      .expect(200);
+  });
+});
