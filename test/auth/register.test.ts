@@ -27,6 +27,7 @@ describe("register", () => {
       .post("/auth/register")
       .set("Accept", "application/json")
       .send({})
+      .expect(400)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "請輸入帳號" }] });
         done();
@@ -42,6 +43,7 @@ describe("register", () => {
       .post("/auth/register")
       .set("Accept", "application/json")
       .send(registerPayload)
+      .expect(400)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "帳號至少要 6 位" }] });
         done();
@@ -57,6 +59,7 @@ describe("register", () => {
       .post("/auth/register")
       .set("Accept", "application/json")
       .send(registerPayload)
+      .expect(400)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "帳號至多 20 位" }] });
         done();
@@ -70,6 +73,7 @@ describe("register", () => {
       .post("/auth/register")
       .set("Accept", "application/json")
       .send(registerPayload)
+      .expect(400)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "請輸入電子郵件" }] });
         done();
@@ -83,6 +87,7 @@ describe("register", () => {
       .post("/auth/register")
       .set("Accept", "application/json")
       .send(registerPayload)
+      .expect(400)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "電子郵件格式不符" }] });
         done();
@@ -97,6 +102,7 @@ describe("register", () => {
       .post("/auth/register")
       .set("Accept", "application/json")
       .send(registerPayload)
+      .expect(400)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "密碼至少要 6 位" }] });
         done();
@@ -110,6 +116,7 @@ describe("register", () => {
       .post("/auth/register")
       .set("Accept", "application/json")
       .send(registerPayload)
+      .expect(400)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "密碼至多 12 位" }] });
         done();
@@ -123,6 +130,7 @@ describe("register", () => {
       .post("/auth/register")
       .set("Accept", "application/json")
       .send(registerPayload)
+      .expect(400)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "請輸入確認密碼" }] });
         done();
@@ -136,6 +144,7 @@ describe("register", () => {
       .post("/auth/register")
       .set("Accept", "application/json")
       .send(registerPayload)
+      .expect(400)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "密碼不一致" }] });
         done();

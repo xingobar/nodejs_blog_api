@@ -25,6 +25,7 @@ describe("login test", () => {
       .post("/auth/login")
       .set("Accept", "application/json")
       .send({})
+      .expect(400)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "請輸入登入帳號" }] });
         done();
@@ -38,6 +39,7 @@ describe("login test", () => {
       .post("/auth/login")
       .set("Accept", "application/json")
       .send(payload)
+      .expect(400)
       .end((err, res) => {
         expect(res.body).that.deep.equals({ errors: [{ message: "請輸入密碼" }] });
         done();

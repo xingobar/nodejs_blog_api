@@ -60,7 +60,12 @@ describe("store profile test", () => {
 
   it("no input data", async () => {
     const token = await createUserAndLogin();
-    const res = await api.post("/users/profiles").set("Accept", "application/json").set("authorization", `Bearer ${token}`).send({});
+    const res = await api
+      .post("/users/profiles")
+      .set("Accept", "application/json")
+      .set("authorization", `Bearer ${token}`)
+      .send({})
+      .expect(400);
 
     expect(res.body).that.deep.equals({ errors: [{ message: "請輸入性別" }] });
   });
@@ -84,6 +89,7 @@ describe("store profile test", () => {
       .post("/users/profiles")
       .set("accept", "application/json")
       .set("authorization", `Bearer ${token}`)
+      .expect(400)
       .send(profilePayload);
     expect(res.body).that.deep.equals({ errors: [{ message: "請輸入電話號碼" }] });
   });
@@ -119,7 +125,12 @@ describe("update profile test", () => {
   it("no input data", async () => {
     const token = await createUserAndLogin();
 
-    const res = await api.post("/users/profiles").set("Accept", "application/json").set("authorization", `Bearer ${token}`).send({});
+    const res = await api
+      .post("/users/profiles")
+      .set("Accept", "application/json")
+      .set("authorization", `Bearer ${token}`)
+      .send({})
+      .expect(400);
     expect(res.body).that.deep.equals({ errors: [{ message: "請輸入性別" }] });
   });
 

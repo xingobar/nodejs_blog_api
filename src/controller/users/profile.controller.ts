@@ -44,7 +44,7 @@ class ProfileController {
     v.update().validate();
 
     if (v.isError()) {
-      return res.json({ errors: v.detail });
+      return res.status(400).json({ errors: v.detail });
     }
 
     const profileService: ProfileService = Container.get(ProfileService);

@@ -61,7 +61,7 @@ class AuthController implements interfaces.Controller {
     v.register().validate();
 
     if (v.isError()) {
-      return res.json({ errors: v.detail });
+      return res.status(400).json({ errors: v.detail });
     }
 
     const userService: UserService = Container.get(UserService);
@@ -95,7 +95,7 @@ class AuthController implements interfaces.Controller {
     v.login().validate();
 
     if (v.isError()) {
-      return res.json({ errors: v.detail });
+      return res.status(400).json({ errors: v.detail });
     }
 
     const userService: UserService = Container.get(UserService);
