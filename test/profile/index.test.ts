@@ -43,10 +43,9 @@ export const createProfile = async () => {
 };
 
 describe("store profile test", () => {
-  // beforeEach(async () => {
-  //   await useRefreshDatabase({ connection: "test" });
-  //   await getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
-  // });
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
 
   it("no login", (done) => {
     api
@@ -102,10 +101,9 @@ describe("store profile test", () => {
 });
 
 describe("update profile test", () => {
-  // beforeEach(async () => {
-  //   await useRefreshDatabase({ connection: "test" });
-  //   await getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
-  // });
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
 
   it("no login", (done) => {
     api
@@ -147,10 +145,9 @@ describe("update profile test", () => {
 });
 
 describe("get profile", () => {
-  // beforeEach(async () => {
-  //   await useRefreshDatabase({ connection: "test" });
-  //   await getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
-  // });
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
 
   it("no login", (done) => {
     api

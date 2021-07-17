@@ -7,6 +7,8 @@ import { getConnection } from "typeorm";
 
 import { User } from "entity/user.entity";
 
+import { useRefreshDatabase } from "typeorm-seeding";
+
 let registerPayload: {
   account?: string;
   password?: string;
@@ -15,9 +17,8 @@ let registerPayload: {
 } = {};
 
 describe("register", () => {
-  beforeEach((done) => {
-    getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
-    done();
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
   });
 
   it("account no input", (done) => {

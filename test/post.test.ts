@@ -3,7 +3,7 @@ import { getConnection } from "typeorm";
 import { api, createUser } from "./global.test";
 import { Post, PostStatus } from "entity/post.entity";
 import { User } from "entity/user.entity";
-import { factory } from "typeorm-seeding";
+import { factory, useRefreshDatabase } from "typeorm-seeding";
 
 let post: Post | undefined;
 
@@ -25,11 +25,9 @@ export const createPost = async ({ status = PostStatus.PUBLISH }: { status: Post
 };
 
 describe("get post index ", () => {
-  // beforeEach((done) => {
-  //   getConnection("test").getRepository(Post).createQueryBuilder().delete().execute();
-  //   getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
-  //   done();
-  // });
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
 
   it("no posts", (done) => {
     api

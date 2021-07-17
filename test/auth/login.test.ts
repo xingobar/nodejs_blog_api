@@ -2,6 +2,7 @@ import { api, createUser, defaultPassword, fakeLogin, createUserAndLogin } from 
 import { expect } from "chai";
 import { getConnection } from "typeorm";
 import { User } from "entity/user.entity";
+import { useRefreshDatabase } from "typeorm-seeding";
 
 import Faker from "faker";
 
@@ -15,9 +16,9 @@ let fakeUser: User | undefined;
 let apiToken: string;
 
 describe("login test", () => {
-  // beforeEach(async () => {
-  //   await getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
-  // });
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
 
   it("no account", (done) => {
     api
