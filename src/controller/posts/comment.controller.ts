@@ -13,6 +13,14 @@ export default class CommentController {
   public async index(@Request() req: any, @Response() res: any) {
     const commentService: CommentService = Container.get(CommentService);
 
+    const postService: PostService = Container.get(PostService);
+
+    const post = await postService.findByIdWithPublished(req.params.postId);
+
+    if (!post) {
+      throw new NotFoundException();
+    }
+
     const comments = await commentService.findPaginatorChildrenComment(req.params.postId);
 
     return res.json(comments);
