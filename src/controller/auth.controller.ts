@@ -103,7 +103,7 @@ class AuthController implements interfaces.Controller {
     // 找不到使用者
     const user = await userService.findByAccount(req.body.account);
     if (!user) {
-      throw new NotFoundException();
+      throw new NotFoundException("帳號不存在");
     }
 
     // 檢查密碼是否一致
