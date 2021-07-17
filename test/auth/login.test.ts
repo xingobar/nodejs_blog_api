@@ -1,4 +1,4 @@
-import { api, createUser, defaultPassword } from "../global.test";
+import { api, createUser, defaultPassword, fakeLogin, createUserAndLogin } from "../global.test";
 import { expect } from "chai";
 import { getConnection } from "typeorm";
 import { User } from "entity/user.entity";
@@ -15,17 +15,9 @@ let fakeUser: User | undefined;
 let apiToken: string;
 
 describe("login test", () => {
-  before((done) => {
-    done();
-    // server = app.listen(process.env.APP_PORT);
-    // getConnection("test").runMigrations();
-  });
-
-  after(() => {
-    getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
-    // server.close();
-    // done();
-  });
+  // beforeEach(async () => {
+  //   await getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
+  // });
 
   it("no account", (done) => {
     api
@@ -39,7 +31,7 @@ describe("login test", () => {
   });
 
   it("no password", (done) => {
-    payload.account = "12345";
+    payload.account = Faker.finance.account();
 
     api
       .post("/auth/login")
@@ -64,36 +56,12 @@ describe("login test", () => {
       });
   });
 
-  it("register", (done) => {
-    createUser().then((user) => {
-      fakeUser = user;
-      done();
-    });
-  });
+  it("check can login", async () => {
+    fakeUser = await createUser({ account: Faker.finance.account(), password: "123456", email: Faker.internet.email() });
+    apiToken = await fakeLogin(fakeUser?.account);
 
-  it("login successful", (done) => {
-    api
-      .post("/auth/login")
-      .set("Accept", "application/json")
-      .send({
-        account: fakeUser?.account,
-        password: defaultPassword,
-      })
-      .end((err, res) => {
-        expect(res.body).includes.keys("token");
-        apiToken = res.body?.token;
-        done();
-      });
-  });
+    const res = await api.get("/users").set("Accept", "application/json").set("authorization", `Bearer ${apiToken}`).expect(200);
 
-  it("check can login", (done) => {
-    api
-      .get("/users")
-      .set("Accept", "application/json")
-      .set("authorization", `Bearer ${apiToken}`)
-      .expect(200)
-      .end((err, res) => {
-        done();
-      });
+    expect(res.statusCode).to.be.equal(200);
   });
 });

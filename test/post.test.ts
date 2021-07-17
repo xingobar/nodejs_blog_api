@@ -25,11 +25,11 @@ export const createPost = async ({ status = PostStatus.PUBLISH }: { status: Post
 };
 
 describe("get post index ", () => {
-  beforeEach((done) => {
-    getConnection("test").getRepository(Post).createQueryBuilder().delete().execute();
-    getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
-    done();
-  });
+  // beforeEach((done) => {
+  //   getConnection("test").getRepository(Post).createQueryBuilder().delete().execute();
+  //   getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
+  //   done();
+  // });
 
   it("no posts", (done) => {
     api

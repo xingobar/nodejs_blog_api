@@ -1,9 +1,10 @@
-import { api, createUser, defaultPassword, fakeLogin, getCurrentUser } from "../global.test";
+import { api, createUser, defaultPassword, fakeLogin, getCurrentUser, createUserAndLogin } from "../global.test";
 import { expect } from "chai";
 import { getConnection } from "typeorm";
 import { User } from "entity/user.entity";
 import { ProfileGender, Profile } from "entity/profile.entity";
 import { useRefreshDatabase, tearDownDatabase } from "typeorm-seeding";
+import Faker from "faker";
 
 let jwtToken: string;
 
@@ -12,25 +13,40 @@ const profilePayload: {
   phone?: string;
 } = {};
 
+export const createProfile = async () => {
+  const profile = await getConnection("test").getRepository(Profile).create({
+    phone: Faker.phone.phoneNumber(),
+    gender: ProfileGender.FEMALE,
+  });
+
+  const user =
+    (await getConnection("test")
+      .getRepository(User)
+      .findOne({
+        where: {
+          id: getCurrentUser?.id,
+        },
+      })) ?? new User();
+
+  user.profileId = profile.id;
+
+  await getConnection("test").getRepository(User).update(
+    {
+      id: user.id,
+    },
+    {
+      profileId: profile.id,
+    }
+  );
+
+  return profile;
+};
+
 describe("store profile test", () => {
-  after((done) => {
-    getConnection("test").getRepository(Profile).createQueryBuilder().delete().execute();
-    getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
-    done();
-  });
-
-  it("create user", (done) => {
-    createUser().then(() => {
-      done();
-    });
-  });
-
-  it("login", (done) => {
-    fakeLogin().then((token) => {
-      jwtToken = token;
-      done();
-    });
-  });
+  // beforeEach(async () => {
+  //   await useRefreshDatabase({ connection: "test" });
+  //   await getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
+  // });
 
   it("no login", (done) => {
     api
@@ -43,77 +59,53 @@ describe("store profile test", () => {
       });
   });
 
-  it("no input data", (done) => {
-    api
-      .post("/users/profiles")
-      .set("Accept", "application/json")
-      .set("authorization", `Bearer ${jwtToken}`)
-      .send({})
-      .end((err, res) => {
-        expect(res.body).that.deep.equals({ errors: [{ message: "請輸入性別" }] });
-        done();
-      });
+  it("no input data", async () => {
+    const token = await createUserAndLogin();
+    const res = await api.post("/users/profiles").set("Accept", "application/json").set("authorization", `Bearer ${token}`).send({});
+
+    expect(res.body).that.deep.equals({ errors: [{ message: "請輸入性別" }] });
   });
 
-  it("gender error", (done) => {
+  it("gender error", async () => {
+    const token = await createUserAndLogin();
     profilePayload.gender = "demo";
-    api
+    const res = await api
       .post("/users/profiles")
       .set("accept", "application/json")
-      .set("authorization", `Bearer ${jwtToken}`)
-      .send(profilePayload)
-      .end((err, res) => {
-        expect(res.body).that.deep.equals({ errors: [{ message: "性別有誤" }] });
-        done();
-      });
+      .set("authorization", `Bearer ${token}`)
+      .send(profilePayload);
+
+    expect(res.body).that.deep.equals({ errors: [{ message: "性別有誤" }] });
   });
 
-  it("no phone", (done) => {
+  it("no phone", async () => {
+    const token = await createUserAndLogin();
     profilePayload.gender = ProfileGender.MALE;
-    api
+    const res = await api
       .post("/users/profiles")
       .set("accept", "application/json")
-      .set("authorization", `Bearer ${jwtToken}`)
-      .send(profilePayload)
-      .end((err, res) => {
-        expect(res.body).that.deep.equals({ errors: [{ message: "請輸入電話號碼" }] });
-        done();
-      });
+      .set("authorization", `Bearer ${token}`)
+      .send(profilePayload);
+    expect(res.body).that.deep.equals({ errors: [{ message: "請輸入電話號碼" }] });
   });
 
-  it("store profile successful", (done) => {
+  it("store profile successful", async () => {
+    const token = await createUserAndLogin();
     profilePayload.phone = "123456";
-    api
+    const res = await api
       .post("/users/profiles")
       .set("accept", "application/json")
-      .set("authorization", `Bearer ${jwtToken}`)
+      .set("authorization", `Bearer ${token}`)
       .send(profilePayload)
-      .expect(200)
-      .end((err, res) => {
-        done();
-      });
+      .expect(200);
   });
 });
 
 describe("update profile test", () => {
-  after((done) => {
-    getConnection("test").getRepository(Profile).createQueryBuilder().delete().execute();
-    getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
-    done();
-  });
-
-  it("create user", (done) => {
-    createUser().then(() => {
-      done();
-    });
-  });
-
-  it("login", (done) => {
-    fakeLogin().then((token) => {
-      jwtToken = token;
-      done();
-    });
-  });
+  // beforeEach(async () => {
+  //   await useRefreshDatabase({ connection: "test" });
+  //   await getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
+  // });
 
   it("no login", (done) => {
     api
@@ -126,49 +118,39 @@ describe("update profile test", () => {
       });
   });
 
-  it("no input data", (done) => {
-    api
-      .post("/users/profiles")
-      .set("Accept", "application/json")
-      .set("authorization", `Bearer ${jwtToken}`)
-      .send({})
-      .end((err, res) => {
-        expect(res.body).that.deep.equals({ errors: [{ message: "請輸入性別" }] });
-        done();
-      });
+  it("no input data", async () => {
+    const token = await createUserAndLogin();
+
+    const res = await api.post("/users/profiles").set("Accept", "application/json").set("authorization", `Bearer ${token}`).send({});
+    expect(res.body).that.deep.equals({ errors: [{ message: "請輸入性別" }] });
   });
 
-  it("create profile", (done) => {
-    api
-      .post("/users/profiles")
-      .set("accept", "application/json")
-      .set("authorization", `Bearer ${jwtToken}`)
-      .send(profilePayload)
-      .expect(200)
-      .end((err, res) => {
-        done();
-      });
-  });
+  it("update profile", async () => {
+    const token = await createUserAndLogin();
 
-  it("update profile", (done) => {
-    api
-      .post("/users/profiles")
-      .set("accept", "application/json")
-      .set("authorization", `Bearer ${jwtToken}`)
-      .send(profilePayload)
-      .expect(200)
-      .end((err, res) => {
-        done();
-      });
+    const profile = await getConnection("test").getRepository(Profile).create({
+      phone: Faker.phone.phoneNumber(),
+      gender: ProfileGender.FEMALE,
+    });
+
+    await getConnection("test")
+      .getRepository(User)
+      .createQueryBuilder()
+      .update(User)
+      .set({
+        profileId: profile.id,
+      })
+      .execute();
+
+    api.post("/users/profiles").set("accept", "application/json").set("authorization", `Bearer ${token}`).send(profilePayload).expect(200);
   });
 });
 
 describe("get profile", () => {
-  after((done) => {
-    getConnection("test").getRepository(Profile).createQueryBuilder().delete().execute();
-    getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
-    done();
-  });
+  // beforeEach(async () => {
+  //   await useRefreshDatabase({ connection: "test" });
+  //   await getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
+  // });
 
   it("no login", (done) => {
     api
@@ -176,30 +158,6 @@ describe("get profile", () => {
       .set("accept", "application/json")
       .send({})
       .expect(401)
-      .end((err, res) => {
-        done();
-      });
-  });
-
-  it("create user", (done) => {
-    createUser().then(() => {
-      done();
-    });
-  });
-
-  it("login", (done) => {
-    fakeLogin().then((token) => {
-      jwtToken = token;
-      done();
-    });
-  });
-
-  it("get profile", (done) => {
-    api
-      .get("/users/profiles")
-      .set("accept", "application/json")
-      .set("authorization", `Bearer ${jwtToken}`)
-      .expect(404)
       .end((err, res) => {
         done();
       });
@@ -234,26 +192,20 @@ describe("get profile", () => {
   //   //done();
   // });
 
-  it("create profile", (done) => {
-    api
-      .post("/users/profiles")
-      .set("accept", "application/json")
-      .set("authorization", `Bearer ${jwtToken}`)
-      .send(profilePayload)
-      .expect(200)
-      .end((err, res) => {
-        done();
-      });
+  it("create profile", async () => {
+    const token = await createUserAndLogin();
+    api.post("/users/profiles").set("accept", "application/json").set("authorization", `Bearer ${token}`).send(profilePayload).expect(200);
   });
 
-  it("get profile", (done) => {
-    api
-      .get("/users/profiles")
-      .set("accept", "application/json")
-      .set("authorization", `Bearer ${jwtToken}`)
-      .expect(200)
-      .end((err, res) => {
-        done();
-      });
+  it("get profile", async () => {
+    const profile = await createProfile();
+    const user = await getConnection("test")
+      .getRepository(User)
+      .createQueryBuilder()
+      .where("profileId = :profileId", { profileId: profile.id })
+      .getOne();
+
+    const token = await fakeLogin(user?.account);
+    api.get("/users/profiles").set("accept", "application/json").set("authorization", `Bearer ${token}`).expect(200);
   });
 });

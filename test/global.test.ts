@@ -13,6 +13,7 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
 // process.env.API_URL;
 
 import app from "../src/app";
+import Faker from "faker";
 
 export const server = app.listen(process.env.APP_PORT);
 
@@ -25,18 +26,24 @@ interface IRegisterPayload {
 }
 
 const fakeUser: IRegisterPayload = {
-  account: "garyng01",
+  account: Faker.finance.account(),
   password: "123456",
-  email: "garyng01@gmail.com",
+  email: Faker.internet.email(),
 };
 
-let currentUser: User | undefined;
+let currentUser: User = new User();
 
 /**
  * 新增會員
  * @param payload
  */
-export const createUser = async (payload: IRegisterPayload = fakeUser): Promise<User | undefined> => {
+export const createUser = async (
+  payload: IRegisterPayload = {
+    account: Faker.finance.account(),
+    password: "123456",
+    email: Faker.internet.email(),
+  }
+): Promise<User | undefined> => {
   const salt = randomBytes(20);
   const hashedPassword = await argon2.hash(payload.password, { salt });
   payload.password = hashedPassword;
@@ -50,13 +57,14 @@ export const createUser = async (payload: IRegisterPayload = fakeUser): Promise<
     })
     .execute();
 
-  currentUser = await getConnection("test")
-    .getRepository(User)
-    .findOne({
-      where: {
-        account: payload.account,
-      },
-    });
+  currentUser =
+    (await getConnection("test")
+      .getRepository(User)
+      .findOne({
+        where: {
+          account: payload.account,
+        },
+      })) ?? new User();
 
   return currentUser;
 };
@@ -90,4 +98,10 @@ export const fakeLogin = async (account?: string): Promise<string> => {
   }
 
   return jwt.sign({ ...user }, process.env.TOKEN_SECRET || randomBytes(20).toString("hex"), { expiresIn: "1h" });
+};
+
+// 新增並且登入
+export const createUserAndLogin = async () => {
+  await createUser();
+  return await fakeLogin();
 };

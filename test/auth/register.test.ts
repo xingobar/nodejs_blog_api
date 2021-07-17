@@ -15,14 +15,9 @@ let registerPayload: {
 } = {};
 
 describe("register", () => {
-  before((done) => {
-    done();
-    // server = app.listen(process.env.APP_PORT);
-    // getConnection("test").runMigrations();
-  });
-
-  afterEach(() => {
+  beforeEach((done) => {
     getConnection("test").getRepository(User).createQueryBuilder().delete().execute();
+    done();
   });
 
   it("account no input", (done) => {
@@ -149,9 +144,9 @@ describe("register", () => {
   it("register success", (done) => {
     // // 註冊成功
     registerPayload = {
-      account: "garyng01",
+      account: Faker.finance.account(),
       password: "123456",
-      email: "garyng01@gmail.com",
+      email: Faker.internet.email(),
       confirmPassword: "123456",
     };
     api
