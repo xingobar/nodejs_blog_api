@@ -30,11 +30,11 @@ class App {
         swagger.express({
           definition: {
             info: {
-              title: "My api",
+              title: "nodejs blog api",
               version: "1.0",
             },
             externalDocs: {
-              url: "My url",
+              url: "/api-docs/swagger",
             },
             // Models can be defined here
           },
