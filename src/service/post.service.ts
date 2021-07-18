@@ -19,9 +19,10 @@ export default class PostService {
    * 新增文章
    * @param {ICreatePost} payload
    */
-  public async createPost(payload: ICreatePost) {
+  public async createPost(payload: ICreatePost, userId: number) {
     return await this.postRepository.create({
       ...payload,
+      userId,
     } as Post);
   }
 

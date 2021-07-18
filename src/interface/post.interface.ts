@@ -5,7 +5,6 @@ import { PostStatus } from "entity/post.entity";
 export interface ICreatePost {
   title: string;
   body: string;
-  user: User;
   status: PostStatus;
 }
 

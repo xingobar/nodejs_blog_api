@@ -46,16 +46,12 @@ export default class PostController {
     v.storeRule().validate();
 
     if (v.isError()) {
-      return res.json({ errors: v.detail });
+      return res.status(400).json({ errors: v.detail });
     }
 
     const postService: PostService = Container.get(PostService);
 
-    const post = await postService.createPost(params);
-
-    post.user = req.session.user;
-
-    await postService.updateById(post.id, post);
+    const post = await postService.createPost(params, req.session.user.id);
 
     const resource = new PostResource(post);
 
