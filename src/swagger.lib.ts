@@ -5,7 +5,7 @@ import logger from "lib/logger.lib";
 import UserResponse from "swagger/response/user.response";
 import ProfileResponse from "swagger/response/profile.response";
 import PostResponse from "swagger/response/post.response";
-import PostLikeResponse from "swagger/response/post.response";
+import PostLikeResponse from "swagger/response/post.like.response";
 import PostBookmarkResponse from "swagger/response/post.bookmark.response";
 
 // swagger exception
