@@ -250,3 +250,40 @@ describe("update user post test", () => {
     await api.put(`/users/posts/${post?.id}`).set("authorization", `Bearer ${token}`).send(payload).expect(200);
   });
 });
+
+describe("delete post test", () => {
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
+
+  it("no login", (done) => {
+    api
+      .delete("/users/posts/1")
+      .expect(401)
+      .end((err, res) => {
+        assert.deepEqual(res.body, { message: "尚未登入" });
+        done();
+      });
+  });
+
+  it("not found post", async () => {
+    const token = await createUserAndLogin();
+
+    await api.delete("/users/posts/1").set("authorization", `Bearer ${token}`).expect(404);
+  });
+
+  it("no delete other user post", async () => {
+    const { user, post } = await createPost({ status: PostStatus.PUBLISH });
+
+    const otherUserToken = await createUserAndLogin();
+
+    await api.delete(`/users/posts/${post?.id}`).set("authorization", `Bearer ${otherUserToken}`).expect(403);
+  });
+
+  it("delete post successful", async () => {
+    const { user, post } = await createPost({ status: PostStatus.PUBLISH });
+    const token = await fakeLogin(user?.account);
+
+    await api.delete(`/users/posts/${post?.id}`).set("authorization", `Bearer ${token}`).expect(200);
+  });
+});

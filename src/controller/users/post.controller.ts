@@ -94,7 +94,7 @@ export default class PostController {
   }
 
   // 刪除文章
-  @Delete("/:postId")
+  @Delete("/:postId", [AuthenticateMiddleware])
   public async destroy(@Request() req: any, @Response() res: any) {
     const postService: PostService = Container.get(PostService);
 
@@ -102,6 +102,12 @@ export default class PostController {
 
     if (!post) {
       throw new NotFoundException();
+    }
+
+    const postPolicy: PostPolicy = Container.get(PostPolicy);
+
+    if (!postPolicy.delete(req.session.user, post)) {
+      throw new AccessDeniedException();
     }
 
     await postService.deleteById(req.params.postId);
