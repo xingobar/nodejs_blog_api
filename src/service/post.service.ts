@@ -234,16 +234,21 @@ export default class PostService {
       .select("posts.*")
       .innerJoin(
         (subquery) => {
-          return subquery
+          const query = subquery
             .from((viewLogsQuery) => {
               return viewLogsQuery.from(ViewLog, "view_logs").where("entityId != :entityId", { entityId: postId });
             }, "tmp")
             .select("tmp.entityId")
             .addSelect("COUNT(*)", "total")
-            .where("userId != :userId", { userId })
             .groupBy("tmp.entityId")
             .orderBy("total", "DESC")
             .take(limit);
+
+          if (userId > 0) {
+            query.where("userId != :userId", { userId });
+          }
+
+          return query;
         },
         "popularity",
         "popularity.entityId = posts.id"
