@@ -12,6 +12,8 @@ import PostValidator from "validator/post.validator";
 import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import LikeableService from "service/likeable.service";
 import PaginatorLib from "lib/paginator.lib";
+import PostPolicy from "policy/post.policy";
+import AccessDeniedException from "exception/access.denied.exception";
 
 // 使用者文章
 interface IPostIndex {
@@ -72,10 +74,16 @@ export default class PostController {
 
     const postService: PostService = Container.get(PostService);
 
-    let post = await postService.findByIdWithPublished(req.params.postId);
+    let post = await postService.findById(req.params.postId);
 
     if (!post) {
       throw new NotFoundException();
+    }
+
+    const postPolicy: PostPolicy = Container.get(PostPolicy);
+
+    if (!postPolicy.update(req.session.user, post)) {
+      throw new AccessDeniedException();
     }
 
     post = await postService.updateById(post.id, params);
@@ -90,7 +98,7 @@ export default class PostController {
   public async destroy(@Request() req: any, @Response() res: any) {
     const postService: PostService = Container.get(PostService);
 
-    const post = await postService.findByIdWithPublished(req.params.postId);
+    const post = await postService.findById(req.params.postId);
 
     if (!post) {
       throw new NotFoundException();

@@ -102,6 +102,17 @@ export default class PostService {
   }
 
   /**
+   * 根據編號取得文章
+   * @param id
+   */
+  public findById(id: number) {
+    return this.postRepository
+      .getOne()
+      .where((post) => post.id)
+      .equal(id);
+  }
+
+  /**
    * 根據編號更新文章
    * @param {number} id - 文章編號
    * @param {IUpdatePost} data

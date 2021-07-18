@@ -214,6 +214,24 @@ describe("update user post test", () => {
     await api.put(`/users/posts/1`).set("authorization", `Bearer ${token}`).send(payload).expect(404);
   });
 
+  it("only update own post", async () => {
+    const payload: {
+      title?: string;
+      body?: string;
+      status?: string;
+    } = {
+      title: Faker.lorem.paragraph(1),
+      body: Faker.lorem.paragraph(2),
+      status: PostStatus.PUBLISH,
+    };
+
+    const { post, user } = await createPost({ status: PostStatus.PUBLISH });
+
+    const otherUserToken = await createUserAndLogin();
+
+    await api.put(`/users/posts/${post?.id}`).set("authorization", `Bearer ${otherUserToken}`).send(payload).expect(403);
+  });
+
   it("update post success", async () => {
     const payload: {
       title?: string;
