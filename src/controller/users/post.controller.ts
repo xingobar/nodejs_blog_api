@@ -233,6 +233,21 @@ export default class UserPostController implements interfaces.Controller {
     });
   }
 
+  @ApiOperationGet({
+    path: "/bookmarks",
+    security: {
+      authorization: ["Bearer <token>"],
+    },
+    summary: "取得使用者加入書籤的文章",
+    description: "取得使用者加入書籤的文章",
+    responses: {
+      200: {
+        description: "成功",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "PostPaginationResponse",
+      },
+    },
+  })
   // 取得使用者書籤
   @Get("/bookmarks", [AuthenticateMiddleware])
   public async bookmarks(@Request() req: any, @Response() res: any) {
@@ -261,6 +276,21 @@ export default class UserPostController implements interfaces.Controller {
     );
   }
 
+  @ApiOperationGet({
+    path: "/likes",
+    security: {
+      authorization: ["Bearer <token>"],
+    },
+    summary: "取得使用者喜歡的文章",
+    description: "取得使用者喜歡的文章",
+    responses: {
+      200: {
+        description: "取得成功",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "PostPaginationResponse",
+      },
+    },
+  })
   // 取得使用者喜歡的文章
   @Get("/likes", [AuthenticateMiddleware])
   public async likes(@Request() req: any, @Response() res: any) {

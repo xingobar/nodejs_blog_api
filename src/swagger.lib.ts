@@ -8,6 +8,7 @@ import PostResponse from "swagger/response/post.response";
 import PostLikeResponse from "swagger/response/post.like.response";
 import PostBookmarkResponse from "swagger/response/post.bookmark.response";
 import OkResponse from "swagger/response/ok.response";
+import PostPaginationResponse from "swagger/response/post.pagination.response";
 
 // swagger exception
 import NotFoundException from "swagger/response/notfound.exception";
@@ -72,6 +73,7 @@ export class SwaggerLib {
       UpdateUserPostRequest,
       AccessDeniedException,
       OkResponse,
+      PostPaginationResponse,
     ]);
   }
 
