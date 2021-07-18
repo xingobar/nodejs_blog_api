@@ -1,6 +1,7 @@
 import * as swagger from "swagger-express-ts";
 import logger from "lib/logger.lib";
 import UserResponse from "swagger/response/user.response";
+import InvalidException from "swagger/response/invalid.exception";
 import AuthController from "controller/auth.controller";
 import UserController from "controller/user.controller";
 
@@ -36,7 +37,7 @@ export class SwaggerLib {
   private setSwaggerDefinition() {
     // note that you *must* bind your controllers to Controller
     this.setSwaggerBindController([AuthController]);
-    this.setSwaggerBindResponse([UserResponse]);
+    this.setSwaggerBindResponse([UserResponse, InvalidException]);
   }
 
   // swagger bind controller

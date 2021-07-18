@@ -28,6 +28,7 @@ class AuthController implements interfaces.Controller {
    * @param res
    */
   @ApiOperationPost({
+    path: "/api/auth/register",
     description: "註冊",
     summary: "註冊",
     parameters: {
@@ -42,6 +43,16 @@ class AuthController implements interfaces.Controller {
           description: "密碼",
           type: "string",
         },
+        email: {
+          required: true,
+          description: "電子信箱",
+          type: "string",
+        },
+        confirmPassword: {
+          required: true,
+          description: "確認密碼",
+          type: "string",
+        },
       },
     },
     responses: {
@@ -49,6 +60,11 @@ class AuthController implements interfaces.Controller {
         description: "成功",
         type: SwaggerDefinitionConstant.Response.Type.OBJECT,
         model: "UserResponse",
+      },
+      400: {
+        description: "發生錯誤",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "InvalidRequestException",
       },
     },
   })
@@ -89,6 +105,37 @@ class AuthController implements interfaces.Controller {
    * @param req
    * @param res
    */
+  @ApiOperationPost({
+    path: "/api/auth/login",
+    description: "登入",
+    summary: "登入",
+    parameters: {
+      formData: {
+        account: {
+          type: SwaggerDefinitionConstant.STRING,
+          required: true,
+          description: "帳號",
+        },
+        password: {
+          type: SwaggerDefinitionConstant.STRING,
+          required: true,
+          description: "密碼",
+        },
+      },
+    },
+    responses: {
+      400: {
+        description: "發生錯誤",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "InvalidRequestException",
+      },
+      200: {
+        description: "登入成功",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "UserResponse",
+      },
+    },
+  })
   @Post("/login")
   public async login(@Request() req: any, @Response() res: any) {
     const v = new AuthValidator(req.body);
