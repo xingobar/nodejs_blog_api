@@ -27,12 +27,10 @@ export interface IUpdatePost {
  * @param {number} page 目前頁碼
  */
 export interface IGetAllPostParams {
-  orderBy?: {
-    column: string;
-    sort: string;
-  };
   keyword?: string;
   account?: string;
   limit?: number;
   page?: number;
+  column?: string;
+  sort?: string;
 }

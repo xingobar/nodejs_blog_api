@@ -15,8 +15,51 @@ import BookmarkService from "service/bookmark.service";
 import ViewLogService from "service/view.log.service";
 import VerifyTokenMiddleware from "middleware/verify.token.middleware";
 
+// swagger
+import { ApiPath, ApiOperationGet, ApiOperationPost, SwaggerDefinitionConstant } from "swagger-express-ts";
+import { injectable } from "inversify";
+import { interfaces } from "inversify-express-utils";
+
+@ApiPath({
+  path: "/api/posts",
+  name: "Post",
+})
+@injectable()
 @Controller("/posts")
-export default class PostController {
+export default class PostController implements interfaces.Controller {
+  public static TARGET_NAME: string = "PostController";
+
+  @ApiOperationGet({
+    path: "/",
+    summary: "取得文章列表",
+    description: "取得文章列表",
+    parameters: {
+      query: {
+        page: {
+          type: SwaggerDefinitionConstant.INTEGER,
+          description: "目前頁碼",
+        },
+        limit: {
+          type: SwaggerDefinitionConstant.INTEGER,
+          description: "每頁幾筆資料",
+        },
+        column: {
+          type: SwaggerDefinitionConstant.STRING,
+          description: "排序欄位",
+        },
+        sort: {
+          type: SwaggerDefinitionConstant.STRING,
+          description: "排序方式",
+        },
+      },
+    },
+    responses: {
+      200: {
+        type: SwaggerDefinitionConstant.Response.Type.ARRAY,
+        model: "PostResponse",
+      },
+    },
+  })
   // 取得文章列表
   @Get("/")
   public async index(@Request() req: any, @Response() res: any) {
@@ -39,7 +82,8 @@ export default class PostController {
      * 觀看次數
      * 喜歡次數
      */
-    params.orderBy = params?.orderBy ?? { column: "created_at", sort: "DESC" };
+    params.column = params?.column ?? "created_at";
+    params.sort = params?.sort ?? "DESC";
 
     const postService: PostService = Container.get(PostService);
 
@@ -56,6 +100,32 @@ export default class PostController {
     return res.json(await resource.toArray());
   }
 
+  @ApiOperationGet({
+    path: "/:postId",
+    summary: "顯示某一篇文章",
+    description: "顯示某一篇文章",
+    parameters: {
+      path: {
+        postId: {
+          description: "文章編號",
+          type: SwaggerDefinitionConstant.STRING,
+          required: true,
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: "取得成功",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "PostResponse",
+      },
+      404: {
+        description: "找不到資料",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "NotFoundException",
+      },
+    },
+  })
   // 顯示單一文章
   @Get("/:postId", [VerifyTokenMiddleware])
   public async show(@Request() req: any, @Response() res: any) {
@@ -88,6 +158,35 @@ export default class PostController {
     return res.json(await resource.toJson());
   }
 
+  @ApiOperationPost({
+    path: "/:postId/likes",
+    summary: "喜歡文章",
+    description: "喜歡文章",
+    security: {
+      authorization: ["Bearer <token>"],
+    },
+    parameters: {
+      path: {
+        postId: {
+          type: SwaggerDefinitionConstant.INTEGER,
+          description: "文章編號",
+          required: true,
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: "成功",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "PostLikeResponse",
+      },
+      404: {
+        description: "找不到資料",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "NotFoundException",
+      },
+    },
+  })
   // 喜歡文章
   @Post("/:postId/likes", [AuthenticateMiddleware])
   public async likes(@Request() req: any, @Response() res: any) {
@@ -123,6 +222,35 @@ export default class PostController {
     return res.json({ status });
   }
 
+  @ApiOperationPost({
+    path: "/:postId/bookmarks",
+    security: {
+      authorization: ["Bearer <token>"],
+    },
+    summary: "收藏文章",
+    description: "收藏文章",
+    parameters: {
+      path: {
+        postId: {
+          type: SwaggerDefinitionConstant.INTEGER,
+          description: "文章編號",
+          required: true,
+        },
+      },
+    },
+    responses: {
+      404: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        description: "找不到資料",
+        model: "NotFoundException",
+      },
+      200: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        description: "成功",
+        model: "PostBookmarkResponse",
+      },
+    },
+  })
   // 收藏文章
   @Post("/:postId/bookmarks", [AuthenticateMiddleware])
   public async bookmarked(@Request() req: any, @Response() res: any) {

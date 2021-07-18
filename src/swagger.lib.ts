@@ -3,12 +3,19 @@ import logger from "lib/logger.lib";
 
 // api swagger response
 import UserResponse from "swagger/response/user.response";
-import InvalidException from "swagger/response/invalid.exception";
 import ProfileResponse from "swagger/response/profile.response";
+import PostResponse from "swagger/response/post.response";
+import PostLikeResponse from "swagger/response/post.response";
+import PostBookmarkResponse from "swagger/response/post.bookmark.response";
+
+// swagger exception
+import NotFoundException from "swagger/response/notfound.exception";
+import InvalidException from "swagger/response/invalid.exception";
 
 // controller
 import AuthController from "controller/auth.controller";
 import UserController from "controller/user.controller";
+import PostController from "controller/post.controller";
 
 // api swagger payload
 import CreateProfileRequest from "swagger/api/users/create.profile.request";
@@ -45,8 +52,18 @@ export class SwaggerLib {
   // 設定 swagger defintion
   private setSwaggerDefinition() {
     // note that you *must* bind your controllers to Controller
-    this.setSwaggerBindController([AuthController]);
-    this.setSwaggerBindResponse([UserResponse, InvalidException, ProfileResponse, CreateProfileRequest]);
+    this.setSwaggerBindController([AuthController, PostController]);
+    this.setSwaggerBindResponse([
+      UserResponse,
+      InvalidException,
+      ProfileResponse,
+      CreateProfileRequest,
+      PostResponse,
+      InvalidException,
+      NotFoundException,
+      PostLikeResponse,
+      PostBookmarkResponse,
+    ]);
   }
 
   // swagger bind controller

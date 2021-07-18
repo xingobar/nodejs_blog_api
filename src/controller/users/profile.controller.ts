@@ -21,6 +21,7 @@ import { interfaces } from "inversify-express-utils";
   path: "/api/users/",
   name: "Profile",
 })
+@injectable()
 @Controller("/users")
 class ProfileController implements interfaces.Controller {
   public static TARGET_NAME: string = "ProfileController";

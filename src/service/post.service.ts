@@ -160,10 +160,10 @@ export default class PostService {
       .where(`posts.status = :status`, { status: PostStatus.PUBLISH });
 
     // 文章排序
-    switch (params.orderBy?.sort) {
+    switch (params?.sort) {
       case "ASC":
       case "DESC":
-        query = query.orderBy(`posts.${params.orderBy.column}`, params?.orderBy?.sort);
+        query = query.orderBy(`posts.${params?.column}`, params?.sort);
         break;
       default:
         query = query.orderBy(`posts.created_at`, "DESC");
