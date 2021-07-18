@@ -15,13 +15,47 @@ import PaginatorLib from "lib/paginator.lib";
 import PostPolicy from "policy/post.policy";
 import AccessDeniedException from "exception/access.denied.exception";
 
+// swagger
+import {
+  ApiPath,
+  ApiOperationPost,
+  SwaggerDefinitionConstant,
+  ApiOperationGet,
+  ApiOperationPut,
+  ApiOperationDelete,
+} from "swagger-express-ts";
+import { injectable } from "inversify";
+import { interfaces } from "inversify-express-utils";
+
 // 使用者文章
 interface IPostIndex {
   keyword?: string;
 }
 
+@ApiPath({
+  path: "/api/users/posts",
+  name: "UserPost",
+})
+@injectable()
 @Controller("/users/posts")
-export default class PostController {
+export default class UserPostController implements interfaces.Controller {
+  public static TARGET_NAME: string = "UserPostController";
+
+  @ApiOperationGet({
+    path: "/",
+    security: {
+      authorization: ["Bearer <token>"],
+    },
+    summary: "取得文章列表",
+    description: "取得文章列表",
+    responses: {
+      200: {
+        description: "成功",
+        type: SwaggerDefinitionConstant.Response.Type.ARRAY,
+        model: "PostResponse",
+      },
+    },
+  })
   // 取得文章列表
   @Get("/", [AuthenticateMiddleware])
   public async index(@Request() req: any, @Response() res: any) {
@@ -39,6 +73,26 @@ export default class PostController {
     return res.json(posts);
   }
 
+  @ApiOperationPost({
+    path: "/",
+    security: {
+      authorization: ["Bearer <token>"],
+    },
+    summary: "新增文章",
+    description: "新增文章",
+    parameters: {
+      body: {
+        model: "CreateUserPostRequest",
+      },
+    },
+    responses: {
+      200: {
+        description: "新增成功",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "PostResponse",
+      },
+    },
+  })
   // 新增文章
   @Post("/", [AuthenticateMiddleware])
   public async store(@Request() req: any, @Response() res: any) {
@@ -60,6 +114,37 @@ export default class PostController {
     return res.json(await resource.toJson());
   }
 
+  @ApiOperationPut({
+    path: "/:postId",
+    security: {
+      authorization: ["Bearer <token>"],
+    },
+    parameters: {
+      path: {
+        postId: {
+          description: "文章編號",
+          type: SwaggerDefinitionConstant.INTEGER,
+        },
+      },
+      body: {
+        model: "UpdateUserPostRequest",
+      },
+    },
+    summary: "更新文章",
+    description: "更新文章",
+    responses: {
+      404: {
+        description: "找不到文章",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "NotFoundException",
+      },
+      200: {
+        description: "更新成功",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "PostResponse",
+      },
+    },
+  })
   // 更新文章
   @Put("/:postId", [AuthenticateMiddleware])
   public async update(@Request() req: any, @Response() res: any) {
@@ -93,6 +178,37 @@ export default class PostController {
     return res.json(await resource.toJson());
   }
 
+  @ApiOperationDelete({
+    path: "/:postId",
+    summary: "刪除文章",
+    description: "刪除文章",
+    security: {
+      authorization: ["Bearer <token>"],
+    },
+    parameters: {
+      path: {
+        postId: {
+          type: SwaggerDefinitionConstant.INTEGER,
+          description: "文章編號",
+          required: true,
+        },
+      },
+    },
+    responses: {
+      404: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "NotFoundException",
+      },
+      403: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "AccessDeniedException",
+      },
+      200: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "OkResponse",
+      },
+    },
+  })
   // 刪除文章
   @Delete("/:postId", [AuthenticateMiddleware])
   public async destroy(@Request() req: any, @Response() res: any) {

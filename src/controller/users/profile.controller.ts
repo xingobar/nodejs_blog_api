@@ -18,7 +18,7 @@ import { injectable } from "inversify";
 import { interfaces } from "inversify-express-utils";
 
 @ApiPath({
-  path: "/api/users/",
+  path: "/api/users",
   name: "Profile",
 })
 @injectable()
