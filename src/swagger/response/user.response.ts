@@ -1,4 +1,5 @@
-import { ApiModel, ApiModelProperty } from "swagger-express-ts";
+import { ApiModel, ApiModelProperty, SwaggerDefinitionConstant } from "swagger-express-ts";
+import ProfileResponse from "swagger/response/profile.response";
 
 @ApiModel({
   description: "User Response",
@@ -25,4 +26,11 @@ export default class UserResponse {
     required: true,
   })
   email: string;
+
+  @ApiModelProperty({
+    description: "個人資料",
+    type: SwaggerDefinitionConstant.OBJECT,
+    model: "ProfileResponse",
+  })
+  profile: ProfileResponse;
 }
