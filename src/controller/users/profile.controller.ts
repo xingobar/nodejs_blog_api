@@ -12,8 +12,31 @@ import { ProfileService } from "service/profile.service";
 import { Profile } from "entity/profile.entity";
 import { Controller, Get, Post, Request, Response } from "@decorators/express";
 
+// swagger
+import { ApiPath, ApiOperationGet, SwaggerDefinitionConstant, ApiOperationPost } from "swagger-express-ts";
+import { injectable } from "inversify";
+import { interfaces } from "inversify-express-utils";
+
+@ApiPath({
+  path: "/api/users/",
+  name: "Profile",
+})
 @Controller("/users")
-class ProfileController {
+class ProfileController implements interfaces.Controller {
+  public static TARGET_NAME: string = "ProfileController";
+
+  @ApiOperationGet({
+    path: "/profiles",
+    description: "取得個人資料",
+    summary: "取得個人資料",
+    responses: {
+      200: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        description: "取得成功",
+        model: "UserResponse",
+      },
+    },
+  })
   // 取得個人資料
   @Get("/profiles", [AuthenticateMiddleware])
   public async index(@Request() req: any, @Response() res: any) {
@@ -31,6 +54,28 @@ class ProfileController {
     res.json(await resource.toJson());
   }
 
+  @ApiOperationPost({
+    path: "/profiles",
+    description: "儲存或更新個人資料",
+    summary: "儲存或更新個人資料",
+    parameters: {
+      body: {
+        model: "CreateProfileRequest",
+      },
+    },
+    responses: {
+      200: {
+        description: "成功",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "ProfileResponse",
+      },
+      400: {
+        description: "資料有誤",
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "InvalidRequestException",
+      },
+    },
+  })
   /**
    * 儲存或更新個人資料
    * @param req

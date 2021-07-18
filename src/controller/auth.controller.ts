@@ -14,7 +14,7 @@ import NotFoundException from "exception/notfound.exception";
 import InvalidException from "exception/invalid.exception";
 
 @ApiPath({
-  path: "/auth",
+  path: "/api/auth",
   name: "Auth",
 })
 @injectable()
@@ -28,7 +28,7 @@ class AuthController implements interfaces.Controller {
    * @param res
    */
   @ApiOperationPost({
-    path: "/api/auth/register",
+    path: "/register",
     description: "註冊",
     summary: "註冊",
     parameters: {
@@ -106,7 +106,7 @@ class AuthController implements interfaces.Controller {
    * @param res
    */
   @ApiOperationPost({
-    path: "/api/auth/login",
+    path: "/login",
     description: "登入",
     summary: "登入",
     parameters: {

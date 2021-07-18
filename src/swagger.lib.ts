@@ -1,11 +1,19 @@
 import * as swagger from "swagger-express-ts";
 import logger from "lib/logger.lib";
+
+// api swagger response
 import UserResponse from "swagger/response/user.response";
 import InvalidException from "swagger/response/invalid.exception";
 import ProfileResponse from "swagger/response/profile.response";
+
+// controller
 import AuthController from "controller/auth.controller";
 import UserController from "controller/user.controller";
 
+// api swagger payload
+import CreateProfileRequest from "swagger/api/users/create.profile.request";
+
+// swagger
 import { SwaggerDefinitionConstant } from "swagger-express-ts";
 import { Container } from "inversify";
 import { interfaces, InversifyExpressServer, TYPE } from "inversify-express-utils";
@@ -38,7 +46,7 @@ export class SwaggerLib {
   private setSwaggerDefinition() {
     // note that you *must* bind your controllers to Controller
     this.setSwaggerBindController([AuthController]);
-    this.setSwaggerBindResponse([UserResponse, InvalidException, ProfileResponse]);
+    this.setSwaggerBindResponse([UserResponse, InvalidException, ProfileResponse, CreateProfileRequest]);
   }
 
   // swagger bind controller
