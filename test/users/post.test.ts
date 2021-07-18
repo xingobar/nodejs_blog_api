@@ -6,6 +6,7 @@ import { assert } from "chai";
 import { Post, PostStatus } from "entity/post.entity";
 import { User } from "entity/user.entity";
 import { Bookmark, BookmarkEntityType } from "entity/bookmark.entity";
+import { Likeable, LikeableEntityType } from "entity/likeable.entity";
 
 export const createPost = async ({ status = PostStatus.PUBLISH, user = undefined }: { status: PostStatus; user?: User | undefined }) => {
   if (!user) {
@@ -327,6 +328,52 @@ describe("user bookmarked post test", () => {
       .execute();
 
     const res = await api.get("/users/posts/bookmarks").set("authorization", `Bearer ${token}`).expect(200);
+
+    assert.equal(res.body.data.length, 1);
+  });
+});
+
+describe("user post like test", () => {
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
+
+  it("no login", (done) => {
+    api
+      .get("/users/posts/likes")
+      .expect(401)
+      .end((err, res) => {
+        assert.deepEqual(res.body, { message: "尚未登入" });
+        done();
+      });
+  });
+
+  it("no likes posts", async () => {
+    const token = await createUserAndLogin();
+
+    const res = await api.get("/users/posts/likes").set("authorization", `Bearer ${token}`).expect(200);
+
+    assert.equal(res.body.data.length, 0);
+  });
+
+  it("likes posts", async () => {
+    const { user, post } = await createPost({ status: PostStatus.PUBLISH });
+
+    const token = await fakeLogin(user?.account);
+
+    await getConnection("test")
+      .getRepository(Likeable)
+      .createQueryBuilder()
+      .insert()
+      .into(Likeable)
+      .values({
+        userId: user?.id,
+        entityType: LikeableEntityType.Post,
+        entityId: post?.id,
+      })
+      .execute();
+
+    const res = await api.get("/users/posts/likes").set("authorization", `Bearer ${token}`).expect(200);
 
     assert.equal(res.body.data.length, 1);
   });
