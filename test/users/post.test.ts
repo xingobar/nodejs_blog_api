@@ -142,3 +142,93 @@ describe("create user post test", () => {
     await api.post("/users/posts").set("authorization", `Bearer ${token}`).send(payload).expect(200);
   });
 });
+
+describe("update user post test", () => {
+  beforeEach(async () => {
+    await useRefreshDatabase({ configName: "test.ormconfig.json", connection: "test" });
+  });
+  it("no login", (done) => {
+    api
+      .put("/users/posts/1")
+      .expect(401)
+      .end((err, res) => {
+        assert.deepEqual(res.body, { message: "尚未登入" });
+        done();
+      });
+  });
+
+  it("no input data", async () => {
+    const token = await createUserAndLogin();
+    const payload: {
+      title?: string;
+      body?: string;
+      status?: string;
+    } = {};
+
+    let res = await api.put("/users/posts/1").set("authorization", `Bearer ${token}`).send(payload).expect(400);
+
+    assert.deepEqual(res.body, { errors: [{ message: "請輸入標題" }] });
+
+    // 內容沒有輸入
+    payload.title = Faker.lorem.paragraph(1);
+
+    res = await api.put("/users/posts/1").set("authorization", `Bearer ${token}`).send(payload).expect(400);
+
+    assert.deepEqual(res.body, { errors: [{ message: "請輸入文章內容" }] });
+
+    // 內容長度不夠
+    payload.body = "demo";
+
+    res = await api.put("/users/posts/1").set("authorization", `Bearer ${token}`).send(payload).expect(400);
+
+    assert.deepEqual(res.body, { errors: [{ message: "內容至少要 50 個字" }] });
+
+    // 沒有輸入狀態
+    payload.body = Faker.lorem.paragraph(2);
+
+    res = await api.put("/users/posts/1").set("authorization", `Bearer ${token}`).send(payload).expect(400);
+
+    assert.deepEqual(res.body, { errors: [{ message: "請輸入狀態" }] });
+
+    // 文章狀態有誤
+    payload.status = "demo";
+
+    res = await api.put("/users/posts/1").set("authorization", `Bearer ${token}`).send(payload).expect(400);
+
+    assert.deepEqual(res.body, { errors: [{ message: "文章狀態有誤" }] });
+  });
+
+  it("not found post", async () => {
+    const payload: {
+      title?: string;
+      body?: string;
+      status?: string;
+    } = {
+      title: Faker.lorem.paragraph(1),
+      body: Faker.lorem.paragraph(2),
+      status: PostStatus.PUBLISH,
+    };
+
+    const token = await createUserAndLogin();
+
+    await api.put(`/users/posts/1`).set("authorization", `Bearer ${token}`).send(payload).expect(404);
+  });
+
+  it("update post success", async () => {
+    const payload: {
+      title?: string;
+      body?: string;
+      status?: string;
+    } = {
+      title: Faker.lorem.paragraph(1),
+      body: Faker.lorem.paragraph(2),
+      status: PostStatus.PUBLISH,
+    };
+
+    const { post, user } = await createPost({ status: PostStatus.PUBLISH });
+
+    const token = await fakeLogin(user?.account);
+
+    await api.put(`/users/posts/${post?.id}`).set("authorization", `Bearer ${token}`).send(payload).expect(200);
+  });
+});
