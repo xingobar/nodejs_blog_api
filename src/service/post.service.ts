@@ -64,7 +64,7 @@ export default class PostService {
       .createQueryBuilder("posts")
       .where("userId = :userId", { userId })
       .offset((page - 1) * limit)
-      .take(page * limit)
+      .take(limit)
       .orderBy("updated_at", "DESC");
 
     // const repo = this.postRepository
@@ -254,9 +254,5 @@ export default class PostService {
         "popularity.entityId = posts.id"
       )
       .getRawMany();
-  }
-
-  public async postsPaginator() {
-    return await this.postRepository.createQueryBuilder("posts").paginate(1);
   }
 }

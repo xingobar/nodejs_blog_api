@@ -304,11 +304,14 @@ export default class UserPostController implements interfaces.Controller {
 
     const likes = await likeableService.findPaginatorByUserId(req.session.user.id, LikeableEntityType.Post, { page, limit });
 
-    const posts = likes.map((like) => like.post);
+    // 加載 user
+    for (const key in likes) {
+      await likes[key].user;
+    }
 
     const total = await likeableService.findTotalByUserId(req.session.user.id, LikeableEntityType.Post);
 
-    const postResource = new PostResource(posts);
+    const postResource = new PostResource(likes);
 
     return res.json(
       PaginatorLib.paginate({

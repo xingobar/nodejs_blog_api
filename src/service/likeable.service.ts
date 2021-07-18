@@ -3,12 +3,15 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import { Likeable, LikeableEntityType } from "entity/likeable.entity";
 import { Post } from "entity/post.entity";
 import LikeableRepository from "repository/likeable.repository";
+import PostRepository from "repository/post.repository";
 
 @Service()
 export default class LikeableService {
   constructor(
     @InjectRepository()
-    private readonly likeableRepository: LikeableRepository
+    private readonly likeableRepository: LikeableRepository,
+    @InjectRepository()
+    private readonly postRepository: PostRepository
   ) {}
 
   /**
@@ -72,14 +75,22 @@ export default class LikeableService {
     entityType: LikeableEntityType,
     { page = 1, limit = 10 }: { page?: number; limit?: number }
   ) {
-    return this.likeableRepository.find({
-      where: {
-        userId,
-        entityType,
-      },
-      take: page * limit,
-      skip: (page - 1) * limit,
-    });
+    return this.postRepository
+      .createQueryBuilder("posts")
+      .leftJoinAndSelect("posts.user", "owner")
+      .where((qb) => {
+        const subquery = qb
+          .subQuery()
+          .from(Likeable, "likeables")
+          .select("likeables.entityId")
+          .where("userId = :userId", { userId })
+          .andWhere("entityType = :entityType", { entityType })
+          .getQuery();
+        return "posts.id IN " + subquery;
+      })
+      .take(limit)
+      .skip((page - 1) * limit)
+      .getMany();
   }
 
   /**

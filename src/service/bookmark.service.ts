@@ -85,7 +85,7 @@ export default class BookmarkService {
         return "posts.id IN " + subquery;
       })
       .leftJoinAndSelect("posts.user", "owner")
-      .take(page * limit)
+      .take(limit)
       .skip((page - 1) * limit)
       .getMany();
   }
