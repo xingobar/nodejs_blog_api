@@ -3,12 +3,15 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import { Bookmark, BookmarkEntityType } from "entity/bookmark.entity";
 import { Post } from "entity/post.entity";
 import BookmarkRepository from "repository/bookmark.repository";
+import PostRepository from "repository/post.repository";
 
 @Service()
 export default class BookmarkService {
   constructor(
     @InjectRepository()
-    private readonly bookmarkRepository: BookmarkRepository
+    private readonly bookmarkRepository: BookmarkRepository,
+    @InjectRepository()
+    private readonly postRepository: PostRepository
   ) {}
 
   /**
@@ -69,14 +72,22 @@ export default class BookmarkService {
     entityType: BookmarkEntityType,
     { page = 1, limit = 10 }: { page?: number; limit?: number }
   ) {
-    return this.bookmarkRepository.find({
-      where: {
-        userId,
-        entityType,
-      },
-      take: page * limit,
-      skip: (page - 1) * limit,
-    });
+    return this.postRepository
+      .createQueryBuilder("posts")
+      .where((qb) => {
+        const subquery = qb
+          .subQuery()
+          .from(Bookmark, "bookmarks")
+          .select("bookmarks.entityId")
+          .where("userId = :userId", { userId })
+          .andWhere("entityType = :entityType", { entityType })
+          .getQuery();
+        return "posts.id IN " + subquery;
+      })
+      .leftJoinAndSelect("posts.user", "owner")
+      .take(page * limit)
+      .skip((page - 1) * limit)
+      .getMany();
   }
 
   /**

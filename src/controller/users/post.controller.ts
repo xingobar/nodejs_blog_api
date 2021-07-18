@@ -262,9 +262,12 @@ export default class UserPostController implements interfaces.Controller {
     // 取得總共的比數
     const total = await bookmarkService.findTotalByUserId(req.session.user.id, BookmarkEntityType.Post);
 
-    const posts = bookmarks.map((bookmark) => bookmark.post);
+    // 加載 user
+    for (const key in bookmarks) {
+      await bookmarks[key].user;
+    }
 
-    const postResource = new PostResource(posts);
+    const postResource = new PostResource(bookmarks);
 
     return res.json(
       PaginatorLib.paginate({
