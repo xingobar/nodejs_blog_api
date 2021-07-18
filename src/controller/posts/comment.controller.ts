@@ -9,8 +9,44 @@ import CommentPolicy from "policy/comment.policy";
 import AccessDeniedException from "exception/access.denied.exception";
 import InvalidException from "@src/exception/invalid.exception";
 
+// swagger
+import { ApiPath, ApiOperationGet, SwaggerDefinitionConstant, ApiOperationPost } from "swagger-express-ts";
+import { injectable } from "inversify";
+import { interfaces } from "inversify-express-utils";
+
+@ApiPath({
+  name: "PostParentComment",
+  description: "父曾留言",
+  path: "/posts",
+})
+@injectable()
 @Controller("/posts")
-export default class CommentController {
+export default class CommentController implements interfaces.Controller {
+  public static TARGET_NAME: string = "CommentController";
+
+  @ApiOperationGet({
+    path: "/:postId/comments",
+    summary: "取得文章留言",
+    description: "取得文章留言",
+    parameters: {
+      path: {
+        postId: {
+          type: SwaggerDefinitionConstant.INTEGER,
+          description: "文章編號",
+        },
+      },
+    },
+    responses: {
+      404: {
+        type: SwaggerDefinitionConstant.OBJECT,
+        model: "NotFoundException",
+      },
+      200: {
+        type: SwaggerDefinitionConstant.OBJECT,
+        model: "CommentPaginationResponse",
+      },
+    },
+  })
   // 取得文章留言
   @Get("/:postId/comments")
   public async index(@Request() req: any, @Response() res: any) {

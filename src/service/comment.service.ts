@@ -114,14 +114,12 @@ export default class CommentService {
         qb.where("comments.postId = :postId", { postId }).andWhere("comments.parentId IS NULL");
       })
       .leftJoinAndSelect("comments.children", "children")
-      .select("children.body")
-      .addSelect("children.id")
-      .addSelect("children.createdAt")
-      .addSelect("children.updatedAt")
-      .addSelect("comments.body")
-      .addSelect("comments.id")
-      .addSelect("comments.createdAt")
-      .addSelect("comments.updatedAt")
+      .leftJoinAndSelect("comments.user", "owner")
+      .leftJoinAndSelect("children.user", "children_owner")
+      .select(["children.updatedAt", "children.createdAt", "children.id", "children.body"])
+      .addSelect(["comments.createdAt", "comments.updatedAt", "comments.id", "comments.body"])
+      .addSelect(["owner.account", "owner.email", "owner.avatar"])
+      .addSelect(["children_owner.account", "children_owner.email"])
       .orderBy("comments.createdAt", "DESC")
       .paginate(limit);
   }

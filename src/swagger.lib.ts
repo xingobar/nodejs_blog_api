@@ -9,6 +9,9 @@ import PostLikeResponse from "swagger/response/post.like.response";
 import PostBookmarkResponse from "swagger/response/post.bookmark.response";
 import OkResponse from "swagger/response/ok.response";
 import PostPaginationResponse from "swagger/response/post.pagination.response";
+import CommentPaginationResponse from "swagger/response/comment.pagination.response";
+import ParentCommentResponse from "swagger/response/parent.comment.response";
+import ChildrenCommentResponse from "swagger/response/children.comment.response";
 
 // swagger exception
 import NotFoundException from "swagger/response/notfound.exception";
@@ -74,6 +77,9 @@ export class SwaggerLib {
       AccessDeniedException,
       OkResponse,
       PostPaginationResponse,
+      CommentPaginationResponse,
+      ParentCommentResponse,
+      ChildrenCommentResponse,
     ]);
   }
 
