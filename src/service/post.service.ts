@@ -210,12 +210,12 @@ export default class PostService {
    * @param {number} postId - 文章編號
    */
   public async getPopularity(postId: number, limit: number = 4) {
-    return await this.postRepository
-      .getAll()
-      .where((p) => p.id)
-      .notEqual(postId)
-      .orderByDescending((p) => p.viewCount)
-      .take(limit);
+    return this.postRepository
+      .createQueryBuilder("posts")
+      .leftJoinAndSelect("posts.user", "owner")
+      .where("posts.id != :postId", { postId })
+      .orderBy("posts.viewCount", "DESC")
+      .paginate(limit);
   }
 
   /**
@@ -231,7 +231,7 @@ export default class PostService {
   public async getOtherPopularityRead(postId: number, userId: number, limit: number = 4) {
     return await this.postRepository
       .createQueryBuilder("posts")
-      .select("posts.*")
+      .leftJoinAndSelect("posts.user", "owner")
       .innerJoin(
         (subquery) => {
           const query = subquery
@@ -253,6 +253,11 @@ export default class PostService {
         "popularity",
         "popularity.entityId = posts.id"
       )
-      .getRawMany();
+      .select(["posts.id", "posts.title", "posts.body", "posts.image", "posts.status", "posts.likeCount"])
+      .addSelect(["posts.viewCount", "posts.bookmarkCount", "posts.createdAt", "posts.updatedAt"])
+      .addSelect(["posts.feedbackScore"])
+      .addSelect(["owner.id", "owner.account", "owner.email", "owner.avatar"])
+      .orderBy("posts.created_at", "DESC")
+      .paginate(limit);
   }
 }
