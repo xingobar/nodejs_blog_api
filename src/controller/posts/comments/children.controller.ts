@@ -7,8 +7,62 @@ import CommentValidator from "validator/comment.validator";
 import CommentPolicy from "policy/comment.policy";
 import AccessDeniedException from "exception/access.denied.exception";
 
+// swagger
+import {
+  ApiPath,
+  ApiOperationPost,
+  SwaggerDefinitionConstant,
+  ApiOperationGet,
+  ApiOperationPut,
+  ApiOperationDelete,
+} from "swagger-express-ts";
+import { injectable } from "inversify";
+import { interfaces } from "inversify-express-utils";
+
+@ApiPath({
+  path: "/posts",
+  description: "子曾留言",
+  name: "PostChildrenComment",
+})
+@injectable()
 @Controller("/posts")
-export default class ChildrenController {
+export default class ChildrenController implements interfaces.Controller {
+  public static TARGET_NAME: string = "ChildrenController";
+
+  @ApiOperationPost({
+    path: "/:postId/comments/:parentId/children",
+    summary: "新增子留言",
+    description: "新增子留言",
+    security: {
+      authorization: ["Bearer <token>"],
+    },
+    parameters: {
+      path: {
+        postId: {
+          description: "文章編號",
+          required: true,
+        },
+        parentId: {
+          description: "父曾留言編號",
+          required: true,
+        },
+      },
+    },
+    responses: {
+      400: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "InvalidRequestException",
+      },
+      404: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "NotFoundException",
+      },
+      200: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "ChildrenCommentResponse",
+      },
+    },
+  })
   // 新增子留言
   @Post("/:postId/comments/:parentId/children", [AuthenticateMiddleware])
   public async store(@Request() req: any, @Response() res: any) {
@@ -37,6 +91,55 @@ export default class ChildrenController {
     return res.json(children);
   }
 
+  @ApiOperationPut({
+    path: "/:postId/comments/:parentId/children/:childrenId",
+    security: {
+      authorization: ["Bearer <token>"],
+    },
+    summary: "更新子留言",
+    description: "更新子留言",
+    parameters: {
+      path: {
+        postId: {
+          description: "文章編號",
+          required: true,
+        },
+        parentId: {
+          description: "父曾留言編號",
+          required: true,
+        },
+        childrenId: {
+          description: "子留言編號",
+          required: true,
+        },
+      },
+      formData: {
+        body: {
+          type: SwaggerDefinitionConstant.STRING,
+          description: "留言內容",
+          required: true,
+        },
+      },
+    },
+    responses: {
+      400: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "InvalidRequestException",
+      },
+      404: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "NotFoundException",
+      },
+      403: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "AccessDeniedException",
+      },
+      200: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "ChildrenCommentResponse",
+      },
+    },
+  })
   // 更新子留言
   @Put("/:postId/comments/:parentId/children/:childrenId", [AuthenticateMiddleware])
   public async update(@Request() req: any, @Response() res: any) {
@@ -80,6 +183,44 @@ export default class ChildrenController {
     return res.json(children);
   }
 
+  @ApiOperationDelete({
+    path: "/:postId/comments/:parentId/children/:childrenId",
+    summary: "刪除子留言",
+    description: "刪除子留言",
+    security: {
+      authorization: ["Bearer <token>"],
+    },
+    parameters: {
+      path: {
+        postId: {
+          description: "文章編號",
+          required: true,
+        },
+        parentId: {
+          description: "父曾留言編號",
+          required: true,
+        },
+        childrenId: {
+          description: "子留言編號",
+          required: true,
+        },
+      },
+    },
+    responses: {
+      404: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "NotFoundException",
+      },
+      403: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "AccessDeniedException",
+      },
+      200: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "OkResponse",
+      },
+    },
+  })
   /**
    * 刪除子留言
    * @param req
