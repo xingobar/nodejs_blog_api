@@ -10,7 +10,14 @@ import AccessDeniedException from "exception/access.denied.exception";
 import InvalidException from "@src/exception/invalid.exception";
 
 // swagger
-import { ApiPath, ApiOperationGet, SwaggerDefinitionConstant, ApiOperationPost } from "swagger-express-ts";
+import {
+  ApiPath,
+  ApiOperationGet,
+  SwaggerDefinitionConstant,
+  ApiOperationPost,
+  ApiOperationDelete,
+  ApiOperationPut,
+} from "swagger-express-ts";
 import { injectable } from "inversify";
 import { interfaces } from "inversify-express-utils";
 
@@ -65,6 +72,33 @@ export default class CommentController implements interfaces.Controller {
     return res.json(comments);
   }
 
+  @ApiOperationPost({
+    path: "/:postId/comments",
+    summary: "新增留言",
+    description: "新增父曾留言",
+    parameters: {
+      path: {
+        postId: {
+          type: SwaggerDefinitionConstant.Response.Type.INTEGER,
+          description: "文章編號",
+        },
+      },
+    },
+    responses: {
+      404: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "NotFoundException",
+      },
+      200: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "ParentCommentResponse",
+      },
+      400: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "InvalidRequestException",
+      },
+    },
+  })
   // 新增留言
   @Post("/:postId/comments", [AuthenticateMiddleware])
   public async store(@Request() req: any, @Response() res: any) {
@@ -81,6 +115,13 @@ export default class CommentController implements interfaces.Controller {
       return res.status(400).json({ errors: v.detail });
     }
 
+    const postService: PostService = Container.get(PostService);
+
+    const post = await postService.findByIdWithPublished(req.params.postId);
+    if (!post) {
+      throw new NotFoundException();
+    }
+
     const commentService: CommentService = Container.get(CommentService);
 
     const comment = await commentService.createParentComment({
@@ -92,6 +133,37 @@ export default class CommentController implements interfaces.Controller {
     return res.json({ comment });
   }
 
+  @ApiOperationDelete({
+    path: "/:postId/comments/:commentId",
+    summary: "刪除父留言",
+    description: "刪除父留言",
+    parameters: {
+      path: {
+        postId: {
+          description: "文章編號",
+          required: true,
+        },
+        commentId: {
+          description: "父曾留言編號",
+          required: true,
+        },
+      },
+    },
+    responses: {
+      404: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "NotFoundException",
+      },
+      403: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "AccessDeniedException",
+      },
+      200: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "OkResponse",
+      },
+    },
+  })
   // 刪除父留言
   @Delete("/:postId/comments/:commentId", [AuthenticateMiddleware])
   public async destroy(@Request() req: any, @Response() res: any) {
@@ -122,6 +194,41 @@ export default class CommentController implements interfaces.Controller {
     return res.json("ok");
   }
 
+  @ApiOperationPut({
+    path: "/:postId/comments/:commentId",
+    summary: "更新評論",
+    description: "更新父曾評論",
+    parameters: {
+      path: {
+        postId: {
+          description: "文章編號",
+          required: true,
+        },
+        commentId: {
+          description: "父曾評論編號",
+          required: true,
+        },
+      },
+    },
+    responses: {
+      400: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "InvalidRequestException",
+      },
+      404: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "NotFoundException",
+      },
+      403: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "AccessDeniedException",
+      },
+      200: {
+        type: SwaggerDefinitionConstant.Response.Type.OBJECT,
+        model: "ParentCommentResponse",
+      },
+    },
+  })
   /**
    * 更新評論
    * @param req
