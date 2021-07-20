@@ -14,9 +14,9 @@ import ParentCommentResponse from "swagger/response/parent.comment.response";
 import ChildrenCommentResponse from "swagger/response/children.comment.response";
 
 // swagger exception
-import NotFoundException from "swagger/response/notfound.exception";
-import InvalidException from "swagger/response/invalid.exception";
-import AccessDeniedException from "swagger/response/access.denied.exception";
+import NotFoundException from "swagger/exception/notfound.exception";
+import InvalidException from "swagger/exception/invalid.exception";
+import AccessDeniedException from "swagger/exception/access.denied.exception";
 
 // controller
 import AuthController from "controller/auth.controller";
