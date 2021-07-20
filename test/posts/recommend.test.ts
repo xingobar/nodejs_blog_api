@@ -52,7 +52,7 @@ describe("popularity post test", () => {
 
     const res = await api.get(`/posts/${post?.id}/popularity`).expect(200);
 
-    assert.equal(res.body.length, 0);
+    assert.equal(res.body.data.length, 0);
   });
 
   it(" popularity post", async () => {
@@ -62,7 +62,7 @@ describe("popularity post test", () => {
 
     const res = await api.get(`/posts/${post?.id}/popularity`).expect(200);
 
-    assert.equal(res.body.length, 1);
+    assert.equal(res.body.data.length, 1);
   });
 });
 
@@ -85,7 +85,7 @@ describe("recommends post test", () => {
 
     const res = await api.get(`/posts/${post?.id}/recommends`).expect(200);
 
-    assert.equal(res.body.length, 0);
+    assert.equal(res.body.data.length, 0);
   });
 
   it("no view logs", async () => {
@@ -95,7 +95,7 @@ describe("recommends post test", () => {
 
     const res = await api.get(`/posts/${post?.id}/recommends`).expect(200);
 
-    assert.equal(res.body.length, 0);
+    assert.equal(res.body.data.length, 0);
   });
 
   it("recommend post", async () => {
@@ -117,6 +117,6 @@ describe("recommends post test", () => {
 
     const res = await api.get(`/posts/${post?.id}/recommends`).expect(200);
 
-    assert.equal(res.body.length, 1);
+    assert.equal(res.body.data.length, 1);
   });
 });

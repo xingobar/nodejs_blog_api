@@ -231,7 +231,7 @@ export default class PostService {
   public async getOtherPopularityRead(postId: number, userId: number, limit: number = 4) {
     return await this.postRepository
       .createQueryBuilder("posts")
-      .leftJoinAndSelect("posts.user", "owner")
+      .leftJoinAndSelect("posts.user", "user")
       .innerJoin(
         (subquery) => {
           const query = subquery
@@ -253,11 +253,7 @@ export default class PostService {
         "popularity",
         "popularity.entityId = posts.id"
       )
-      .select(["posts.id", "posts.title", "posts.body", "posts.image", "posts.status", "posts.likeCount"])
-      .addSelect(["posts.viewCount", "posts.bookmarkCount", "posts.createdAt", "posts.updatedAt"])
-      .addSelect(["posts.feedbackScore"])
-      .addSelect(["owner.id", "owner.account", "owner.email", "owner.avatar"])
-      .orderBy("posts.created_at", "DESC")
+      .orderBy("posts.createdAt", "DESC")
       .paginate(limit);
   }
 }
