@@ -8,6 +8,8 @@ import {
   OneToOne,
   OneToMany,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from "typeorm";
 
 import { Post } from "entity/post.entity";
@@ -16,6 +18,8 @@ import { Likeable } from "entity/likeable.entity";
 import { Bookmark } from "entity/bookmark.entity";
 import { ViewLog } from "entity/view.log.entity";
 import { Comment } from "entity/comment.entity";
+import { Role } from "entity/role.entity";
+import { Permission } from "entity/permission.entity";
 
 @Entity("users") // 資料表名稱 users
 export class User {
@@ -99,4 +103,12 @@ export class User {
     nullable: true,
   })
   avatar: string;
+
+  @ManyToMany(() => Role, (role) => role.users)
+  @JoinTable()
+  roles: Role[];
+
+  @ManyToMany(() => Permission)
+  @JoinTable()
+  permissions: Permission[];
 }
