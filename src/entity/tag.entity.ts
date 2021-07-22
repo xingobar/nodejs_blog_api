@@ -14,6 +14,12 @@ export class Tag {
   })
   title: string;
 
+  @Column({
+    name: "alias",
+    comment: "別名",
+  })
+  alias: string;
+
   @PolymorphicChildren(() => Taggable, {
     eager: false,
   })
