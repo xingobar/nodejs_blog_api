@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import envConfig from "config/index";
 import swaggerLib from "./swagger.lib"; // swagger init
 import * as swagger from "swagger-express-ts";
+import adminRouter from "./routes/admin/admin.router";
 
 import { config } from "config/ormconfig";
 import { createConnection, useContainer, ConnectionOptions } from "typeorm";
@@ -43,6 +44,11 @@ class App {
 
       // 建置 swagger route
       for (const route of router) {
+        app.use(route.getPrefix(), route.getRouter());
+      }
+
+      // admin router
+      for (const route of adminRouter) {
         app.use(route.getPrefix(), route.getRouter());
       }
     });
