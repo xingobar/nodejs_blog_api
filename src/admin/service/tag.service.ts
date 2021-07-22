@@ -22,4 +22,19 @@ export default class TagService {
       alias,
     } as Tag);
   }
+
+  /**
+   * 根據編號取得標籤
+   * @param {number} id - 標籤編號
+   */
+  public findById(id: number) {
+    return this.tagRepository
+      .getOne()
+      .where((t) => t.id)
+      .equal(id);
+  }
+
+  public async delete(tag: Tag) {
+    return this.tagRepository.delete(tag);
+  }
 }
