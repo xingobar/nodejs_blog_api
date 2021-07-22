@@ -5,7 +5,7 @@ import AuthenticateMiddleware from "middleware/authenticate.middleware";
 import AccessDeniedException from "exception/access.denied.exception";
 import TagService from "admin/service/tag.service";
 import TagValidator from "admin/validator/tag.validator";
-import InvalidException from "exception/invalid.exception";
+import { TagPermissionAction } from "entity/permission.entity";
 
 @Controller("/tags")
 export default class TagController {
@@ -32,7 +32,7 @@ export default class TagController {
 
     const permissionService: PermissionService = Container.get(PermissionService);
 
-    if (!(await permissionService.checkPermissionByUserId(req.session.user.id, "tag.created"))) {
+    if (!(await permissionService.checkPermissionByUserId(req.session.user.id, TagPermissionAction.TAG_CREATED))) {
       throw new AccessDeniedException();
     }
 

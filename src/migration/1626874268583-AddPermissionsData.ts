@@ -8,8 +8,8 @@ export class AddPermissionsData1626874268583 implements MigrationInterface {
                       ("新增標籤", "tag.created"),
                       ("更新標籤", "tag.updated"),
                       ("刪除標籤", "tag.deleted"),
-                      ("顯示標籤列表", "tags.index"),
-                      ("顯示標籤", "tags.show")`);
+                      ("顯示標籤列表", "tag.index"),
+                      ("顯示標籤", "tag.show")`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
