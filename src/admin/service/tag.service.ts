@@ -14,10 +14,12 @@ export default class TagService {
   /**
    * 新增標籤
    * @param {string} title - 標籤名稱
+   * @param {string} alias - 別名
    */
-  public async createTag(title: string) {
+  public async createTag(title: string, alias: string) {
     return await this.tagRepository.create({
       title,
+      alias,
     } as Tag);
   }
 }
