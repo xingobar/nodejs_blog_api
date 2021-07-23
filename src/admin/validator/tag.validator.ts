@@ -6,6 +6,9 @@ export default class TagValidator extends ValidatorAbstract {
     super(payload);
   }
 
+  /**
+   * 新增規則
+   */
   public storeRule() {
     this.rules = Joi.object().keys({
       title: Joi.string().required().messages({
@@ -16,5 +19,12 @@ export default class TagValidator extends ValidatorAbstract {
       }),
     });
     return this;
+  }
+
+  /**
+   * 更新規則
+   */
+  public updateRule() {
+    return this.storeRule();
   }
 }

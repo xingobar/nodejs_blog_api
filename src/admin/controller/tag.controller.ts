@@ -1,4 +1,4 @@
-import { Controller, Post, Request, Response, Delete } from "@decorators/express";
+import { Controller, Post, Request, Response, Delete, Put } from "@decorators/express";
 import { Container } from "typedi";
 import { TagPermissionAction } from "entity/permission.entity";
 
@@ -69,5 +69,47 @@ export default class TagController {
     await tagService.delete(tag);
 
     return res.json({ ok: "ok" });
+  }
+
+  /**
+   * 更新標籤
+   * @param req
+   * @param res
+   */
+  @Put("/:id", [AuthenticateMiddleware])
+  public async update(@Request() req: any, @Response() res: any) {
+    interface IUpdateTag {
+      title: string;
+      alias: string;
+    }
+
+    const params: IUpdateTag = req.body;
+
+    const v = new TagValidator(params);
+    v.updateRule().validate();
+
+    if (v.isError()) {
+      return res.status(400).json({ errors: v.detail });
+    }
+
+    const permissionService: PermissionService = Container.get(PermissionService);
+
+    if (!(await permissionService.checkPermissionByUserId(req.session.user.id, TagPermissionAction.TAG_UPDATED))) {
+      throw new AccessDeniedException();
+    }
+
+    const tagService: TagService = Container.get(TagService);
+
+    let tag = await tagService.findById(req.params.id);
+
+    if (!tag) {
+      throw new NotFoundException();
+    }
+
+    tag.title = params.title;
+
+    tag = await tagService.update(tag);
+
+    return res.json(tag);
   }
 }

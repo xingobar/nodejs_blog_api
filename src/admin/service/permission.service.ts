@@ -25,7 +25,6 @@ export default class PermissionService {
       .where((p) => p.action)
       .equal(action);
 
-    console.log("line 28 => ", user.permissions.length > 0);
     return user.permissions.length > 0;
   }
 }

@@ -34,7 +34,19 @@ export default class TagService {
       .equal(id);
   }
 
+  /**
+   * 刪除標籤
+   * @param tag
+   */
   public async delete(tag: Tag) {
-    return this.tagRepository.delete(tag);
+    return await this.tagRepository.delete(tag);
+  }
+
+  /**
+   * 更新標籤
+   * @param tag
+   */
+  public async update(tag: Tag) {
+    return await this.tagRepository.update(tag);
   }
 }
