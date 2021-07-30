@@ -4,15 +4,28 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import { Post, PostStatus } from "entity/post.entity";
 import { DeleteResult } from "typeorm";
 import { ViewLog } from "entity/view.log.entity";
+import { User } from "entity/user.entity";
+import { Tag } from "entity/tag.entity";
+import { Taggable, TaggableEntityType } from "entity/taggable.entity";
 
 import PostRepository from "repository/post.repository";
 import config from "config/index";
-import { User } from "entity/user.entity";
+import TaggableRepository from "repository/taggable.repository";
+
+// 更新文章 interface
+interface IUpdatePostById {
+  title: string;
+  body: string;
+  userId: number;
+  status: PostStatus;
+}
 @Service()
 export default class PostService {
   constructor(
     @InjectRepository(config.connectionName)
-    private readonly postRepository: PostRepository
+    private readonly postRepository: PostRepository,
+    @InjectRepository(config.connectionName)
+    private readonly taggableRepository: TaggableRepository
   ) {}
 
   /**
@@ -117,7 +130,7 @@ export default class PostService {
    * @param {number} id - 文章編號
    * @param {IUpdatePost} data
    */
-  public async updateById(id: number, data: IUpdatePost): Promise<Post> {
+  public async updateById(id: number, data: IUpdatePostById): Promise<Post> {
     await this.postRepository
       .createQueryBuilder("posts")
       .update(Post)
@@ -255,5 +268,31 @@ export default class PostService {
       )
       .orderBy("posts.createdAt", "DESC")
       .paginate(limit);
+  }
+
+  /**
+   * 更新文章標籤
+   * @param {Post} post - 文章資料
+   * @param {Tag[]} tags - 標籤資料
+   */
+  public async syncTag(post: Post, tags: Tag[]) {
+    const taggables: Taggable[] = [];
+
+    // 先清掉該文章的 taggables
+    await this.taggableRepository.delete({
+      postId: post.id,
+    });
+
+    // 重新新增 taggable 資料
+    tags.forEach((tag, index) => {
+      const entity = new Taggable();
+      entity.post = post;
+      entity.entityId = tag.id;
+      entity.entityType = TaggableEntityType.Tag;
+
+      taggables.push(entity);
+    });
+
+    return await this.taggableRepository.save(taggables);
   }
 }

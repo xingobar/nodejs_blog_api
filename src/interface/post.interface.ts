@@ -14,6 +14,7 @@ export interface IUpdatePost {
   body: string;
   user: User;
   status: PostStatus;
+  tags: any[];
 }
 
 /**

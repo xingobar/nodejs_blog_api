@@ -17,10 +17,13 @@ export default class PostValidator extends ValidatorAbstract {
         "any.required": "請輸入文章內容",
         "string.min": "內容至少要 {#limit} 個字",
       }),
-      status: Joi.string().required().valid(...Object.values(PostStatus)).messages({
-        "any.required": "請輸入狀態",
-        "any.only": "文章狀態有誤",
-      }),
+      status: Joi.string()
+        .required()
+        .valid(...Object.values(PostStatus))
+        .messages({
+          "any.required": "請輸入狀態",
+          "any.only": "文章狀態有誤",
+        }),
     });
 
     return this;
@@ -38,9 +41,17 @@ export default class PostValidator extends ValidatorAbstract {
         "any.required": "請輸入文章內容",
         "string.min": "內容至少要 {#limit} 個字",
       }),
-      status: Joi.string().required().valid(...Object.values(PostStatus)).messages({
-        "any.required": "請輸入狀態",
-        "any.only": "文章狀態有誤",
+      status: Joi.string()
+        .required()
+        .valid(...Object.values(PostStatus))
+        .messages({
+          "any.required": "請輸入狀態",
+          "any.only": "文章狀態有誤",
+        }),
+      tags: Joi.array().required().items(Joi.number().required()).messages({
+        "any.required": "請輸入標籤資料",
+        "array.includesRequiredUnknowns": "需傳入標籤資料",
+        "number.base": "請傳入正確的標籤資料",
       }),
     });
     return this;

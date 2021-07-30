@@ -4,6 +4,10 @@ import { Tag } from "entity/tag.entity";
 import { Post } from "entity/post.entity";
 import { PolymorphicParent } from "typeorm-polymorphic";
 
+export enum TaggableEntityType {
+  Tag = "Tag",
+}
+
 @Entity("taggables")
 export class Taggable implements PolymorphicChildInterface {
   @PrimaryGeneratedColumn()

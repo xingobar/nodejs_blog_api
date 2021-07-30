@@ -3,6 +3,7 @@ import { ICreatePost, IUpdatePost } from "interface/post.interface";
 import { Container } from "typedi";
 import { BookmarkEntityType } from "entity/bookmark.entity";
 import { LikeableEntityType } from "entity/likeable.entity";
+import { Taggable } from "entity/taggable.entity";
 
 import PostService from "service/post.service";
 import PostResource from "resource/post.resource";
@@ -26,6 +27,7 @@ import {
 } from "swagger-express-ts";
 import { injectable } from "inversify";
 import { interfaces } from "inversify-express-utils";
+import TagService from "service/tag.service";
 
 // 使用者文章
 interface IPostIndex {
@@ -157,6 +159,7 @@ export default class UserPostController implements interfaces.Controller {
       return res.status(400).json({ errors: v.detail });
     }
 
+    // 文章檢查
     const postService: PostService = Container.get(PostService);
 
     let post = await postService.findById(req.params.postId);
@@ -165,13 +168,25 @@ export default class UserPostController implements interfaces.Controller {
       throw new NotFoundException();
     }
 
+    // 標籤檢查
+    const tagService: TagService = Container.get(TagService);
+
+    const tags = await tagService.findByIds(params.tags);
+
     const postPolicy: PostPolicy = Container.get(PostPolicy);
 
     if (!postPolicy.update(req.session.user, post)) {
       throw new AccessDeniedException();
     }
 
-    post = await postService.updateById(post.id, params);
+    post = await postService.updateById(post.id, {
+      title: params.title,
+      body: params.body,
+      status: params.status,
+      userId: req.session.user.id,
+    });
+
+    const data = await postService.syncTag(post, tags);
 
     const resource = new PostResource(post);
 
