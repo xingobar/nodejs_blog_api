@@ -295,4 +295,20 @@ export default class PostService {
 
     return await this.taggableRepository.save(taggables);
   }
+
+  /**
+   * 取得文章標籤資料
+   * @param id
+   * @param post
+   */
+  public findByTagsWithPublished(id: number) {
+    return this.postRepository
+      .createQueryBuilder("posts")
+      .leftJoinAndSelect("posts.tags", "taggables")
+      .leftJoinAndSelect("posts.user", "owner")
+      .leftJoinAndSelect("taggables.tag", "tag")
+      .where("posts.id = :id", { id })
+      .andWhere("status = :status", { status: PostStatus.PUBLISH })
+      .getOne();
+  }
 }

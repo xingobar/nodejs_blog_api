@@ -1,6 +1,7 @@
 import ResourceAbstract from "resource/resource.abstract";
 import { Post } from "entity/post.entity";
 import UserResource, { IUserResource } from "resource/user.resource";
+import { Taggable } from "entity/taggable.entity";
 
 interface IPostResource {
   id: number;
@@ -13,6 +14,7 @@ interface IPostResource {
   createdAt: Date;
   updatedAt: Date;
   owner?: IUserResource;
+  tags?: Taggable[];
 }
 
 export default class PostResource extends ResourceAbstract {
@@ -27,6 +29,11 @@ export default class PostResource extends ResourceAbstract {
     if (this.when("user")) {
       data.owner = await new UserResource(await this.getCurrentResource().user).toJson();
     }
+
+    if (post.hasOwnProperty("tags")) {
+      data.tags = post.tags;
+    }
+
     return data;
   }
 

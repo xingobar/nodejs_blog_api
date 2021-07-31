@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn } from "typeorm";
 import { PolymorphicChildInterface } from "interface/polymorphic.child.interface";
 import { Tag } from "entity/tag.entity";
 import { Post } from "entity/post.entity";
@@ -22,6 +22,8 @@ export class Taggable implements PolymorphicChildInterface {
   postId: number;
 
   @PolymorphicParent(() => [Tag])
+  @OneToOne(() => Tag)
+  @JoinColumn({ name: "entityId" })
   tag: Tag;
 
   @Column()

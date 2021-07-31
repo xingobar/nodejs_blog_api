@@ -132,9 +132,7 @@ export default class PostController implements interfaces.Controller {
     const postService: PostService = Container.get(PostService);
     const viewLogService: ViewLogService = Container.get(ViewLogService);
 
-    const post: PostEntity = await postService.findByIdWithPublished(req.params.postId).join((p) => p.user);
-
-    await post.user;
+    const post: PostEntity | undefined = await postService.findByTagsWithPublished(req.params.postId);
 
     if (!post) {
       throw new NotFoundException();
@@ -145,11 +143,11 @@ export default class PostController implements interfaces.Controller {
       const viewLog: ViewLog | undefined = await viewLogService.findById({
         userId: req.session.user.id,
         entityType: ViewLogEntityType.Post,
-        entityId: post.id,
+        entityId: post?.id ?? 0,
       });
 
       if (!viewLog) {
-        await viewLogService.createLog({ userId: req.session.user.id, entity: post });
+        await viewLogService.createLog({ userId: req.session.user.id, entity: post ?? new PostEntity() });
       }
     }
 
