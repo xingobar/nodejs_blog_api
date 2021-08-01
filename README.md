@@ -1,5 +1,17 @@
 簡單文章 api
 
+# graphql docs
+
+```
+ 1. https://www.apollographql.com/docs/apollo-server/getting-started/
+```
+
+# run graphql
+
+```
+npm run dev:graphql
+```
+
 # swagger url
 
 ```
