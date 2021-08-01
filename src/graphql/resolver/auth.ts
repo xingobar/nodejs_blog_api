@@ -58,4 +58,66 @@ export default {
       error: null,
     };
   },
+  /**
+   * 登入
+   * @param {SignInInput} 輸入的資料
+   */
+  signIn: async (_: any, { input }: any, context: any) => {
+    const { account, password } = input;
+
+    const v = new AuthValidator(input);
+    v.login().validate();
+
+    if (v.isError()) {
+      return {
+        jwt: null,
+        user: null,
+        error: {
+          code: 400,
+          message: v.detail[0].message,
+          field: v.detail[0].field,
+        },
+      };
+    }
+
+    const userService: UserService = Container.get(UserService);
+
+    const user = await userService.findByAccount(account);
+
+    // 根據帳號尋找會員
+    if (!user) {
+      return {
+        jwt: null,
+        user: null,
+        error: {
+          code: 400,
+          message: "帳號不存在",
+          field: "account",
+        },
+      };
+    }
+
+    // 密碼一致
+    if (await userService.checkPasswordMatch({ account, password })) {
+      const token = userService.generateJwtToken(user);
+
+      return {
+        jwt: {
+          token,
+        },
+        user,
+        error: null,
+      };
+    }
+
+    return {
+      jwt: null,
+      user: null,
+      error: {
+        code: 400,
+        message: "帳號或密碼錯誤",
+        field: "password",
+      },
+    };
+  },
 };

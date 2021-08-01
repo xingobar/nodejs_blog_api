@@ -4,6 +4,7 @@ import authResolver from "graphql/resolver/auth";
 import userType from "graphql/types/user";
 import UserService from "service/user.service";
 import errorType from "graphql/types/error";
+import tokenType from "graphql/types/token";
 
 const typeDefs = gql`
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -20,6 +21,9 @@ const typeDefs = gql`
   # 錯誤資料
   ${errorType}
 
+  # jwt token
+  ${tokenType}
+
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
@@ -33,6 +37,11 @@ const typeDefs = gql`
     註冊會員
     """
     signUp(input: SignUpInput): SignUpPayload
+
+    """
+    登入
+    """
+    signIn(input: SignInInput): SignInPayload
   }
 `;
 
