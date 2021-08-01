@@ -66,10 +66,12 @@ abstract class ValidatorAbstract {
   /**
    * 客製化回傳訊息
    */
-  public get detail(): IError[] | undefined {
-    return this._error?.details.map<IError>((item) => {
-      return { message: item.message };
-    });
+  public get detail(): IError[] {
+    return (
+      this._error?.details.map<IError>((item) => {
+        return { message: item.message, field: item.context?.key };
+      }) ?? [{ message: "", field: "" }]
+    );
   }
 }
 

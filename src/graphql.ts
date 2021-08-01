@@ -1,6 +1,9 @@
 import { ApolloServer, gql } from "apollo-server";
 import { Container } from "typedi";
+import auth from "graphql/resolver/auth";
+import user from "graphql/types/user";
 import UserService from "service/user.service";
+import error from "graphql/types/error";
 
 const typeDefs = gql`
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -11,33 +14,11 @@ const typeDefs = gql`
     author: String
   }
 
-  """
-  使用者
-  """
-  type User {
-    """
-    使用者帳號
-    """
-    account: String
-    """
-    使用者信箱
-    """
-    email: String
-    """
-    使用者頭像
-    """
-    avatar: String
-  }
+  # 會員相關
+  ${user}
 
-  """
-  新增使用者的 input
-  """
-  input CreateUserInput {
-    email: String
-    password: String
-    confirmPassword: String
-    account: String
-  }
+  # 錯誤資料
+  ${error}
 
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
@@ -48,7 +29,10 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    signUp(content: CreateUserInput): User
+    """
+    註冊會員
+    """
+    signUp(input: SignUpInput): SignUpPayload
   }
 `;
 
@@ -75,9 +59,8 @@ const resolvers = {
     },
   },
   Mutation: {
-    signUp: (_: any, args: any, context: any) => {
-      console.log(args.content.email);
-    },
+    // 註冊登入相關
+    ...auth,
   },
 };
 
