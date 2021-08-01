@@ -29,12 +29,26 @@ const typeDefs = gql`
     avatar: String
   }
 
+  """
+  新增使用者的 input
+  """
+  input CreateUserInput {
+    email: String
+    password: String
+    confirmPassword: String
+    account: String
+  }
+
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
   type Query {
     books: [Book]
     users: [User]
+  }
+
+  type Mutation {
+    signUp(content: CreateUserInput): User
   }
 `;
 
@@ -58,6 +72,11 @@ const resolvers = {
       const userService = Container.get(UserService);
 
       return userService.getAllUsers();
+    },
+  },
+  Mutation: {
+    signUp: (_: any, args: any, context: any) => {
+      console.log(args.content.email);
     },
   },
 };
