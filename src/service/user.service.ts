@@ -75,4 +75,11 @@ export default class UserService {
       .where((u) => u.email)
       .equal(email);
   }
+
+  /**
+   * 取得所有使用者
+   */
+  public getAllUsers() {
+    return this.userRepository.getAll().orderByDescending((u) => u.createdAt);
+  }
 }
