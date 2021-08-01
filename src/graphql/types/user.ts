@@ -6,6 +6,11 @@ const user = gql`
   """
   type User {
     """
+    編號
+    """
+    id: ID
+
+    """
     使用者帳號
     """
     account: String
