@@ -5,6 +5,8 @@ import userType from "graphql/types/user";
 import UserService from "service/user.service";
 import errorType from "graphql/types/error";
 import tokenType from "graphql/types/token";
+import jwt from "jsonwebtoken";
+import config from "config/index";
 
 const typeDefs = gql`
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -78,6 +80,22 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: async ({ req }) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(" ")[1];
+
+    try {
+      // jwt token 驗證
+      const user = await jwt.verify(token ?? "", config.jwt.secret);
+
+      return {
+        user,
+      };
+    } catch (e) {
+      console.log("context error: ", e);
+      return {};
+    }
+  },
 });
 
 // The `listen` method launches a web server.
