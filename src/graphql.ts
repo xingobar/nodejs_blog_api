@@ -88,6 +88,8 @@ const server = new ApolloServer({
     const token = authHeader && authHeader.split(" ")[1];
 
     try {
+      if (!token) return {};
+
       // jwt token 驗證
       const user = await jwt.verify(token ?? "", config.jwt.secret);
 
