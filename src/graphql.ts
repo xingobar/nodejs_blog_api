@@ -7,6 +7,7 @@ import errorType from "graphql/types/error";
 import tokenType from "graphql/types/token";
 import jwt from "jsonwebtoken";
 import config from "config/index";
+import userQuery from "graphql/query/user";
 
 const typeDefs = gql`
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -32,6 +33,7 @@ const typeDefs = gql`
   type Query {
     books: [Book]
     users: [User]
+    user: UserPayload
   }
 
   type Mutation {
@@ -68,6 +70,7 @@ const resolvers = {
 
       return userService.getAllUsers();
     },
+    ...userQuery,
   },
   Mutation: {
     // 註冊登入相關

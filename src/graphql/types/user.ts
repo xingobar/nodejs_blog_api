@@ -93,6 +93,14 @@ const user = gql`
     """
     error: Error
   }
+
+  """
+  取得使用者 payload
+  """
+  type UserPayload {
+    me: User
+    error: Error
+  }
 `;
 
 export default user;
