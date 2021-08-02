@@ -1,13 +1,32 @@
+// node_modules
 import { ApolloServer, gql } from "apollo-server";
 import { Container } from "typedi";
-import authResolver from "graphql/resolver/auth";
-import userType from "graphql/types/user";
+import { GraphQLDateTime } from "graphql-iso-date";
+
+// service
 import UserService from "service/user.service";
-import errorType from "graphql/types/error";
-import tokenType from "graphql/types/token";
+
+// config
 import jwt from "jsonwebtoken";
 import config from "config/index";
+
+// graphql type
+import errorType from "graphql/types/error";
+import tokenType from "graphql/types/token";
+import postType from "graphql/types/post";
+import userType from "graphql/types/user";
+import dateTimeType from "graphql/types/datetime";
+
+// graphql query
 import userQuery from "graphql/query/user";
+import postQuery from "graphql/query/post";
+
+// graphql resolver
+import authResolver from "graphql/resolver/auth";
+
+import express from "express";
+
+const app = express();
 
 const typeDefs = gql`
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -18,6 +37,9 @@ const typeDefs = gql`
     author: String
   }
 
+  # custom scalar
+  scalar DateTime
+
   # 會員相關
   ${userType}
 
@@ -27,6 +49,12 @@ const typeDefs = gql`
   # jwt token
   ${tokenType}
 
+  # 文章相關
+  ${postType}
+
+  # 時間相關
+  ${dateTimeType}
+
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
@@ -34,6 +62,7 @@ const typeDefs = gql`
     books: [Book]
     users: [User]
     user: UserPayload
+    posts: [Post]
   }
 
   type Mutation {
@@ -70,12 +99,17 @@ const resolvers = {
 
       return userService.getAllUsers();
     },
+    // 會員相關
     ...userQuery,
+
+    // 文章相關
+    ...postQuery,
   },
   Mutation: {
     // 註冊登入相關
     ...authResolver,
   },
+  DateTime: GraphQLDateTime,
 };
 
 // The ApolloServer constructor requires two parameters: your schema
