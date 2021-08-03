@@ -4,6 +4,7 @@
 
 ```
  1. https://www.apollographql.com/docs/apollo-server/getting-started/
+ 2. https://javascript.plainenglish.io/writing-a-node-js-graphql-backend-that-actually-scales-d20c920a4494
 ```
 
 # run graphql

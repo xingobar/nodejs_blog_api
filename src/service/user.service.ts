@@ -82,4 +82,15 @@ export default class UserService {
   public getAllUsers() {
     return this.userRepository.getAll().orderByDescending((u) => u.createdAt);
   }
+
+  /**
+   * 根據會員編號取得會員
+   * @param id
+   */
+  public findByIds(id: number[]) {
+    return this.userRepository
+      .getAll()
+      .where((u) => u.id)
+      .in(id);
+  }
 }

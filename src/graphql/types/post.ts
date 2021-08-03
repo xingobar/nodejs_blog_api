@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 
 const post = gql`
   """
-  文章資料
+  文章
   """
   type Post {
     """
@@ -21,9 +21,39 @@ const post = gql`
     body: String
 
     """
+    作者資料
+    """
+    author: User
+
+    """
     資料相關時間資料
     """
     dateTime: DataDateTime
+  }
+
+  """
+  文章排序的欄位
+  """
+  enum PostSortKeys {
+    """
+    新增的日期
+    """
+    CREATED_AT
+
+    """
+    更新的時間
+    """
+    UPDATED_AT
+
+    """
+    編號
+    """
+    ID
+
+    """
+    文章名稱
+    """
+    TITLE
   }
 `;
 

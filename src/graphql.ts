@@ -22,11 +22,12 @@ import userQuery from "graphql/query/user";
 import postQuery from "graphql/query/post";
 
 // graphql resolver
-import authResolver from "graphql/resolver/auth";
+import authMutation from "graphql/mutation/auth";
 
-import express from "express";
+// graphql loader
+import postResolver from "graphql/resolver/post";
 
-const app = express();
+import DataLoader from "dataloader";
 
 const typeDefs = gql`
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -62,7 +63,7 @@ const typeDefs = gql`
     books: [Book]
     users: [User]
     user: UserPayload
-    posts: [Post]
+    posts(sortKey: PostSortKeys): [Post]
   }
 
   type Mutation {
@@ -107,9 +108,12 @@ const resolvers = {
   },
   Mutation: {
     // 註冊登入相關
-    ...authResolver,
+    ...authMutation,
   },
   DateTime: GraphQLDateTime,
+
+  // 文章 resolver
+  ...postResolver,
 };
 
 // The ApolloServer constructor requires two parameters: your schema
@@ -120,20 +124,30 @@ const server = new ApolloServer({
   context: async ({ req }) => {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
+    let user = undefined;
 
     try {
-      if (!token) return {};
-
-      // jwt token 驗證
-      const user = await jwt.verify(token ?? "", config.jwt.secret);
-
-      return {
-        user,
-      };
+      if (!token) {
+        user = undefined;
+      } else {
+        // jwt token 驗證
+        user = await jwt.verify(token ?? "", config.jwt.secret);
+      }
     } catch (e) {
       console.log("context error: ", e);
-      return {};
     }
+
+    return {
+      dataloader: {
+        users: new DataLoader(async (userIds) => {
+          const userService = Container.get(UserService);
+          const users = await userService.findByIds(userIds as number[]);
+
+          return users;
+        }),
+      },
+      user,
+    };
   },
 });
 
