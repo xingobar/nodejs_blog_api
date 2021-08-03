@@ -57,7 +57,7 @@ const post = gql`
   }
 
   """
-  post edge
+  post edge, 每筆資料內容
   """
   type PostEdge {
     """
@@ -72,7 +72,7 @@ const post = gql`
   }
 
   """
-  post connection
+  post connection 分頁資料
   """
   type PostConnection {
     """

@@ -169,6 +169,13 @@ const server = new ApolloServer({
       user,
     };
   },
+  formatError: (err) => {
+    return {
+      message: err.message,
+      code: err?.extensions?.exception?.code ?? 500,
+      field: err?.extensions?.exception?.field ?? "",
+    };
+  },
 });
 
 // The `listen` method launches a web server.
