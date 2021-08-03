@@ -55,6 +55,36 @@ const post = gql`
     """
     TITLE
   }
+
+  """
+  post edge
+  """
+  type PostEdge {
+    """
+    cursor 資料
+    """
+    cursor: String!
+
+    """
+    實際的文章資料
+    """
+    node: Post!
+  }
+
+  """
+  post connection
+  """
+  type PostConnection {
+    """
+    各個文章的資料
+    """
+    edges: [PostEdge!]!
+
+    """
+    分頁資料
+    """
+    pageInfo: PageInfo!
+  }
 `;
 
 export default post;

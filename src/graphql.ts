@@ -56,6 +56,26 @@ const typeDefs = gql`
   # 時間相關
   ${dateTimeType}
 
+  """
+  頁碼相關資訊
+  """
+  type PageInfo {
+    """
+    是否還有下一頁
+    """
+    hasNextPage: Boolean!
+
+    """
+    是否還有上一頁
+    """
+    hasPreviousPage: Boolean!
+
+    """
+    總頁數
+    """
+    totalPageCount: Int
+  }
+
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
@@ -63,7 +83,7 @@ const typeDefs = gql`
     books: [Book]
     users: [User]
     user: UserPayload
-    posts(cursor: String, limit: Int): [Post]
+    posts(cursor: String, limit: Int): PostConnection!
   }
 
   type Mutation {

@@ -7,6 +7,18 @@ export default {
 
     const posts = await postService.findAll({ cursor, limit });
 
-    return posts;
+    return {
+      edges: posts.map((post) => {
+        return {
+          cursor: post.createdAt,
+          node: post,
+        };
+      }),
+      pageInfo: {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        totalPageCount: 10,
+      },
+    };
   },
 };
