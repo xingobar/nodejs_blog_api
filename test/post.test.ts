@@ -10,7 +10,7 @@ let post: Post | undefined;
 
 export const createPost = async ({
   status = PostStatus.PUBLISH,
-  user = undefined,
+  user,
 }: {
   status: PostStatus;
   user?: User | undefined;

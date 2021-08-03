@@ -7,7 +7,7 @@ import { assert } from "chai";
 import { useRefreshDatabase } from "typeorm-seeding";
 import { ViewLog, ViewLogEntityType } from "entity/view.log.entity";
 
-export const createPost = async ({ status = PostStatus.PUBLISH, user = undefined }: { status: PostStatus; user?: User | undefined }) => {
+export const createPost = async ({ status = PostStatus.PUBLISH, user }: { status: PostStatus; user?: User | undefined }) => {
   if (!user) {
     user = await createUser();
   }

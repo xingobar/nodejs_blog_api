@@ -144,7 +144,7 @@ const server = new ApolloServer({
   context: async ({ req }) => {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
-    let user = undefined;
+    let user;
 
     try {
       if (!token) {

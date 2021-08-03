@@ -8,7 +8,7 @@ import { User } from "entity/user.entity";
 import { Bookmark, BookmarkEntityType } from "entity/bookmark.entity";
 import { Likeable, LikeableEntityType } from "entity/likeable.entity";
 
-export const createPost = async ({ status = PostStatus.PUBLISH, user = undefined }: { status: PostStatus; user?: User | undefined }) => {
+export const createPost = async ({ status = PostStatus.PUBLISH, user }: { status: PostStatus; user?: User | undefined }) => {
   if (!user) {
     user = await createUser();
   }

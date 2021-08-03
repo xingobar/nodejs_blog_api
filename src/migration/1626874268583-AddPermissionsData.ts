@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class AddPermissionsData1626874268583 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`INSERT INTO permissions 
+    await queryRunner.query(`INSERT INTO permissions
                       (name, action)
                     VALUES
                       ("新增標籤", "tag.created"),
