@@ -63,7 +63,7 @@ const typeDefs = gql`
     books: [Book]
     users: [User]
     user: UserPayload
-    posts(sortKey: PostSortKeys): [Post]
+    posts(cursor: String, limit: Int): [Post]
   }
 
   type Mutation {
