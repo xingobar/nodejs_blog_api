@@ -1,5 +1,6 @@
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
+import { Post } from "entity/post.entity";
 import PostRepository from "repository/post.repository";
 
 @Service()
@@ -15,13 +16,50 @@ export default class PostService {
    * @param {string} param.cursor cursor
    * @param {number} param.limit 每頁幾筆資料
    */
-  public async findAll({ cursor, limit = 10 }: { cursor: Date; limit: number }) {
-    const builder = this.postRepository.createQueryBuilder("posts").orderBy("created_at", "DESC");
+  public async findAll({ before, after, first, last }: { before: Date; after: Date; first: number; last: number }) {
+    let builder = this.postRepository.createQueryBuilder("posts").orderBy("created_at", "DESC");
 
-    if (cursor) {
-      builder.where("created_at < :createdAt", { createdAt: cursor });
+    if (first) {
+      // 下一頁資料
+      if (after) {
+        builder = builder.where("created_at < :createdAt", { createdAt: after });
+      }
     }
 
-    return await builder.take(limit).getMany();
+    // 上一頁資料
+    if (last) {
+      builder = builder.where("created_at > :createdAt", { createdAt: before });
+    }
+
+    return await builder.take(first || last).getMany();
+  }
+
+  /**
+   * 取得文章個數
+   * @param param0
+   */
+  public async findCount({ before, after, first, last }: { before: Date; after: Date; first: number; last: number }) {
+    let builder = this.postRepository.createQueryBuilder("posts").select("COUNT(*)", "total");
+
+    if (first) {
+      // 下一頁資料
+      if (after) {
+        builder = builder.where("created_at < :createdAt", { createdAt: after });
+      }
+    }
+
+    // 上一頁資料
+    if (last) {
+      builder = builder.where("created_at > :createdAt", { createdAt: before });
+    }
+
+    const cursorCount = await builder.getRawOne();
+
+    const count = await this.postRepository.createQueryBuilder("posts").getCount();
+
+    return {
+      cursorCount,
+      count,
+    };
   }
 }

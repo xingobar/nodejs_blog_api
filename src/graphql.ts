@@ -83,7 +83,7 @@ const typeDefs = gql`
     books: [Book]
     users: [User]
     user: UserPayload
-    posts(cursor: String, limit: Int): PostConnection!
+    posts(after: String, first: Int, last: Int, before: String): PostConnection!
   }
 
   type Mutation {
