@@ -57,22 +57,6 @@ export default class PostService {
    * @param param0
    */
   public async findCount({ before, after }: { before: Date; after: Date }) {
-    let builder = await this.postRepository.createQueryBuilder("posts");
-
-    if (after) {
-      builder = builder.where("posts.created_at < :createdAt", { createdAt: after });
-    }
-
-    if (before) {
-      builder = builder.from((qb) => {
-        return qb
-          .select("subPosts.*")
-          .from(Post, "subPosts")
-          .orderBy("subPosts.created_at", "ASC")
-          .where("subPosts.created_at > :createdAt", { createdAt: before });
-      }, "posts");
-    }
-
-    return await builder.select("COUNT(*)", "total").getRawOne();
+    return await this.postRepository.createQueryBuilder("posts").getCount();
   }
 }
