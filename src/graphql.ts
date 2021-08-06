@@ -87,7 +87,42 @@ const typeDefs = gql`
     """
     文章資料
     """
-    posts(after: String, first: Int, last: Int, before: String, sortKey: PostSortKeys, reverse: Boolean): PostConnection!
+    posts(
+      """
+      after cursor
+      """
+      after: String
+
+      """
+      first n element
+      """
+      first: Int
+
+      """
+      last n element
+      """
+      last: Int
+
+      """
+      before cursor
+      """
+      before: String
+
+      """
+      可以排序的 key
+      """
+      sortKey: PostSortKeys
+
+      """
+      是否 reverse 排序, 預設為 true (DESC)
+      """
+      reverse: Boolean
+
+      """
+      關鍵字查詢
+      """
+      query: String
+    ): PostConnection!
   }
 
   type Mutation {
