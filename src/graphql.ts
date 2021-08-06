@@ -122,6 +122,11 @@ const typeDefs = gql`
       關鍵字查詢 (文章標題、內文)
       """
       query: String
+
+      """
+      文章類型
+      """
+      postType: PostType
     ): PostConnection!
   }
 
@@ -183,7 +188,7 @@ const server = new ApolloServer({
   context: async ({ req }) => {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
-    let user;
+    let user = undefined;
 
     try {
       if (!token) {

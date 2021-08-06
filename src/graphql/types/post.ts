@@ -32,31 +32,6 @@ const post = gql`
   }
 
   """
-  文章排序的欄位
-  """
-  enum PostSortKeys {
-    """
-    新增的日期
-    """
-    CREATED_AT
-
-    """
-    更新的時間
-    """
-    UPDATED_AT
-
-    """
-    編號
-    """
-    ID
-
-    """
-    文章名稱
-    """
-    TITLE
-  }
-
-  """
   post edge, 每筆資料內容
   """
   type PostEdge {
@@ -84,6 +59,51 @@ const post = gql`
     分頁資料
     """
     pageInfo: PageInfo!
+  }
+
+  """
+  文章排序的欄位
+  """
+  enum PostSortKeys {
+    """
+    新增的日期
+    """
+    CREATED_AT
+
+    """
+    更新的時間
+    """
+    UPDATED_AT
+
+    """
+    編號
+    """
+    ID
+
+    """
+    文章名稱
+    """
+    TITLE
+  }
+
+  """
+  文章類型
+  """
+  enum PostType {
+    """
+    加入書籤的文章
+    """
+    BOOKMARKED
+
+    """
+    文章
+    """
+    POST
+
+    """
+    喜歡的文章
+    """
+    LIKES
   }
 `;
 

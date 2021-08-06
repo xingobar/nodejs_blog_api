@@ -1,6 +1,6 @@
 import { Container } from "typedi";
 import { UserInputError } from "apollo-server";
-import { PostSortKeys } from "graphql/interfaces/post";
+import { PostSortKeys, PostType } from "graphql/interfaces/post";
 import PostService from "graphql/service/post.service";
 
 export default {
@@ -14,7 +14,18 @@ export default {
       sortKey,
       reverse,
       query,
-    }: { before: Date; after: Date; first: number; last: number; sortKey: PostSortKeys; reverse: boolean; query: String }
+      postType,
+    }: {
+      before: Date;
+      after: Date;
+      first: number;
+      last: number;
+      sortKey: PostSortKeys;
+      reverse: boolean;
+      query: String;
+      postType: PostType;
+    },
+    context: any
   ) => {
     if (!first && after) throw new UserInputError("after 必須搭配 first");
 
@@ -24,7 +35,17 @@ export default {
 
     const postService: PostService = Container.get(PostService);
 
-    const posts = await postService.findAll({ before, after, first, last, sortKey, reverse, query });
+    const posts = await postService.findAll({
+      before,
+      after,
+      first,
+      last,
+      sortKey,
+      reverse,
+      query,
+      postType,
+      userId: context?.user?.id ?? 0,
+    });
 
     // 資料筆數
     const totalCount = await postService.findCount({ after, before });
