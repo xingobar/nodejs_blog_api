@@ -119,7 +119,7 @@ const typeDefs = gql`
       reverse: Boolean
 
       """
-      關鍵字查詢
+      關鍵字查詢 (文章標題、內文)
       """
       query: String
     ): PostConnection!

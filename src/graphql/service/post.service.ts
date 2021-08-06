@@ -30,6 +30,7 @@ export default class PostService {
     last,
     sortKey,
     reverse = true,
+    query = "",
   }: {
     before: Date;
     after: Date;
@@ -37,6 +38,7 @@ export default class PostService {
     last: number;
     sortKey: PostSortKeys;
     reverse: boolean;
+    query: String;
   }) {
     let builder = this.postRepository.createQueryBuilder("posts");
 
@@ -73,6 +75,11 @@ export default class PostService {
             .orderBy("subPosts.created_at", "ASC");
         }, "subPosts");
       }
+    }
+
+    // 關鍵字查詢
+    if (query) {
+      builder = builder.where("title LIKE :title OR body LIKE :body", { title: `%${query}%`, body: `%${query}%` });
     }
 
     //  排序方向

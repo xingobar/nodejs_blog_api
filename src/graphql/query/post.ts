@@ -13,7 +13,8 @@ export default {
       last,
       sortKey,
       reverse,
-    }: { before: Date; after: Date; first: number; last: number; sortKey: PostSortKeys; reverse: boolean }
+      query,
+    }: { before: Date; after: Date; first: number; last: number; sortKey: PostSortKeys; reverse: boolean; query: String }
   ) => {
     if (!first && after) throw new UserInputError("after 必須搭配 first");
 
@@ -23,7 +24,7 @@ export default {
 
     const postService: PostService = Container.get(PostService);
 
-    const posts = await postService.findAll({ before, after, first, last, sortKey, reverse });
+    const posts = await postService.findAll({ before, after, first, last, sortKey, reverse, query });
 
     // 資料筆數
     const totalCount = await postService.findCount({ after, before });
