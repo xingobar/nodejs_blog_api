@@ -11,19 +11,33 @@ export default {
 
     const posts = await postService.findAll({ before, after, first, last });
 
-    const postCount = await postService.findCount({ after, before, first, last });
+    // 資料筆數
+    const { total: totalCount } = await postService.findCount({ after, before });
+
+    // 達成條件的資料數
+    const postCount = parseInt(posts[0]?.count ?? 0);
 
     return {
-      edges: posts.map((post) => {
-        return {
-          cursor: post.createdAt,
-          node: post,
-        };
-      }),
+      edges:
+        postCount === 0
+          ? []
+          : posts.map((post) => {
+              return {
+                cursor: before || after,
+                node: {
+                  id: post.id,
+                  title: post.title,
+                  body: post.body,
+                  userId: post.userId,
+                  createdAt: post.created_at,
+                  updatedAt: post.updated_at,
+                },
+              };
+            }),
       pageInfo: {
-        hasNextPage: first ? postCount.cursorCount.total > first : postCount.count > postCount.cursorCount.total,
-        hasPreviousPage: last ? postCount.cursorCount.total > last : postCount.count > postCount.cursorCount.total,
-        totalPageCount: Math.ceil(postCount.count / (first || last)),
+        hasNextPage: first ? postCount > first : totalCount > postCount,
+        hasPreviousPage: last ? postCount > last : totalCount > postCount,
+        totalPageCount: Math.ceil(totalCount / (first || last)),
       },
     };
   },

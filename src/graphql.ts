@@ -83,6 +83,10 @@ const typeDefs = gql`
     books: [Book]
     users: [User]
     user: UserPayload
+
+    """
+    文章資料
+    """
     posts(after: String, first: Int, last: Int, before: String): PostConnection!
   }
 
