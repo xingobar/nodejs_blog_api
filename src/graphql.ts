@@ -87,7 +87,7 @@ const typeDefs = gql`
     """
     文章資料
     """
-    posts(after: String, first: Int, last: Int, before: String): PostConnection!
+    posts(after: String, first: Int, last: Int, before: String, sortKey: PostSortKeys, reverse: Boolean): PostConnection!
   }
 
   type Mutation {

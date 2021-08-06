@@ -1,7 +1,10 @@
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Post } from "entity/post.entity";
+import { PostSortKeys } from "graphql/interfaces/post";
+
 import PostRepository from "repository/post.repository";
+import { sortBy } from "lodash";
 
 @Service()
 export default class PostService {
@@ -12,11 +15,29 @@ export default class PostService {
 
   /**
    * 取得所有文章
-   * @param {object} param
-   * @param {string} param.cursor cursor
-   * @param {number} param.limit 每頁幾筆資料
+   * @param param
+   * @param {string} param.before
+   * @param {string} param.after
+   * @param {number} param.first
+   * @param {number} param.last
+   * @param {PostSortKeys} param.sortKey
+   * @param {boolean} param.reverse
    */
-  public async findAll({ before, after, first, last }: { before: Date; after: Date; first: number; last: number }) {
+  public async findAll({
+    before,
+    after,
+    first,
+    last,
+    sortKey,
+    reverse = true,
+  }: {
+    before: Date;
+    after: Date;
+    first: number;
+    last: number;
+    sortKey: PostSortKeys;
+    reverse: boolean;
+  }) {
     let builder = this.postRepository.createQueryBuilder("posts");
 
     if (first) {
@@ -54,10 +75,28 @@ export default class PostService {
       }
     }
 
-    return await builder
-      .take(first || last)
-      .orderBy("posts.created_at", "DESC")
-      .getRawMany();
+    //  排序方向
+    const sort = reverse ? "DESC" : "ASC";
+
+    // sort key 排序處理
+    switch (sortKey) {
+      case PostSortKeys.CREATED_AT:
+        builder.orderBy("created_at", sort);
+        break;
+      case PostSortKeys.ID:
+        builder.orderBy("id", sort);
+        break;
+      case PostSortKeys.TITLE:
+        builder.orderBy("title", sort);
+        break;
+      case PostSortKeys.UPDATED_AT:
+        builder.orderBy("updated_at", sort);
+        break;
+      default:
+        builder.orderBy("created_at", sort);
+    }
+
+    return await builder.take(first || last).getRawMany();
   }
 
   /**
