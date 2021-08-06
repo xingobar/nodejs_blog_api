@@ -8,9 +8,9 @@ enum PostSortKeys {
 
 export default {
   posts: async (root: any, { before, after, first, last }: any) => {
-    if (first && !after) throw new UserInputError("after 必須搭配 first");
+    if (!first && after) throw new UserInputError("after 必須搭配 first");
 
-    if ((last && !before) || (!last && before)) throw new UserInputError("last 和 before 參數要一起傳入");
+    if (!last && before) throw new UserInputError("last 和 before 參數要一起傳入");
 
     if (last && first && before && after) throw new UserInputError("參數有誤");
 
@@ -30,7 +30,7 @@ export default {
           ? []
           : posts.map((post) => {
               return {
-                cursor: before || after,
+                cursor: post.created_at ?? "",
                 node: {
                   id: post.id,
                   title: post.title,

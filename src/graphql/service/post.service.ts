@@ -22,7 +22,12 @@ export default class PostService {
     if (first) {
       // 下一頁資料
       if (after) {
-        builder = builder.select("COUNT(posts.id)", "count").addSelect("posts.*").where("created_at < :createdAt", { createdAt: after });
+        builder = builder
+          .select("COUNT(posts.id) OVER()", "count")
+          .addSelect("posts.*")
+          .where("created_at < :createdAt", { createdAt: after });
+      } else {
+        builder = builder.select("COUNT(posts.id) OVER()", "count").addSelect("posts.*");
       }
     }
 
@@ -32,24 +37,27 @@ export default class PostService {
         builder = builder.select(["posts.*", "count"]).from((qb) => {
           return qb
             .select("subPosts.*")
-            .addSelect("COUNT(subPosts.id)", "count")
+            .addSelect("COUNT(subPosts.id) OVER()", "count")
             .from(Post, "subPosts")
             .orderBy("subPosts.created_at", "ASC")
             .where("subPosts.created_at > :createdAt", { createdAt: before })
             .take(last);
-        }, "posts");
+        }, "subPosts");
       } else {
         builder = builder.select(["posts.*", "count"]).from((qb) => {
           return qb
             .select("subPosts.*")
-            .addSelect("COUNT(subPosts.id)", "count")
+            .addSelect("COUNT(subPosts.id) OVER()", "count")
             .from(Post, "subPosts")
             .orderBy("subPosts.created_at", "ASC");
-        }, "posts");
+        }, "subPosts");
       }
     }
 
-    return await builder.take(first || last).getRawMany();
+    return await builder
+      .take(first || last)
+      .orderBy("posts.created_at", "DESC")
+      .getRawMany();
   }
 
   /**
