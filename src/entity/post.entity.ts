@@ -22,6 +22,16 @@ export enum PostStatus {
   PUBLISH = "PUBLISH",
 }
 
+/**
+ * 章節排序 key type
+ */
+export const postSortKeyType = {
+  CREATED_AT: "created_at",
+  ID: "id",
+  TITLE: "title",
+  UPDATED_AT: "updated_at",
+};
+
 @Entity("posts")
 export class Post {
   @PrimaryGeneratedColumn()

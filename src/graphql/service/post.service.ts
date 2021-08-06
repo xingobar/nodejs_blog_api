@@ -3,7 +3,7 @@ import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 // entity
-import { Post } from "entity/post.entity";
+import { Post, postSortKeyType } from "entity/post.entity";
 import { Bookmark, BookmarkEntityType } from "entity/bookmark.entity";
 import { Likeable, LikeableEntityType } from "entity/likeable.entity";
 
@@ -35,7 +35,7 @@ export default class PostService {
     after,
     first,
     last,
-    sortKey,
+    sortKey = PostSortKeys.CREATED_AT,
     reverse = true,
     query = "",
     postType = PostType.POST,
@@ -124,22 +124,7 @@ export default class PostService {
     const sort = reverse ? "DESC" : "ASC";
 
     // sort key 排序處理
-    switch (sortKey) {
-      case PostSortKeys.CREATED_AT:
-        builder.orderBy("created_at", sort);
-        break;
-      case PostSortKeys.ID:
-        builder.orderBy("id", sort);
-        break;
-      case PostSortKeys.TITLE:
-        builder.orderBy("title", sort);
-        break;
-      case PostSortKeys.UPDATED_AT:
-        builder.orderBy("updated_at", sort);
-        break;
-      default:
-        builder.orderBy("created_at", sort);
-    }
+    builder = builder.orderBy(postSortKeyType[sortKey], sort);
 
     return await builder.take(first || last).getRawMany();
   }
