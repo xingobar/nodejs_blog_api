@@ -220,4 +220,26 @@ export default class PostService {
 
     return await this.taggableRepository.save(taggables);
   }
+
+  /**
+   * 更新文章
+   * @param param
+   * @param {string} param.title 文章標題
+   * @param {PostStatus} param.status 文章狀態
+   * @param {string} param.body 文章內容
+   */
+  public async updatePost({ title, status, body, id }: { title: string; status: PostStatus; body: string; id: number }) {
+    const { generatedMaps } = await this.postRepository
+      .createQueryBuilder("posts")
+      .update(Post)
+      .where("id = :id", { id })
+      .set({
+        title,
+        status,
+        body,
+      })
+      .execute();
+
+    return (await this.postRepository.createQueryBuilder("posts").where("id = :id", { id }).getOne()) ?? new Post();
+  }
 }

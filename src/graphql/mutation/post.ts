@@ -11,6 +11,7 @@ import TagService from "graphql/service/tag.service";
 import NotFoundException from "exception/notfound.exception";
 import AccessDeniedException from "exception/access.denied.exception";
 import InvalidRequestException from "exception/invalid.exception";
+import AuthorizationException from "exception/authorization.exception";
 
 // validator
 import PostValidator from "graphql/validator/post.validator";
@@ -29,7 +30,7 @@ export default {
     const postService: PostService = Container.get(PostService);
 
     if (!context.user) {
-      throw new AccessDeniedException();
+      throw new AuthorizationException();
     }
 
     const post = await postService.findById({ id });
@@ -76,7 +77,7 @@ export default {
     const postService: PostService = Container.get(PostService);
 
     if (!context.user) {
-      throw new AccessDeniedException();
+      throw new AuthorizationException();
     }
 
     const post = await postService.findById({ id });
@@ -118,7 +119,7 @@ export default {
 
     // 尚未登入
     if (!context.user) {
-      throw new AccessDeniedException();
+      throw new AuthorizationException();
     }
 
     const v = new PostValidator(input);
@@ -147,6 +148,54 @@ export default {
     });
 
     // 同步標籤
+    await postService.syncTags({ post, tagsId: input.tags });
+
+    return {
+      post,
+    };
+  },
+
+  /**
+   * 文章更新
+   *
+   * @param {object} args
+   * @param {PostUpdateInput} args.input
+   */
+  postUpdate: async (_: any, { input }: any, context: any) => {
+    const { title, status, body } = input;
+
+    if (!context.user) {
+      throw new AuthorizationException();
+    }
+
+    const v = new PostValidator(input);
+    v.postUpdateRule().validate();
+
+    if (v.isError()) {
+      throw new InvalidRequestException(v.detail[0].message);
+    }
+
+    const postService: PostService = Container.get(PostService);
+
+    let post = await postService.findById({ id: input.id });
+
+    // 找不到文章
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    const tagService = Container.get(TagService);
+
+    // 檢查標籤
+    const tags = await tagService.findByIds(input.tags);
+    if (tags.length !== input.tags.length) {
+      throw new InvalidRequestException("標籤資料有誤");
+    }
+
+    // 更新文章
+    post = await postService.updatePost({ title, status, body, id: input.id });
+
+    // 同步文章標籤
     await postService.syncTags({ post, tagsId: input.tags });
 
     return {

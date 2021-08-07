@@ -1,5 +1,5 @@
 // exception
-import AccessDeniedException from "exception/access.denied.exception";
+import AuthorizationException from "exception/authorization.exception";
 
 // node_modules
 import { Container } from "typedi";
@@ -10,7 +10,7 @@ import ProfileService from "graphql/service/profile.service";
 export default {
   profileStore: async (_: any, { phone, gender }: any, context: any) => {
     if (!context.user) {
-      throw new AccessDeniedException();
+      throw new AuthorizationException();
     }
 
     const profileService: ProfileService = Container.get(ProfileService);

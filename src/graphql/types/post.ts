@@ -220,6 +220,51 @@ const post = gql`
     """
     tags: [Int]
   }
+
+  """
+  更新文章 payload
+  """
+  type PostUpdatePayload {
+    """
+    文章
+    """
+    post: Post
+
+    """
+    錯誤訊息
+    """
+    error: Error
+  }
+
+  """
+  更新文章
+  """
+  input PostUpdateInput {
+    """
+    文章編號
+    """
+    id: ID!
+
+    """
+    文章標題
+    """
+    title: String
+
+    """
+    文章內容
+    """
+    body: String
+
+    """
+    文章狀態
+    """
+    status: PostStatus
+
+    """
+    標籤資料
+    """
+    tags: [Int]
+  }
 `;
 
 export default post;

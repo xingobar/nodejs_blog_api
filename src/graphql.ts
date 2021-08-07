@@ -232,6 +232,11 @@ const typeDefs = gql`
     文章新增
     """
     postCreate(input: PostCreateInput): PostCreatePayload
+
+    """
+    文章更新
+    """
+    postUpdate(input: PostUpdateInput): PostUpdatePayload
   }
 `;
 
@@ -334,6 +339,8 @@ const server = new ApolloServer({
     };
   },
   formatError: (err) => {
+    console.log(err);
+    return err;
     return {
       message: err.message,
       code: err?.extensions?.exception?.code ?? 500,
