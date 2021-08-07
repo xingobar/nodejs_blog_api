@@ -21,7 +21,7 @@ export default {
     posts: async ({ id }: any, args: any, context: any) => {
       const postService: PostService = Container.get(PostService);
 
-      const posts = await postService.findByUsersId(id);
+      const posts = await postService.findByUsersId({ userId: id });
 
       return posts;
     },

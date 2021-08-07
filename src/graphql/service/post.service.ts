@@ -4,7 +4,7 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import { getConnection } from "typeorm";
 
 // entity
-import { Post, postSortKeyType } from "entity/post.entity";
+import { Post, postSortKeyType, PostStatus } from "entity/post.entity";
 import { Bookmark, BookmarkEntityType } from "entity/bookmark.entity";
 import { Likeable, LikeableEntityType } from "entity/likeable.entity";
 
@@ -42,6 +42,7 @@ export default class PostService {
     query = "",
     postType = PostType.POST,
     userId = 0,
+    status = PostStatus.PUBLISH,
   }: {
     before: Date;
     after: Date;
@@ -52,6 +53,7 @@ export default class PostService {
     query: String;
     postType: PostType;
     userId?: number;
+    status?: PostStatus;
   }) {
     let builder = getConnection().createQueryBuilder();
 
@@ -130,7 +132,10 @@ export default class PostService {
     // sort key 排序處理
     builder = builder.orderBy(postSortKeyType[sortKey], sort);
 
-    return await builder.take(first || last).getRawMany();
+    return await builder
+      .where("status = :status", { status })
+      .take(first || last)
+      .getRawMany();
   }
 
   /**
@@ -145,15 +150,23 @@ export default class PostService {
    * 根據編號取得文章
    * @param id 文章編號
    */
-  public async findById(id: number) {
-    return await this.postRepository.createQueryBuilder("posts").where("id = :id", { id }).getOne();
+  public async findById({ id, status = PostStatus.PUBLISH }: { id: number; status?: PostStatus.PUBLISH }) {
+    return await this.postRepository
+      .createQueryBuilder("posts")
+      .where("id = :id", { id })
+      .andWhere("status = :status", { status })
+      .getOne();
   }
 
   /**
    * 取得使用者文章
    * @param {number} userId - 會員編號
    */
-  public async findByUsersId(userId: number) {
-    return await this.postRepository.createQueryBuilder("posts").where("userId = :userId", { userId }).getMany();
+  public async findByUsersId({ userId, status = PostStatus.PUBLISH }: { userId: number; status?: PostStatus }) {
+    return await this.postRepository
+      .createQueryBuilder("posts")
+      .where("userId = :userId", { userId })
+      .andWhere("status = :status", { status })
+      .getMany();
   }
 }

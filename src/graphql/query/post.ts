@@ -95,7 +95,7 @@ export default {
   post: async (root: any, { id }: any, context: any) => {
     const postService: PostService = Container.get(PostService);
 
-    const post = await postService.findById(id);
+    const post = await postService.findById({ id: parseInt(id, 10) });
 
     return post;
   },

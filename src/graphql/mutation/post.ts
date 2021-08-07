@@ -25,7 +25,7 @@ export default {
       throw new AccessDeniedException();
     }
 
-    const post = await postService.findById(id);
+    const post = await postService.findById({ id });
 
     if (!post) {
       throw new NotFoundException();
@@ -72,7 +72,7 @@ export default {
       throw new AccessDeniedException();
     }
 
-    const post = await postService.findById(id);
+    const post = await postService.findById({ id });
 
     if (!post) {
       throw new NotFoundException();
