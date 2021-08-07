@@ -106,9 +106,12 @@ export default {
     if (await userService.checkPasswordMatch({ account, password })) {
       const token = userService.generateJwtToken(user);
 
+      const refreshToken = userService.generateRefreshJwtToken(user);
+
       return {
         jwt: {
           token,
+          refreshToken,
         },
         user,
         error: null,

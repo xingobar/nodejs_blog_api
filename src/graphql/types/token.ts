@@ -9,6 +9,11 @@ const token = gql`
     jwt token
     """
     token: String
+
+    """
+    refresh token
+    """
+    refreshToken: String
   }
 `;
 

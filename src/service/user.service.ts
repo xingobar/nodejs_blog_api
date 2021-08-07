@@ -47,6 +47,14 @@ export default class UserService {
   }
 
   /**
+   * 產生 refresh token
+   * @param user
+   */
+  public generateRefreshJwtToken(user: User): string {
+    return jwt.sign({ ...user }, config.jwt.secret || randomBytes(20).toString("hex"), { expiresIn: "1days" });
+  }
+
+  /**
    * 根據帳號取得會員資料
    * @param account
    * @param relations
