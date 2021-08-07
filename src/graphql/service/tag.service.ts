@@ -12,11 +12,15 @@ export default class TagService {
     private readonly taggableRepository: TaggableRepository
   ) {}
 
-  public async findPostTag(postId: number[]) {
+  /**
+   * 根據文章編號取得標籤
+   * @param {number[]} postsId 文章編號
+   */
+  public async findTagByPostIds(postsId: number[]) {
     const builder = this.taggableRepository
       .createQueryBuilder("taggables")
       .leftJoinAndSelect("taggables.tag", "tag")
-      .where("postId IN (:postId)", { postId });
+      .where("postId IN (:postsId)", { postsId });
 
     return await builder.getMany();
   }

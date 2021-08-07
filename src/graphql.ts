@@ -217,12 +217,12 @@ const server = new ApolloServer({
 
           return users;
         }),
-        tag: new DataLoader(async (postIds) => {
+        tag: new DataLoader(async (postsId) => {
           const tagService = Container.get(TagService);
 
-          const taggables = await tagService.findPostTag(postIds as number[]);
+          const taggables = await tagService.findTagByPostIds(postsId as number[]);
 
-          return postIds.map((postId) => {
+          return postsId.map((postId) => {
             return taggables.filter((taggable) => taggable.postId === postId).map((taggable) => taggable.tag);
           });
         }),
