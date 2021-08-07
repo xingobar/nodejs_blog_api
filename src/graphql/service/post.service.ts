@@ -140,4 +140,12 @@ export default class PostService {
   public async findCount({ before, after }: { before: Date; after: Date }) {
     return await this.postRepository.createQueryBuilder("posts").getCount();
   }
+
+  /**
+   * 根據編號取得文章
+   * @param id 文章編號
+   */
+  public async findById(id: number) {
+    return await this.postRepository.createQueryBuilder("posts").where("id = :id", { id }).getOne();
+  }
 }

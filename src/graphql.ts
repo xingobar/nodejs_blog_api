@@ -136,6 +136,16 @@ const typeDefs = gql`
       """
       postType: PostType
     ): PostConnection!
+
+    """
+    取得單筆文章
+    """
+    post(
+      """
+      文章編號
+      """
+      id: Int
+    ): Post
   }
 
   type Mutation {

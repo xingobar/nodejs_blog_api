@@ -1,9 +1,17 @@
+// node_modules
 import { Container } from "typedi";
 import { UserInputError } from "apollo-server";
+
+// interface
 import { PostSortKeys, PostType } from "graphql/interfaces/post";
+
+// service
 import PostService from "graphql/service/post.service";
 
 export default {
+  /**
+   * 取得多筆文章資料
+   */
   posts: async (
     root: any,
     {
@@ -79,5 +87,16 @@ export default {
         totalPageCount: Math.ceil(totalCount / (first || last)),
       },
     };
+  },
+
+  /**
+   * 取得單筆文章
+   */
+  post: async (root: any, { id }: any, context: any) => {
+    const postService: PostService = Container.get(PostService);
+
+    const post = await postService.findById(id);
+
+    return post;
   },
 };
