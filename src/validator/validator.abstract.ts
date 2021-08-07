@@ -69,8 +69,8 @@ abstract class ValidatorAbstract {
   public get detail(): IError[] {
     return (
       this._error?.details.map<IError>((item) => {
-        return { message: item.message, field: item.context?.key };
-      }) ?? [{ message: "", field: "" }]
+        return { message: item.message };
+      }) ?? [{ message: "" }]
     );
   }
 }
