@@ -217,7 +217,7 @@ const server = new ApolloServer({
 
           return users;
         }),
-        tag: new DataLoader(async (postsId) => {
+        tags: new DataLoader(async (postsId) => {
           const tagService = Container.get(TagService);
 
           const taggables = await tagService.findTagByPostIds(postsId as number[]);

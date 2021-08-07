@@ -10,7 +10,7 @@ export default {
       };
     },
     tags(parent: any, args: any, context: any) {
-      return context.dataloader.tag.load(parent.id);
+      return context.dataloader.tags.load(parent.id);
     },
   },
 };
