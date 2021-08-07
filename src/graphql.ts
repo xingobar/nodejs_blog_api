@@ -3,9 +3,6 @@ import { ApolloServer, gql } from "apollo-server";
 import { Container } from "typedi";
 import { GraphQLDateTime } from "graphql-iso-date";
 
-// entity
-import { Tag } from "entity/tag.entity";
-
 // service
 import UserService from "service/user.service";
 import TagService from "graphql/service/tag.service";
@@ -21,6 +18,7 @@ import postType from "graphql/types/post";
 import userType from "graphql/types/user";
 import dateTimeType from "graphql/types/datetime";
 import tagType from "graphql/types/tag";
+import profileType from "graphql/types/profile";
 
 // graphql query
 import userQuery from "graphql/query/user";
@@ -29,6 +27,7 @@ import postQuery from "graphql/query/post";
 // graphql resolver
 import authMutation from "graphql/mutation/auth";
 import postMutation from "graphql/mutation/post";
+import profileMutation from "graphql/mutation/profile";
 
 // graphql loader
 import postResolver from "graphql/resolver/post";
@@ -64,6 +63,9 @@ const typeDefs = gql`
 
   # 標籤
   ${tagType}
+
+  # 個人資料
+  ${profileType}
 
   """
   頁碼相關資訊
@@ -189,6 +191,21 @@ const typeDefs = gql`
       """
       value: Boolean
     ): BookmarkPostPayload
+
+    """
+    個人資料儲存
+    """
+    profileStore(
+      """
+      電話號碼
+      """
+      phone: String
+
+      """
+      性別
+      """
+      gender: ProfileGender
+    ): ProfileStorePayload
   }
 `;
 
@@ -225,6 +242,9 @@ const resolvers = {
 
     // 文章相關
     ...postMutation,
+
+    // 個人資料相關
+    ...profileMutation,
   },
   DateTime: GraphQLDateTime,
 
