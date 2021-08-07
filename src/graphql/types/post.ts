@@ -26,6 +26,11 @@ const post = gql`
     author: User
 
     """
+    標籤
+    """
+    tags: [Tag!]!
+
+    """
     資料相關時間資料
     """
     dateTime: DataDateTime

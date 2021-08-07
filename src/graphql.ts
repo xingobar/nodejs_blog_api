@@ -3,8 +3,12 @@ import { ApolloServer, gql } from "apollo-server";
 import { Container } from "typedi";
 import { GraphQLDateTime } from "graphql-iso-date";
 
+// entity
+import { Tag } from "entity/tag.entity";
+
 // service
 import UserService from "service/user.service";
+import PostService from "graphql/service/post.service";
 
 // config
 import jwt from "jsonwebtoken";
@@ -16,6 +20,7 @@ import tokenType from "graphql/types/token";
 import postType from "graphql/types/post";
 import userType from "graphql/types/user";
 import dateTimeType from "graphql/types/datetime";
+import tagType from "graphql/types/tag";
 
 // graphql query
 import userQuery from "graphql/query/user";
@@ -55,6 +60,9 @@ const typeDefs = gql`
 
   # 時間相關
   ${dateTimeType}
+
+  # 標籤
+  ${tagType}
 
   """
   頁碼相關資訊
@@ -208,6 +216,22 @@ const server = new ApolloServer({
           const users = await userService.findByIds(userIds as number[]);
 
           return users;
+        }),
+        tag: new DataLoader(async (postIds) => {
+          const postService = Container.get(PostService);
+          const posts = await postService.findPostTag({ postsId: postIds as number[] });
+
+          return postIds.map((postId) => {
+            return posts
+              .filter((post) => post.postId === postId)
+              .map((post) => {
+                return {
+                  title: post.tag_title,
+                  id: post.tag_id,
+                  alias: post.tag_alias,
+                };
+              });
+          });
         }),
       },
       user,

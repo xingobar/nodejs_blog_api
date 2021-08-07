@@ -9,5 +9,8 @@ export default {
         updatedAt: parent.updatedAt,
       };
     },
+    tags(parent: any, args: any, context: any) {
+      return context.dataloader.tag.load(parent.id);
+    },
   },
 };

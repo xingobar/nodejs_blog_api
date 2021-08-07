@@ -1,6 +1,7 @@
 // node_modules
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
+import { getConnection } from "typeorm";
 
 // entity
 import { Post, postSortKeyType } from "entity/post.entity";
@@ -12,6 +13,7 @@ import { PostSortKeys, PostType } from "graphql/interfaces/post";
 
 // repository
 import PostRepository from "repository/post.repository";
+import TagRepository from "repository/tag.repository";
 
 @Service()
 export default class PostService {
@@ -51,17 +53,18 @@ export default class PostService {
     postType: PostType;
     userId?: number;
   }) {
-    let builder = this.postRepository.createQueryBuilder("posts");
+    let builder = getConnection().createQueryBuilder();
 
     if (first) {
       // 下一頁資料
       if (after) {
         builder = builder
+          .from(Post, "posts")
           .select("COUNT(posts.id) OVER()", "count")
           .addSelect("posts.*")
           .where("created_at < :createdAt", { createdAt: after });
       } else {
-        builder = builder.select("COUNT(posts.id) OVER()", "count").addSelect("posts.*");
+        builder = builder.from(Post, "posts").select("COUNT(posts.id) OVER()", "count").addSelect("posts.*");
       }
     }
 
@@ -78,12 +81,13 @@ export default class PostService {
             .take(last);
         }, "subPosts");
       } else {
-        builder = builder.select(["posts.*", "count"]).from((qb) => {
+        builder = builder.select(["subPosts.*", "count"]).from((qb) => {
           return qb
             .select("subPosts.*")
             .addSelect("COUNT(subPosts.id) OVER()", "count")
             .from(Post, "subPosts")
-            .orderBy("subPosts.created_at", "ASC");
+            .orderBy("subPosts.created_at", "ASC")
+            .take(last);
         }, "subPosts");
       }
     }
@@ -135,5 +139,19 @@ export default class PostService {
    */
   public async findCount({ before, after }: { before: Date; after: Date }) {
     return await this.postRepository.createQueryBuilder("posts").getCount();
+  }
+
+  /**
+   * 取得文章標籤
+   * @param param0
+   */
+  public async findPostTag({ postsId }: { postsId: number[] }) {
+    return await this.postRepository
+      .createQueryBuilder("posts")
+      .select(["tag.*", "taggables.postId"])
+      .leftJoinAndSelect("posts.tags", "taggables")
+      .leftJoinAndSelect("taggables.tag", "tag")
+      .whereInIds(postsId)
+      .getRawMany();
   }
 }
