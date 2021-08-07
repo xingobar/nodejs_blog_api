@@ -153,12 +153,13 @@ export default class PostService {
    * 根據編號取得文章
    * @param id 文章編號
    */
-  public async findById({ id, status = PostStatus.PUBLISH }: { id: number; status?: PostStatus.PUBLISH }) {
-    return await this.postRepository
-      .createQueryBuilder("posts")
-      .where("id = :id", { id })
-      .andWhere("status = :status", { status })
-      .getOne();
+  public async findById({ id, status = PostStatus.PUBLISH }: { id: number; status?: PostStatus.PUBLISH | string }) {
+    let builder = this.postRepository.createQueryBuilder("posts").where("id = :id", { id });
+
+    if (status) {
+      builder = builder.andWhere(" status = :status", { status });
+    }
+    return await builder.getOne();
   }
 
   /**

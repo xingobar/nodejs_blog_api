@@ -180,7 +180,7 @@ export default {
 
     const postService: PostService = Container.get(PostService);
 
-    let post = await postService.findById({ id: input.id });
+    let post = await postService.findById({ id: input.id, status: "" });
 
     // 找不到文章
     if (!post) {
