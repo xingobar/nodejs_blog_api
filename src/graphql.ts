@@ -12,6 +12,9 @@ import ProfileService from "graphql/service/profile.service";
 import jwt from "jsonwebtoken";
 import config from "config/index";
 
+// lib
+import logger from "lib/logger.lib";
+
 // graphql type
 import errorType from "graphql/types/error";
 import tokenType from "graphql/types/token";
@@ -340,7 +343,7 @@ const server = new ApolloServer({
   },
   formatError: (err) => {
     console.log(err);
-    return err;
+    logger.error(err);
     return {
       message: err.message,
       code: err?.extensions?.exception?.code ?? 500,
