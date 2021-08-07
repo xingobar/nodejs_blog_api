@@ -95,7 +95,16 @@ const typeDefs = gql`
   type Query {
     books: [Book]
     users: [User]
-    user: UserPayload
+
+    """
+    取得某個會員的資料
+    """
+    user(
+      """
+      會員編號
+      """
+      id: Int
+    ): UserPayload
 
     """
     文章資料

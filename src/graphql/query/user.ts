@@ -1,20 +1,35 @@
+// exception
 import AccessDeniedException from "exception/access.denied.exception";
+import NotFoundException from "exception/notfound.exception";
+
+// node_modules
+import { Container } from "typedi";
+import { cloneDeep } from "lodash";
+
+// service
+import UserService from "service/user.service";
+import PostService from "graphql/service/post.service";
+
 export default {
-  user: (_: any, args: any, context: any) => {
-    if (!context.user) {
-      return {
-        me: null,
-        error: {
-          code: 401,
-          message: "尚未登入",
-          field: "",
-        },
-      };
+  user: async (_: any, { id }: any, context: any) => {
+    const userService = Container.get(UserService);
+
+    const user = await userService.findById(id);
+
+    if (!user) {
+      throw new NotFoundException();
     }
 
+    const postService = Container.get(PostService);
+
+    const posts = await postService.findByUsersId(user.id);
+
     return {
-      me: context.user,
-      error: null,
+      me: {
+        ...user,
+
+        posts,
+      },
     };
   },
 };

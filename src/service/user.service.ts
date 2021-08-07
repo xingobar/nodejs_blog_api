@@ -101,4 +101,12 @@ export default class UserService {
       .where((u) => u.id)
       .in(id);
   }
+
+  /**
+   * 根據編號取得會員
+   * @param {number} id - 會員編號
+   */
+  public async findById(id: number) {
+    return await this.userRepository.createQueryBuilder("users").where("id = :id", { id }).getOne();
+  }
 }

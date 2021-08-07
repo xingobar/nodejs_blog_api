@@ -27,6 +27,11 @@ const user = gql`
     個人資料
     """
     profile: Profile
+
+    """
+    使用者文章資料
+    """
+    posts: [Post]
   }
 
   """

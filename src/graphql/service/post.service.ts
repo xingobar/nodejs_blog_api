@@ -148,4 +148,12 @@ export default class PostService {
   public async findById(id: number) {
     return await this.postRepository.createQueryBuilder("posts").where("id = :id", { id }).getOne();
   }
+
+  /**
+   * 取得使用者文章
+   * @param {number} userId - 會員編號
+   */
+  public async findByUsersId(userId: number) {
+    return await this.postRepository.createQueryBuilder("posts").where("userId = :userId", { userId }).getMany();
+  }
 }
