@@ -7,6 +7,7 @@ import { PostSortKeys, PostType } from "graphql/interfaces/post";
 
 // service
 import PostService from "graphql/service/post.service";
+import ViewLogService from "graphql/service/view_log.service";
 
 export default {
   /**
@@ -96,6 +97,23 @@ export default {
     const postService: PostService = Container.get(PostService);
 
     const post = await postService.findById({ id: parseInt(id, 10) });
+
+    // 檢查是否有觀看紀錄
+    if (context.user) {
+      const viewLogService: ViewLogService = Container.get(ViewLogService);
+
+      const viewLog = await viewLogService.findPostLogsByUserId({
+        postId: id,
+        userId: context.user.id,
+      });
+
+      if (!viewLog) {
+        await viewLogService.createPostLogs({
+          postId: id,
+          userId: context.user.id,
+        });
+      }
+    }
 
     return post;
   },
