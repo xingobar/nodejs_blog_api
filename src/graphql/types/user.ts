@@ -31,7 +31,12 @@ const user = gql`
     """
     使用者文章資料
     """
-    posts: [Post]
+    posts(
+      """
+      文章狀態
+      """
+      status: PostStatus
+    ): [Post]
   }
 
   """

@@ -127,6 +127,26 @@ const post = gql`
   }
 
   """
+  文章狀態
+  """
+  enum PostStatus {
+    """
+    發布的文章
+    """
+    PUBLISH
+
+    """
+    草稿
+    """
+    DRAFT
+
+    """
+    下架
+    """
+    OFFLINE
+  }
+
+  """
   喜歡文章 payload
   """
   type LikePostPayload {
