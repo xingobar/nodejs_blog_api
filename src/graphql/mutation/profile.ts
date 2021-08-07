@@ -15,8 +15,6 @@ export default {
 
     const profileService: ProfileService = Container.get(ProfileService);
 
-    console.log("user => ", context.user);
-
     const profile = await profileService.store({
       phone,
       gender,
