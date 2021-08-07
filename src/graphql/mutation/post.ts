@@ -13,6 +13,9 @@ import AccessDeniedException from "exception/access.denied.exception";
 import InvalidRequestException from "exception/invalid.exception";
 import AuthorizationException from "exception/authorization.exception";
 
+// policy
+import PostPolicy from "graphql/policy/post.policy";
+
 // validator
 import PostValidator from "graphql/validator/post.validator";
 
@@ -182,6 +185,12 @@ export default {
     // 找不到文章
     if (!post) {
       throw new NotFoundException();
+    }
+
+    // 檢查是否是更新自己的文章
+    const postPolicy: PostPolicy = Container.get(PostPolicy);
+    if (!postPolicy.updateRule(context.user, post)) {
+      throw new AccessDeniedException();
     }
 
     const tagService = Container.get(TagService);
