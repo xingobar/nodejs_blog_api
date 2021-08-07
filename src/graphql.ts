@@ -28,6 +28,7 @@ import postQuery from "graphql/query/post";
 
 // graphql resolver
 import authMutation from "graphql/mutation/auth";
+import postMutation from "graphql/mutation/post";
 
 // graphql loader
 import postResolver from "graphql/resolver/post";
@@ -158,6 +159,21 @@ const typeDefs = gql`
     登入
     """
     signIn(input: SignInInput): SignInPayload
+
+    """
+    喜歡文章
+    """
+    likePost(
+      """
+      文章編號
+      """
+      id: Int
+
+      """
+      喜歡 or 不喜歡
+      """
+      value: Boolean
+    ): LikePostPayload
   }
 `;
 
@@ -191,6 +207,9 @@ const resolvers = {
   Mutation: {
     // 註冊登入相關
     ...authMutation,
+
+    // 文章相關
+    ...postMutation,
   },
   DateTime: GraphQLDateTime,
 

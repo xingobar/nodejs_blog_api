@@ -125,6 +125,21 @@ const post = gql`
     """
     LIKES
   }
+
+  """
+  喜歡文章 payload
+  """
+  type LikePostPayload {
+    """
+    文章
+    """
+    post: Post
+
+    """
+    錯誤訊息
+    """
+    error: Error
+  }
 `;
 
 export default post;

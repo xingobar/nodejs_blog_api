@@ -1,5 +1,10 @@
+// validator
 import AuthValidator from "validator/auth.validator";
+
+// service
 import UserService from "service/user.service";
+
+// node_modules
 import { Container } from "typedi";
 
 export default {
