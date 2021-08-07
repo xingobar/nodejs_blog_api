@@ -2,7 +2,7 @@
 import AuthValidator from "validator/auth.validator";
 
 // service
-import UserService from "service/user.service";
+import UserService from "graphql/service/user.service";
 
 // node_modules
 import { Container } from "typedi";

@@ -7,7 +7,7 @@ import { Container } from "typedi";
 import { cloneDeep } from "lodash";
 
 // service
-import UserService from "service/user.service";
+import UserService from "graphql/service/user.service";
 import PostService from "graphql/service/post.service";
 
 export default {

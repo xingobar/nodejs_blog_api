@@ -4,7 +4,7 @@ import { Container } from "typedi";
 import { GraphQLDateTime } from "graphql-iso-date";
 
 // service
-import UserService from "service/user.service";
+import UserService from "graphql/service/user.service";
 import TagService from "graphql/service/tag.service";
 import ProfileService from "graphql/service/profile.service";
 
