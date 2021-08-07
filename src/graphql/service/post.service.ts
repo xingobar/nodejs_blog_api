@@ -7,19 +7,22 @@ import { getConnection } from "typeorm";
 import { Post, postSortKeyType, PostStatus } from "entity/post.entity";
 import { Bookmark, BookmarkEntityType } from "entity/bookmark.entity";
 import { Likeable, LikeableEntityType } from "entity/likeable.entity";
+import { Taggable, TaggableEntityType } from "entity/taggable.entity";
 
 // interface
 import { PostSortKeys, PostType } from "graphql/interfaces/post";
 
 // repository
 import PostRepository from "repository/post.repository";
-import TagRepository from "repository/tag.repository";
+import TaggableRepository from "repository/taggable.repository";
 
 @Service()
 export default class PostService {
   constructor(
     @InjectRepository()
-    private readonly postRepository: PostRepository
+    private readonly postRepository: PostRepository,
+    @InjectRepository()
+    private readonly taggableRepository: TaggableRepository
   ) {}
 
   /**
@@ -168,5 +171,53 @@ export default class PostService {
       .where("userId = :userId", { userId })
       .andWhere("status = :status", { status })
       .getMany();
+  }
+
+  /**
+   * 新增文章
+   * @param param
+   * @param {string} param.title 文章標題
+   * @param {string} param.body 文章內層
+   * @param {PostStatus} param.status 文章狀態
+   * @param {number} post.userId 文章作者編號
+   */
+  public async createPost({ title, body, status, userId }: { title: string; body: string; status: PostStatus; userId: number }) {
+    const { generatedMaps } = await this.postRepository
+      .createQueryBuilder("posts")
+      .insert()
+      .into(Post)
+      .values({
+        title,
+        body,
+        status,
+        userId,
+      })
+      .execute();
+
+    return (await this.postRepository.createQueryBuilder("posts").where("id = :id", { id: generatedMaps[0].id }).getOne()) ?? new Post();
+  }
+
+  /**
+   * 更新文章標籤
+   * @param param0
+   */
+  public async syncTags({ post, tagsId }: { post: Post; tagsId: number[] }) {
+    const taggables: Taggable[] = [];
+
+    // 先刪除就有的標籤
+    await this.taggableRepository.delete({
+      postId: post.id,
+    });
+
+    tagsId.forEach((tagId) => {
+      const taggable = new Taggable();
+      taggable.postId = post.id;
+      taggable.entityId = tagId;
+      taggable.entityType = TaggableEntityType.Tag;
+
+      taggables.push(taggable);
+    });
+
+    return await this.taggableRepository.save(taggables);
   }
 }

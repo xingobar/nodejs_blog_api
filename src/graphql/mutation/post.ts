@@ -5,11 +5,18 @@ import { Container } from "typedi";
 import PostService from "graphql/service/post.service";
 import LikeableService from "graphql/service/likeable.service";
 import BookmarkService from "graphql/service/bookmark.service";
+import TagService from "graphql/service/tag.service";
 
 // exception
 import NotFoundException from "exception/notfound.exception";
 import AccessDeniedException from "exception/access.denied.exception";
 import InvalidRequestException from "exception/invalid.exception";
+
+// validator
+import PostValidator from "graphql/validator/post.validator";
+
+// entity
+import { PostStatus } from "entity/post.entity";
 
 export default {
   /**
@@ -94,6 +101,53 @@ export default {
     if (!bookmark && value) {
       await bookmarkService.bookmarkedPost({ userId: context.user.id, postId: id });
     }
+
+    return {
+      post,
+    };
+  },
+
+  /**
+   * 新增文章
+   *
+   * @param {object} args
+   * @param {PostCreateInput} args.input
+   */
+  postCreate: async (_: any, { input }: any, context: any) => {
+    const { title, body, status }: { title: string; body: string; status: PostStatus } = input;
+
+    // 尚未登入
+    if (!context.user) {
+      throw new AccessDeniedException();
+    }
+
+    const v = new PostValidator(input);
+    v.postCreateRule().validate();
+
+    if (v.isError()) {
+      throw new InvalidRequestException(v.detail[0].message);
+    }
+
+    const tagService = Container.get(TagService);
+
+    const tags = await tagService.findByIds(input.tags);
+
+    if (tags.length !== input.tags.length) {
+      throw new InvalidRequestException("標籤資料有誤");
+    }
+
+    const postService: PostService = Container.get(PostService);
+
+    // 新增文章
+    const post = await postService.createPost({
+      title,
+      body,
+      status,
+      userId: context.user.id,
+    });
+
+    // 同步標籤
+    await postService.syncTags({ post, tagsId: input.tags });
 
     return {
       post,

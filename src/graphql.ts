@@ -227,6 +227,11 @@ const typeDefs = gql`
       """
       gender: ProfileGender
     ): ProfileStorePayload
+
+    """
+    文章新增
+    """
+    postCreate(input: PostCreateInput): PostCreatePayload
   }
 `;
 
