@@ -6,6 +6,17 @@ import UserService from "service/user.service";
 
 // node_modules
 import { Container } from "typedi";
+import jwt from "jsonwebtoken";
+
+// config
+import config from "config/index";
+
+// entity
+import { User } from "entity/user.entity";
+
+// exeption
+import AccessDeniedException from "exception/access.denied.exception";
+import InvalidRequestException from "exception/invalid.exception";
 
 export default {
   /**
@@ -127,5 +138,29 @@ export default {
         field: "password",
       },
     };
+  },
+
+  /**
+   * refresh token
+   */
+  refreshToken: async (_: any, { token }: any, context: any) => {
+    try {
+      await jwt.verify(token ?? "", config.jwt.secret);
+
+      const userService = Container.get(UserService);
+
+      const user = await userService.findByAccount(context.user.account);
+
+      return {
+        user,
+        jwt: {
+          token: await userService.generateJwtToken(user),
+          refreshToken: await userService.generateRefreshJwtToken(user),
+        },
+      };
+    } catch (e) {
+      console.log("line 166 => ", e);
+      throw new InvalidRequestException("token 有誤");
+    }
   },
 };

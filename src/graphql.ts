@@ -163,6 +163,16 @@ const typeDefs = gql`
     signIn(input: SignInInput): SignInPayload
 
     """
+    refresh token
+    """
+    refreshToken(
+      """
+      refresh token
+      """
+      token: String
+    ): SignInPayload
+
+    """
     喜歡文章
     """
     likePost(
