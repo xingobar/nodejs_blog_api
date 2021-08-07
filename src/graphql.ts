@@ -6,6 +6,7 @@ import { GraphQLDateTime } from "graphql-iso-date";
 // service
 import UserService from "service/user.service";
 import TagService from "graphql/service/tag.service";
+import ProfileService from "graphql/service/profile.service";
 
 // config
 import jwt from "jsonwebtoken";
@@ -31,6 +32,7 @@ import profileMutation from "graphql/mutation/profile";
 
 // graphql loader
 import postResolver from "graphql/resolver/post";
+import userResolver from "graphql/resolver/user";
 
 import DataLoader from "dataloader";
 
@@ -260,6 +262,9 @@ const resolvers = {
 
   // 文章 resolver
   ...postResolver,
+
+  // 會員 resolver
+  ...userResolver,
 };
 
 // The ApolloServer constructor requires two parameters: your schema
@@ -285,12 +290,14 @@ const server = new ApolloServer({
 
     return {
       dataloader: {
+        // 會員資料
         users: new DataLoader(async (userIds) => {
           const userService = Container.get(UserService);
           const users = await userService.findByIds(userIds as number[]);
 
           return users;
         }),
+        // 文章標籤
         tags: new DataLoader(async (postsId) => {
           const tagService = Container.get(TagService);
 
@@ -299,6 +306,14 @@ const server = new ApolloServer({
           return postsId.map((postId) => {
             return taggables.filter((taggable) => taggable.postId === postId).map((taggable) => taggable.tag);
           });
+        }),
+        // 會員個人資料
+        profiles: new DataLoader(async (profilesId) => {
+          const profileService = Container.get(ProfileService);
+
+          const profiles = await profileService.findByIds(profilesId as number[]);
+
+          return profiles;
         }),
       },
       user,

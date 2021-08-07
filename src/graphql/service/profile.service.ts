@@ -73,4 +73,12 @@ export default class ProfileService {
   public async findById(profileId: number) {
     return await this.profileRepository.createQueryBuilder("profiles").where("id = :id", { id: profileId }).getOne();
   }
+
+  /**
+   * 取得多個個人資料
+   * @param profileIds
+   */
+  public async findByIds(profileIds: number[]) {
+    return await this.profileRepository.createQueryBuilder("profiles").whereInIds(profileIds).getMany();
+  }
 }

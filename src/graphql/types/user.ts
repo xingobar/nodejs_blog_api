@@ -22,6 +22,11 @@ const user = gql`
     使用者頭像
     """
     avatar: String
+
+    """
+    個人資料
+    """
+    profile: Profile
   }
 
   """
