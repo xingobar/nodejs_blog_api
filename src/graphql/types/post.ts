@@ -140,6 +140,21 @@ const post = gql`
     """
     error: Error
   }
+
+  """
+  收藏文章 payload
+  """
+  type BookmarkPostPayload {
+    """
+    文章
+    """
+    post: Post
+
+    """
+    錯誤訊息
+    """
+    error: Error
+  }
 `;
 
 export default post;

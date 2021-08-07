@@ -174,6 +174,21 @@ const typeDefs = gql`
       """
       value: Boolean
     ): LikePostPayload
+
+    """
+    收藏文章
+    """
+    bookmarkPost(
+      """
+      文章編號
+      """
+      id: Int
+
+      """
+      收藏 or 取消文章
+      """
+      value: Boolean
+    ): BookmarkPostPayload
   }
 `;
 

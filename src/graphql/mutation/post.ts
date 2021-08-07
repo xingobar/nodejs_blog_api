@@ -4,6 +4,7 @@ import { Container } from "typedi";
 // service
 import PostService from "graphql/service/post.service";
 import LikeableService from "graphql/service/likeable.service";
+import BookmarkService from "graphql/service/bookmark.service";
 
 // exception
 import NotFoundException from "exception/notfound.exception";
@@ -51,6 +52,47 @@ export default {
     // 有資料
     if (like && !value) {
       await likeableService.unlikePost({ userId: context.user.id, postId: id });
+    }
+
+    return {
+      post,
+    };
+  },
+
+  /**
+   * 收藏文章
+   *
+   * @param {number} id 文章編號
+   * @param {boolean} value 收藏 or 取消收藏
+   */
+  bookmarkPost: async (_: any, { id, value }: any, context: any) => {
+    const postService: PostService = Container.get(PostService);
+
+    if (!context.user) {
+      throw new AccessDeniedException();
+    }
+
+    const post = await postService.findById(id);
+
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    const bookmarkService: BookmarkService = Container.get(BookmarkService);
+
+    const bookmark = await bookmarkService.findBookmarkByPostId({ userId: context.user.id, postId: id });
+
+    // 參數有錯
+    if ((bookmark && value) || (!bookmark && !value)) {
+      throw new InvalidRequestException("傳入的參數有誤");
+    }
+
+    if (bookmark && !value) {
+      await bookmarkService.unBookmarkedPost({ userId: context.user.id, postId: id });
+    }
+
+    if (!bookmark && value) {
+      await bookmarkService.bookmarkedPost({ userId: context.user.id, postId: id });
     }
 
     return {
