@@ -46,6 +46,11 @@ const post = gql`
     tags: [Tag!]!
 
     """
+    推薦文章
+    """
+    recommend: [Post]
+
+    """
     資料相關時間資料
     """
     dateTime: DataDateTime

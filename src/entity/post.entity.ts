@@ -13,7 +13,6 @@ import { User } from "entity/user.entity";
 import { PolymorphicChildren } from "typeorm-polymorphic";
 import { Likeable } from "entity/likeable.entity";
 import { Comment } from "entity/comment.entity";
-import { Tag } from "entity/tag.entity";
 import { Taggable } from "entity/taggable.entity";
 
 export enum PostStatus {
