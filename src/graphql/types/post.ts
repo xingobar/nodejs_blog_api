@@ -21,6 +21,21 @@ const post = gql`
     body: String
 
     """
+    觀看次數
+    """
+    viewCount: Int
+
+    """
+    按讚次數
+    """
+    likeCount: Int
+
+    """
+    文章收藏次數
+    """
+    bookmarkCount: Int
+
+    """
     作者資料
     """
     author: User
