@@ -140,18 +140,4 @@ export default class PostService {
   public async findCount({ before, after }: { before: Date; after: Date }) {
     return await this.postRepository.createQueryBuilder("posts").getCount();
   }
-
-  /**
-   * 取得文章標籤
-   * @param param0
-   */
-  public async findPostTag({ postsId }: { postsId: number[] }) {
-    return await this.postRepository
-      .createQueryBuilder("posts")
-      .select(["tag.*", "taggables.postId"])
-      .leftJoinAndSelect("posts.tags", "taggables")
-      .leftJoinAndSelect("taggables.tag", "tag")
-      .whereInIds(postsId)
-      .getRawMany();
-  }
 }

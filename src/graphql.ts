@@ -8,7 +8,7 @@ import { Tag } from "entity/tag.entity";
 
 // service
 import UserService from "service/user.service";
-import PostService from "graphql/service/post.service";
+import TagService from "graphql/service/tag.service";
 
 // config
 import jwt from "jsonwebtoken";
@@ -218,19 +218,12 @@ const server = new ApolloServer({
           return users;
         }),
         tag: new DataLoader(async (postIds) => {
-          const postService = Container.get(PostService);
-          const posts = await postService.findPostTag({ postsId: postIds as number[] });
+          const tagService = Container.get(TagService);
+
+          const taggables = await tagService.findPostTag(postIds as number[]);
 
           return postIds.map((postId) => {
-            return posts
-              .filter((post) => post.postId === postId)
-              .map((post) => {
-                return {
-                  title: post.tag_title,
-                  id: post.tag_id,
-                  alias: post.tag_alias,
-                };
-              });
+            return taggables.filter((taggable) => taggable.postId === postId).map((taggable) => taggable.tag);
           });
         }),
       },
