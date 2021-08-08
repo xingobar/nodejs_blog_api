@@ -76,14 +76,13 @@ export default {
 
       const postTotalComments = await commentService.findTotalCommentByPostId(parent.id);
 
-      console.log("posts => ", postTotalComments, commentsTotalWithCondition);
-
       return {
         edges: comments.map((comment) => {
           return {
             node: {
               id: comment.id,
               body: comment.body,
+              userId: comment.userId,
               createdAt: comment.created_at,
               updatedAt: comment.updated_at,
             },

@@ -11,9 +11,19 @@ const comment = gql`
     id: ID!
 
     """
+    會員編號
+    """
+    userId: ID!
+
+    """
     留言內容
     """
     body: String
+
+    """
+    留言者
+    """
+    owner: User!
 
     """
     新增時間

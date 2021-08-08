@@ -38,6 +38,7 @@ import commentMutation from "graphql/mutation/comment";
 // graphql loader
 import postResolver from "graphql/resolver/post";
 import userResolver from "graphql/resolver/user";
+import commentResolver from "graphql/resolver/comment";
 
 import DataLoader from "dataloader";
 
@@ -310,6 +311,9 @@ const resolvers = {
 
   // 會員 resolver
   ...userResolver,
+
+  // 留言 resolver
+  ...commentResolver,
 };
 
 // The ApolloServer constructor requires two parameters: your schema
