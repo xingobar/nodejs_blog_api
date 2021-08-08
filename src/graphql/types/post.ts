@@ -51,6 +51,11 @@ const post = gql`
     recommend: [Post]
 
     """
+    文章評論
+    """
+    comments(input: CommentGetInput): CommentConnection
+
+    """
     資料相關時間資料
     """
     dateTime: DataDateTime

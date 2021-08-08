@@ -13,6 +13,14 @@ import {
 import { User } from "entity/user.entity";
 import { Post } from "entity/post.entity";
 
+export enum CommentSortKey {
+  CREATED_AT = "CREATED_AT",
+}
+
+export const CommentSortKeyType = {
+  CREATED_AT: "created_at",
+};
+
 @Entity("comments")
 @Tree("closure-table")
 export class Comment {
