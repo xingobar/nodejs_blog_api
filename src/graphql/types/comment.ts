@@ -155,6 +155,41 @@ const comment = gql`
     """
     error: Error
   }
+
+  """
+  留言更新 input
+  """
+  input CommentUpdateInput {
+    """
+    文章編號
+    """
+    postId: ID!
+
+    """
+    留言編號
+    """
+    commentId: ID!
+
+    """
+    留言內容
+    """
+    body: String
+  }
+
+  """
+  留言更新 payload
+  """
+  type CommentUpdatePayload {
+    """
+    更新後的留言資料
+    """
+    comment: Comment
+
+    """
+    錯誤訊息
+    """
+    error: Error
+  }
 `;
 
 export default comment;

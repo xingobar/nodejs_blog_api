@@ -276,6 +276,13 @@ const typeDefs = gql`
       """
       postId: ID!
     ): CommentDeletePayload
+
+    """
+    留言更新
+    """
+    commentUpdate(
+      input: CommentUpdateInput
+    ): CommentUpdatePayload
   }
 `;
 

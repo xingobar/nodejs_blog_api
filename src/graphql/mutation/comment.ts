@@ -91,4 +91,49 @@ export default {
       comment,
     };
   },
+
+  /**
+   * 留言更新
+   * @param {object} args
+   * @param {CommentUpdateInput} args.input
+   */
+  async commentUpdate(parent: any, { input }:any, context: any) {
+    
+    if (!context.user) {
+      throw new AuthorizationException()
+    }
+
+    const { postId, commentId } = input
+
+    const v = new CommentValidator({ body: input.body})
+    v.commentUpdateRule().validate()
+
+    if (v.isError()) {
+      throw new InvalidRequestException(v.detail[0].message)
+    }
+
+    if (!commentId || !postId) {
+      throw new UserInputError("請傳入文章以及留言編號");
+    }
+
+    const commentService: CommentService = Container.get(CommentService);
+
+    let comment = await commentService.findByCommentAndPostId({ postId, commentId });
+
+    if (!comment) {
+      throw new NotFoundException();
+    }
+
+    const commentPolicy = Container.get(CommentPolicy)
+
+    if (!commentPolicy.commentUpdateRule(context.user, comment)) {
+      throw new AccessDeniedException()
+    }
+
+    comment = await commentService.updateCommentById({ postId, commentId, body: input.body})
+
+    return {
+      comment
+    }
+  }
 };

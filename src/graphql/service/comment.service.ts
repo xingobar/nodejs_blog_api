@@ -144,4 +144,21 @@ export default class CommentService {
       .where("id = :id", { id: commentId })
       .execute();
   }
+
+  /**
+  * 更新留言
+   */
+  public async updateCommentById({ commentId, postId, body}: {commentId: number, postId: number, body: string}) {
+    await this.commentRepository.createQueryBuilder('comments')
+      .update(Comment)
+      .where('id = :id', { id: commentId })
+      .andWhere('postId = :postId', { postId })
+      .set({
+        body
+      }).execute()
+
+    return await this.commentRepository.createQueryBuilder('comments')
+      .where('id = :id', { id: commentId})
+      .getOne()
+  }
 }

@@ -26,4 +26,18 @@ export default class CommentValidator extends ValidatorAbstract {
 
     return this;
   }
+
+  /**
+  * 留言更新規則
+   */  
+  public commentUpdateRule() {
+    this.rules = Joi.object().keys({
+      body: Joi.string().required().min(10).messages({
+        "any.required": "請輸入留言內容",
+        "string.min": "留言內容至少 {#limit} 個字",
+      }),
+    })
+
+    return this
+  }
 }

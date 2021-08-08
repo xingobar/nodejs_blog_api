@@ -10,4 +10,8 @@ export default class CommentPolicy {
   public commentDeleteRule(user: User, comment: Comment) {
     return user.id === comment.userId;
   }
+
+  public commentUpdateRule(user: User, comment: Comment) {
+    return this.commentDeleteRule()
+  }
 }
