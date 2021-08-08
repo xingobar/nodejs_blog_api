@@ -23,6 +23,7 @@ import userType from "graphql/types/user";
 import dateTimeType from "graphql/types/datetime";
 import tagType from "graphql/types/tag";
 import profileType from "graphql/types/profile";
+import commentType from "graphql/types/comment";
 
 // graphql query
 import userQuery from "graphql/query/user";
@@ -32,6 +33,7 @@ import postQuery from "graphql/query/post";
 import authMutation from "graphql/mutation/auth";
 import postMutation from "graphql/mutation/post";
 import profileMutation from "graphql/mutation/profile";
+import commentMutation from "graphql/mutation/comment";
 
 // graphql loader
 import postResolver from "graphql/resolver/post";
@@ -71,6 +73,9 @@ const typeDefs = gql`
 
   # 個人資料
   ${profileType}
+
+  # 留言資料
+  ${commentType}
 
   """
   頁碼相關資訊
@@ -250,6 +255,11 @@ const typeDefs = gql`
       """
       id: ID!
     ): PostDeletePayload
+
+    """
+    新增留言
+    """
+    commentStore(input: CommentStoreInput): CommentStorePayload
   }
 `;
 
@@ -289,6 +299,9 @@ const resolvers = {
 
     // 個人資料相關
     ...profileMutation,
+
+    // 文章留言
+    ...commentMutation,
   },
   DateTime: GraphQLDateTime,
 
