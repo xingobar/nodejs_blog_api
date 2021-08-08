@@ -243,4 +243,12 @@ export default class PostService {
 
     return (await this.postRepository.createQueryBuilder("posts").where("id = :id", { id }).getOne()) ?? new Post();
   }
+
+  /**
+   * 根據編號刪除文章
+   * @param id  - 文章編號
+   */
+  public async deleteById(id: number) {
+    return await this.postRepository.createQueryBuilder("posts").softDelete().from(Post).where("id = :id", { id }).execute();
+  }
 }

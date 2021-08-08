@@ -15,4 +15,13 @@ export default class PostPolicy {
   public updateRule(user: User, post: Post) {
     return user.id === post.userId;
   }
+
+  /**
+   * 刪除文章規則
+   * @param user
+   * @param post
+   */
+  public deleteRule(user: User, post: Post) {
+    return user.id === post.userId;
+  }
 }

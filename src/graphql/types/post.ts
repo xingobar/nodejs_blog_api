@@ -265,6 +265,21 @@ const post = gql`
     """
     tags: [Int]
   }
+
+  """
+  文章刪除
+  """
+  type PostDeletePayload {
+    """
+    刪除的文章
+    """
+    post: Post
+
+    """
+    錯誤訊息
+    """
+    error: Error
+  }
 `;
 
 export default post;

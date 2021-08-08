@@ -240,6 +240,16 @@ const typeDefs = gql`
     文章更新
     """
     postUpdate(input: PostUpdateInput): PostUpdatePayload
+
+    """
+    文章刪除
+    """
+    postDelete(
+      """
+      文章編號
+      """
+      id: ID!
+    ): PostDeletePayload
   }
 `;
 

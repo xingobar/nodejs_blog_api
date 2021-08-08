@@ -211,4 +211,36 @@ export default {
       post,
     };
   },
+
+  /**
+   * 文章刪除
+   *
+   * @param {object} args
+   * @param {number} args.id 文章編號
+   */
+  postDelete: async (_: any, { id }: any, context: any) => {
+    if (!context.user) {
+      throw new AuthorizationException();
+    }
+
+    const postService: PostService = Container.get(PostService);
+
+    const post = await postService.findById({ id, status: "" });
+
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    const postPolicy = Container.get(PostPolicy);
+
+    if (!postPolicy.deleteRule(context.user, post)) {
+      throw new AccessDeniedException();
+    }
+
+    await postService.deleteById(id);
+
+    return {
+      post,
+    };
+  },
 };
