@@ -261,6 +261,21 @@ const typeDefs = gql`
     新增留言
     """
     commentStore(input: CommentStoreInput): CommentStorePayload
+
+    """
+    刪除留言
+    """
+    commentDelete(
+      """
+      留言編號
+      """
+      commentId: ID!
+
+      """
+      文章編號
+      """
+      postId: ID!
+    ): CommentDeletePayload
   }
 `;
 

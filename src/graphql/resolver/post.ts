@@ -5,6 +5,7 @@ import CommentService from "graphql/service/comment.service";
 
 // node_modules
 import { Container } from "typedi";
+import { UserInputError } from "apollo-server";
 
 export default {
   Post: {
@@ -63,7 +64,13 @@ export default {
      * @param context
      */
     async comments(parent: any, { input }: any, context: any) {
-      const { first, last } = input;
+      const { first, last, before, after } = input;
+
+      if (!first && after) throw new UserInputError("after 必須搭配 first");
+
+      if (!last && before) throw new UserInputError("last 和 before 參數要一起傳入");
+
+      if (last && first && before && after) throw new UserInputError("參數有誤");
 
       const commentService = Container.get(CommentService);
 
@@ -72,27 +79,30 @@ export default {
         ...input,
       });
 
-      const commentsTotalWithCondition = comments[0].total ?? 0;
+      const commentsTotalWithCondition = comments.length === 0 ? 0 : comments[0].total ?? 0;
 
       const postTotalComments = await commentService.findTotalCommentByPostId(parent.id);
 
       return {
-        edges: comments.map((comment) => {
-          return {
-            node: {
-              id: comment.id,
-              body: comment.body,
-              userId: comment.userId,
-              createdAt: comment.created_at,
-              updatedAt: comment.updated_at,
-            },
-            cursor: comment.created_at,
-          };
-        }),
+        edges:
+          comments.length === 0
+            ? []
+            : comments.map((comment) => {
+                return {
+                  node: {
+                    id: comment.id,
+                    body: comment.body,
+                    userId: comment.userId,
+                    createdAt: comment.created_at,
+                    updatedAt: comment.updated_at,
+                  },
+                  cursor: comment.created_at,
+                };
+              }),
         pageInfo: {
           hasNextPage: first ? commentsTotalWithCondition > first : postTotalComments > commentsTotalWithCondition,
           hasPreviousPage: last ? commentsTotalWithCondition > last : postTotalComments > commentsTotalWithCondition,
-          totalPageCount: Math.ceil(commentsTotalWithCondition / first || last),
+          totalPageCount: comments.length === 0 ? 0 : Math.ceil(commentsTotalWithCondition / first || last),
         },
       };
     },

@@ -117,4 +117,31 @@ export default class CommentService {
       .andWhere("parentId IS NULL")
       .getCount();
   }
+
+  /**
+   * 取得文章的某一個留言
+   * @param {object} param
+   * @param {number} param.postId 文章編號
+   * @param {number} param.commentId 留言編號
+   */
+  public async findByCommentAndPostId({ postId, commentId }: { postId: number; commentId: number }) {
+    return await this.commentRepository
+      .createQueryBuilder("comments")
+      .where("postId = :postId", { postId })
+      .andWhere("id = :id", { id: commentId })
+      .getOne();
+  }
+
+  /**
+   * 根據編號刪除留言
+   * @param {number} commentId 留言編號
+   */
+  public async deleteById(commentId: number) {
+    return await this.commentRepository
+      .createQueryBuilder("comments")
+      .softDelete()
+      .from(Comment)
+      .where("id = :id", { id: commentId })
+      .execute();
+  }
 }

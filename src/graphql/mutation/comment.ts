@@ -4,6 +4,7 @@ import CommentService from "graphql/service/comment.service";
 
 // node_modules
 import { Container } from "typedi";
+import { UserInputError } from "apollo-server";
 
 // exception
 import AuthorizationException from "exception/authorization.exception";
@@ -45,6 +46,37 @@ export default {
     const commentService = Container.get(CommentService);
 
     const comment = await commentService.commentStore({ postId, userId: context.user.id, body });
+
+    return {
+      comment,
+    };
+  },
+
+  /**
+   * 刪除留言
+   *
+   * @param {object} args
+   * @param {number} args.commentId 留言編號
+   * @param {number} args.postId 文章編號
+   */
+  async commentDelete(parent: any, { commentId, postId }: any, context: any) {
+    if (!context.user) {
+      throw new AuthorizationException();
+    }
+
+    if (!commentId || !postId) {
+      throw new UserInputError("請傳入文章以及留言編號");
+    }
+
+    const commentService: CommentService = Container.get(CommentService);
+
+    const comment = await commentService.findByCommentAndPostId({ postId, commentId });
+
+    if (!comment) {
+      throw new NotFoundException();
+    }
+
+    await commentService.deleteById(commentId);
 
     return {
       comment,

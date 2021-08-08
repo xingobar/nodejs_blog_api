@@ -140,6 +140,21 @@ const comment = gql`
     """
     reverse: Boolean
   }
+
+  """
+  刪除留言 payload
+  """
+  type CommentDeletePayload {
+    """
+    刪除的留言
+    """
+    comment: Comment
+
+    """
+    錯誤訊息
+    """
+    error: Error
+  }
 `;
 
 export default comment;
