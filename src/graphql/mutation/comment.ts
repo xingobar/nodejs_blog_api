@@ -10,9 +10,13 @@ import { UserInputError } from "apollo-server";
 import AuthorizationException from "exception/authorization.exception";
 import NotFoundException from "exception/notfound.exception";
 import InvalidRequestException from "exception/invalid.exception";
+import AccessDeniedException from 'exception/access.denied.exception'
 
 // validator
 import CommentValidator from "graphql/validator/comment.validator";
+
+// policy
+import CommentPolicy from "graphql/policy/comment.policy";
 
 export default {
   /**
@@ -74,6 +78,11 @@ export default {
 
     if (!comment) {
       throw new NotFoundException();
+    }
+
+    const commentPolicy = Container.get(CommentPolicy)
+    if (!commentPolicy.commentDeleteRule(context.user, comment)) {
+      throw new AccessDeniedException()
     }
 
     await commentService.deleteById(commentId);
