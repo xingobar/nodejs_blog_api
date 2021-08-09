@@ -190,6 +190,41 @@ const comment = gql`
     """
     error: Error
   }
+
+  """
+  子留言 input
+  """
+  input CommentChildrenCreateInput {
+    """
+    父曾編號
+    """
+    parentId: ID!
+
+    """
+    文章編號
+    """
+    postId: ID!
+
+    """
+    留言內容
+    """
+    body: String
+  }
+
+  """
+  子留言回傳值
+  """
+  type CommentChildrenCreatePayload {
+    """
+    子留言資料
+    """
+    comment: Comment
+
+    """
+    錯誤訊息
+    """
+    error: Error
+  }
 `;
 
 export default comment;

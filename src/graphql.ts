@@ -283,6 +283,13 @@ const typeDefs = gql`
     commentUpdate(
       input: CommentUpdateInput
     ): CommentUpdatePayload
+
+    """
+    子留言新增
+    """
+    commentChildrenCreate(
+      input:CommentChildrenCreateInput
+    ): CommentChildrenCreatePayload
   }
 `;
 

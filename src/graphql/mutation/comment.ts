@@ -10,7 +10,7 @@ import { UserInputError } from "apollo-server";
 import AuthorizationException from "exception/authorization.exception";
 import NotFoundException from "exception/notfound.exception";
 import InvalidRequestException from "exception/invalid.exception";
-import AccessDeniedException from 'exception/access.denied.exception'
+import AccessDeniedException from "exception/access.denied.exception";
 
 // validator
 import CommentValidator from "graphql/validator/comment.validator";
@@ -80,9 +80,9 @@ export default {
       throw new NotFoundException();
     }
 
-    const commentPolicy = Container.get(CommentPolicy)
+    const commentPolicy = Container.get(CommentPolicy);
     if (!commentPolicy.commentDeleteRule(context.user, comment)) {
-      throw new AccessDeniedException()
+      throw new AccessDeniedException();
     }
 
     await commentService.deleteById(commentId);
@@ -97,19 +97,18 @@ export default {
    * @param {object} args
    * @param {CommentUpdateInput} args.input
    */
-  async commentUpdate(parent: any, { input }:any, context: any) {
-    
+  async commentUpdate(parent: any, { input }: any, context: any) {
     if (!context.user) {
-      throw new AuthorizationException()
+      throw new AuthorizationException();
     }
 
-    const { postId, commentId } = input
+    const { postId, commentId } = input;
 
-    const v = new CommentValidator({ body: input.body})
-    v.commentUpdateRule().validate()
+    const v = new CommentValidator({ body: input.body });
+    v.commentUpdateRule().validate();
 
     if (v.isError()) {
-      throw new InvalidRequestException(v.detail[0].message)
+      throw new InvalidRequestException(v.detail[0].message);
     }
 
     if (!commentId || !postId) {
@@ -124,16 +123,53 @@ export default {
       throw new NotFoundException();
     }
 
-    const commentPolicy = Container.get(CommentPolicy)
+    const commentPolicy = Container.get(CommentPolicy);
 
     if (!commentPolicy.commentUpdateRule(context.user, comment)) {
-      throw new AccessDeniedException()
+      throw new AccessDeniedException();
     }
 
-    comment = await commentService.updateCommentById({ postId, commentId, body: input.body})
+    comment = await commentService.updateCommentById({ postId, commentId, body: input.body });
 
     return {
-      comment
+      comment,
+    };
+  },
+
+  /**
+   *   子留言新增
+   */
+  async commentChildrenCreate(parent: any, { input }: any, context: any) {
+    const { parentId, postId, body } = input;
+
+    if (!context.user) {
+      throw new AuthorizationException();
     }
-  }
+
+    const v = new CommentValidator(input);
+    v.childrenCommentCreateRule().validate();
+
+    if (v.isError()) {
+      throw new InvalidRequestException(v.detail[0].message);
+    }
+
+    const commentService = Container.get(CommentService);
+
+    const parentComment = await commentService.findByCommentAndPostId({ commentId: parentId, postId });
+
+    if (!parentComment) {
+      throw new NotFoundException();
+    }
+
+    const children = await commentService.createChildrenCommentByPostId({
+      postId,
+      parentId,
+      body,
+      userId: context.user.id,
+    });
+
+    return {
+      comment: children,
+    };
+  },
 };

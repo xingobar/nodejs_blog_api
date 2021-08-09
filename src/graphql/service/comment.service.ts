@@ -146,19 +146,69 @@ export default class CommentService {
   }
 
   /**
-  * 更新留言
+   * 更新留言
    */
-  public async updateCommentById({ commentId, postId, body}: {commentId: number, postId: number, body: string}) {
-    await this.commentRepository.createQueryBuilder('comments')
+  public async updateCommentById({ commentId, postId, body }: { commentId: number; postId: number; body: string }) {
+    await this.commentRepository
+      .createQueryBuilder("comments")
       .update(Comment)
-      .where('id = :id', { id: commentId })
-      .andWhere('postId = :postId', { postId })
+      .where("id = :id", { id: commentId })
+      .andWhere("postId = :postId", { postId })
       .set({
-        body
-      }).execute()
+        body,
+      })
+      .execute();
 
-    return await this.commentRepository.createQueryBuilder('comments')
-      .where('id = :id', { id: commentId})
-      .getOne()
+    return await this.commentRepository.createQueryBuilder("comments").where("id = :id", { id: commentId }).getOne();
+  }
+
+  /**
+   * 取得父曾留言
+   * @param param0
+   */
+  public async findParentCommentByPostId({ parentId, postId }: { parentId: number; postId: number }) {
+    return await this.commentRepository
+      .createQueryBuilder("comments")
+      .where("postId = :postId", { postId })
+      .andWhere("parentId = :parentId", { parentId })
+      .getOne();
+  }
+
+  /**
+   * 新增子曾留言
+   * @param {object} param
+   * @param {number} param.parentId 父曾留言編號
+   * @param {number} param.postId 文章編號
+   * @param {string} param.body
+   */
+  public async createChildrenCommentByPostId({
+    parentId,
+    postId,
+    body,
+    userId,
+  }: {
+    parentId: number;
+    postId: number;
+    body: string;
+    userId: number;
+  }) {
+    const { generatedMaps } = await this.commentRepository
+      .createQueryBuilder("comments")
+      .insert()
+      .into(Comment)
+      .values({
+        parentId,
+        postId,
+        body,
+        userId,
+      })
+      .execute();
+
+    return await this.commentRepository
+      .createQueryBuilder("comments")
+      .where("userId = :userId", { userId })
+      .andWhere("postId = :postId", { postId })
+      .andWhere("parentId = :parentId", { parentId })
+      .getOne();
   }
 }
