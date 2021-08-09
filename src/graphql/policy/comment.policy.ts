@@ -12,6 +12,6 @@ export default class CommentPolicy {
   }
 
   public commentUpdateRule(user: User, comment: Comment) {
-    return this.commentDeleteRule()
+    return this.commentDeleteRule(user, comment)
   }
 }
