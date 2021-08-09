@@ -280,16 +280,17 @@ const typeDefs = gql`
     """
     留言更新
     """
-    commentUpdate(
-      input: CommentUpdateInput
-    ): CommentUpdatePayload
+    commentUpdate(input: CommentUpdateInput): CommentUpdatePayload
 
     """
     子留言新增
     """
-    commentChildrenCreate(
-      input:CommentChildrenCreateInput
-    ): CommentChildrenCreatePayload
+    commentChildrenCreate(input: CommentChildrenCreateInput): CommentChildrenCreatePayload
+
+    """
+    子留言更新
+    """
+    commentChildrenUpdate(input: CommentChildrenUpdateInput): CommentChildrenUpdatePayload
   }
 `;
 

@@ -225,6 +225,46 @@ const comment = gql`
     """
     error: Error
   }
+
+  """
+  子層留言更新
+  """
+  input CommentChildrenUpdateInput {
+    """
+    父曾編號
+    """
+    parentId: ID!
+
+    """
+    文章編號
+    """
+    postId: ID!
+
+    """
+    留言編號
+    """
+    id: ID!
+
+    """
+    留言內容
+    """
+    body: String
+  }
+
+  """
+  子留言更新 payload
+  """
+  type CommentChildrenUpdatePayload {
+    """
+    留言
+    """
+    comment: Comment
+
+    """
+    錯誤訊息
+    """
+    error: Error
+  }
 `;
 
 export default comment;

@@ -166,11 +166,12 @@ export default class CommentService {
    * 取得父曾留言
    * @param param0
    */
-  public async findParentCommentByPostId({ parentId, postId }: { parentId: number; postId: number }) {
+  public async findChildrenCommentByPostId({ parentId, postId, id }: { parentId: number; postId: number; id: number }) {
     return await this.commentRepository
       .createQueryBuilder("comments")
       .where("postId = :postId", { postId })
       .andWhere("parentId = :parentId", { parentId })
+      .andWhere("id = :id", { id })
       .getOne();
   }
 

@@ -138,6 +138,9 @@ export default {
 
   /**
    *   子留言新增
+   *
+   * @param {object} args
+   * @param {CommentChildrenCreateInput} args.input
    */
   async commentChildrenCreate(parent: any, { input }: any, context: any) {
     const { parentId, postId, body } = input;
@@ -157,6 +160,7 @@ export default {
 
     const parentComment = await commentService.findByCommentAndPostId({ commentId: parentId, postId });
 
+    // 父層留言找不到
     if (!parentComment) {
       throw new NotFoundException();
     }
@@ -167,6 +171,42 @@ export default {
       body,
       userId: context.user.id,
     });
+
+    return {
+      comment: children,
+    };
+  },
+
+  /**
+   * 子留言更新
+   * @param parent
+   * @param {object} args
+   * @param {CommentChildrenUpdateInput} args.input
+   * @param context
+   */
+  async commentChildrenUpdate(parent: any, { input }: any, context: any) {
+    const { parentId, postId, body, id } = input;
+
+    if (!context.user) {
+      throw new AuthorizationException();
+    }
+
+    const v = new CommentValidator(input);
+    v.childrenCommentUpdateRule().validate();
+
+    if (v.isError()) {
+      throw new InvalidRequestException(v.detail[0].message);
+    }
+
+    const commentService = Container.get(CommentService);
+
+    let children = await commentService.findChildrenCommentByPostId({ parentId, postId, id });
+
+    if (!children) {
+      throw new NotFoundException();
+    }
+
+    children = await commentService.updateCommentById({ postId, body, commentId: id });
 
     return {
       comment: children,
