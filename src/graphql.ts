@@ -291,6 +291,11 @@ const typeDefs = gql`
     子留言更新
     """
     commentChildrenUpdate(input: CommentChildrenUpdateInput): CommentChildrenUpdatePayload
+
+    """
+    子留言刪除
+    """
+    commentChildrenRemove(input: CommentChildrenRemove): CommentChildrenRemovePayload
   }
 `;
 

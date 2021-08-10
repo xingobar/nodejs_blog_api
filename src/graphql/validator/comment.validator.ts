@@ -88,4 +88,25 @@ export default class CommentValidator extends ValidatorAbstract {
 
     return this;
   }
+
+  /**
+   * 子留言刪除
+   */
+  public childrenCommentRemoveRule() {
+    this.rules = Joi.object().keys({
+      postId: Joi.number().required().messages({
+        "any.required": "請輸入文章編號",
+        "number.base": "文章編號格式不符",
+      }),
+      parentId: Joi.number().required().messages({
+        "any.required": "請傳入留言編號",
+        "number.base": "留言編號格式不符",
+      }),
+      id: Joi.number().required().messages({
+        "any.required": "請傳入留言編號",
+        "number.base": "留言編號格式不符",
+      }),
+    });
+    return this;
+  }
 }

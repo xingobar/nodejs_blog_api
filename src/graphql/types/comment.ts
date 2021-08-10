@@ -265,6 +265,41 @@ const comment = gql`
     """
     error: Error
   }
+
+  """
+  子留言刪除
+  """
+  input CommentChildrenRemove {
+    """
+    子留言編號
+    """
+    id: ID!
+
+    """
+    文章編號
+    """
+    postId: ID!
+
+    """
+    父曾編號
+    """
+    parentId: ID!
+  }
+
+  """
+  子留言刪除
+  """
+  type CommentChildrenRemovePayload {
+    """
+    留言
+    """
+    comment: Comment
+
+    """
+    錯誤訊息
+    """
+    error: Error
+  }
 `;
 
 export default comment;

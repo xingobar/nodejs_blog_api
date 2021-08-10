@@ -206,7 +206,52 @@ export default {
       throw new NotFoundException();
     }
 
+    const commentPolicy = Container.get(CommentPolicy);
+    if (!commentPolicy.commentUpdateRule(context.user, children)) {
+      throw new AccessDeniedException();
+    }
+
     children = await commentService.updateCommentById({ postId, body, commentId: id });
+
+    return {
+      comment: children,
+    };
+  },
+
+  /**
+   * 子留言刪除
+   * @param parent
+   * @param param1
+   * @param context
+   */
+  async commentChildrenRemove(parent: any, { input }: any, context: any) {
+    if (!context.user) {
+      throw new AuthorizationException();
+    }
+
+    const { id, postId, parentId } = input;
+
+    const v = new CommentValidator(input);
+    v.childrenCommentRemoveRule().validate();
+    if (v.isError()) {
+      throw new InvalidRequestException(v.detail[0].message);
+    }
+
+    const commentService = Container.get(CommentService);
+
+    const children = await commentService.findChildrenCommentByPostId({ id, postId, parentId });
+
+    if (!children) {
+      throw new NotFoundException();
+    }
+
+    const commentPolicy = Container.get(CommentPolicy);
+
+    if (!commentPolicy.commentDeleteRule(context.user, children)) {
+      throw new AccessDeniedException();
+    }
+
+    await commentService.deleteById(id);
 
     return {
       comment: children,
